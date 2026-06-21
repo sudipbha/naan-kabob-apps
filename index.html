@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<title>Naan Kabob — Inventory Apps</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    margin: 0; min-height: 100vh; background: #14181D; color: #EDE3D0;
+    font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 32px 20px calc(32px + env(safe-area-inset-bottom));
+  }
+  .kicker { font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; color: #F2A33C; }
+  h1 { font-size: 28px; font-weight: 900; margin: 6px 0 28px; letter-spacing: -0.02em; }
+  .grid { display: flex; flex-direction: column; gap: 14px; width: 100%; max-width: 380px; }
+  a.app {
+    display: flex; align-items: center; justify-content: space-between;
+    text-decoration: none; color: #EDE3D0; background: #1E242B;
+    border: 1px solid #2A323B; border-radius: 16px; padding: 20px 22px;
+    font-size: 19px; font-weight: 800; transition: transform .08s ease;
+  }
+  a.app:active { transform: scale(0.98); }
+  a.app .arrow { color: #F2A33C; font-size: 22px; }
+  a.app .sub { display: block; font-size: 12px; font-weight: 600; color: #8A94A0; margin-top: 3px; }
+  .foot { margin-top: 26px; font-size: 12px; color: #8A94A0; text-align: center; }
+</style>
+</head>
+<body>
+  <div class="kicker">Naan Kabob</div>
+  <h1>Inventory Apps</h1>
+  <div class="grid">
+    <a class="app" href="sysco/">
+      <span>Sysco tracker<span class="sub">Shelf count &amp; ordering</span></span>
+      <span class="arrow">&rarr;</span>
+    </a>
+    <a class="app" href="champion/">
+      <span>Champion tracker<span class="sub">Shelf count &amp; ordering</span></span>
+      <span class="arrow">&rarr;</span>
+    </a>
+  </div>
+  <div class="foot">Add either app to your home screen for full-screen use.</div>
+</body>
+</html>
