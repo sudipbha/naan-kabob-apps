@@ -1,0 +1,5 @@
+# Skip this site's deploy when nothing in the sysco/ folder changed.
+# Netlify runs `ignore` from the site's base directory (sysco/); exit 0 = skip build.
+# Compares the last successfully-built commit ($CACHED_COMMIT_REF) to the current one.
+[build]
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF ."
