@@ -100,6 +100,7 @@ const ITEMS = [
   { id: "vinyl", st: "gloves", name: "Vinyl gloves", code: "Foodservice · Large · powder-free · 100/bx", alt: "#4226605", pack: "cs", use: 0, lt: 1, ss: 1 },
   { id: "poly", st: "gloves", name: "Poly gloves", code: "Embossed · Large · 500 ct", alt: "", pack: "cs", use: 0, lt: 1, ss: 1 },
   { id: "grillcleaner", st: "clean", name: "Grill & fryer cleaner", code: "Keystone fryer & grill cleaner · 3.78 L", alt: "#6100409", pack: "cs", use: 0, lt: 1, ss: 1 },
+  { id: "glasscleaner", st: "clean", name: "Glass cleaner", code: "Keystone non-ammoniated · 2/2 L", alt: "#6100065", pack: "cs", use: 0, lt: 1, ss: 1 },
   { id: "quat", st: "clean", name: "Multi-Quat sanitizer", code: "Keystone liquid · use QT-40 strips", alt: "", pack: "cs", use: 0, lt: 1, ss: 1 },
   { id: "floorfinish", st: "clean", name: "Floor finish", code: "Keystone Finish Floor · verify", alt: "", pack: "cs", use: 0, lt: 1, ss: 1, tag: "TBC" },
   { id: "liquidsoap", st: "clean", name: "Liquid soap", code: "Ecolab Clean & Smooth · 6/750 mL", alt: "#6100706", pack: "cs", use: 0, lt: 1, ss: 1 },
@@ -119,7 +120,7 @@ const CAP = {
   paneer: 2, flour: 2, salt: 2, oil: 2, fries: 2, doogh: 2, water: 2, apple: 2, ketchupbtl: 2, ketchuppkt: 2, chickpeas: 2,
   kabobfoil: 2, alufoil: 2, bigfilm: 2, smallfilm: 2, friesbox: 2, fohbox: 2, bolanibox: 2, straws: 2, burgerbags: 2, pattypaper: 2,
   vinyl: 2, poly: 2,
-  grillcleaner: 2, quat: 2, floorfinish: 2, liquidsoap: 2, mophead: 2, dishstone: 2, greenpads: 2, steelscrub: 2, rinseaid: 2, bleach: 2,
+  grillcleaner: 2, glasscleaner: 2, quat: 2, floorfinish: 2, liquidsoap: 2, mophead: 2, dishstone: 2, greenpads: 2, steelscrub: 2, rinseaid: 2, bleach: 2,
   gb2422: 2, gb2636: 2, gb3038: 2, gb3550: 2, printer: 2
 };
 const capOf = (it) => CAP[it.id] != null ? CAP[it.id] : Math.max(1, Math.round(it.use * 0.75));
