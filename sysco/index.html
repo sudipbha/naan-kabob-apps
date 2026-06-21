@@ -1,0 +1,776 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="NK Sysco"/>
+<meta name="theme-color" content="#14181D"/>
+<link rel="apple-touch-icon" sizes="180x180" href="/icon-180.png"/>
+<link rel="icon" type="image/png" href="/icon-180.png"/>
+<title>Naan Kabob — Sysco Tracker</title>
+<script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  html,body{margin:0;padding:0;background:#14181D;-webkit-text-size-adjust:100%;}
+  #root{min-height:100vh;}
+  *{-webkit-tap-highlight-color:transparent;}
+</style>
+</head>
+<body>
+<div id="root"><div style="color:#8A94A0;font-family:-apple-system,system-ui,sans-serif;padding:48px 24px;text-align:center;font-size:15px">Loading Naan Kabob tracker…</div></div>
+<script>
+const { useState, useEffect, useMemo, useRef } = React;
+const _ic = (size, p, children) => React.createElement("svg", Object.assign({ width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round" }, p), children);
+const Plus = ({ size = 24, ...p }) => /* @__PURE__ */ React.createElement("svg", { width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", ...p }, /* @__PURE__ */ React.createElement("line", { x1: "5", y1: "12", x2: "19", y2: "12" }), /* @__PURE__ */ React.createElement("line", { x1: "12", y1: "5", x2: "12", y2: "19" }));
+const Minus = ({ size = 24, ...p }) => /* @__PURE__ */ React.createElement("svg", { width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", ...p }, /* @__PURE__ */ React.createElement("line", { x1: "5", y1: "12", x2: "19", y2: "12" }));
+const Copy = ({ size = 24, ...p }) => /* @__PURE__ */ React.createElement("svg", { width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", ...p }, /* @__PURE__ */ React.createElement("rect", { x: "9", y: "9", width: "13", height: "13", rx: "2", ry: "2" }), /* @__PURE__ */ React.createElement("path", { d: "M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" }));
+const Check = ({ size = 24, ...p }) => /* @__PURE__ */ React.createElement("svg", { width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", ...p }, /* @__PURE__ */ React.createElement("polyline", { points: "20 6 9 17 4 12" }));
+const ChevronLeft = ({ size = 24, ...p }) => /* @__PURE__ */ React.createElement("svg", { width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", ...p }, /* @__PURE__ */ React.createElement("polyline", { points: "15 18 9 12 15 6" }));
+const ListChecks = ({ size = 24, ...p }) => /* @__PURE__ */ React.createElement("svg", { width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", ...p }, /* @__PURE__ */ React.createElement("path", { d: "m3 17 2 2 4-4" }), /* @__PURE__ */ React.createElement("path", { d: "m3 7 2 2 4-4" }), /* @__PURE__ */ React.createElement("line", { x1: "13", y1: "6", x2: "21", y2: "6" }), /* @__PURE__ */ React.createElement("line", { x1: "13", y1: "12", x2: "21", y2: "12" }), /* @__PURE__ */ React.createElement("line", { x1: "13", y1: "18", x2: "21", y2: "18" }));
+const PackagePlus = ({ size = 24, ...p }) => /* @__PURE__ */ React.createElement("svg", { width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", ...p }, /* @__PURE__ */ React.createElement("path", { d: "M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" }), /* @__PURE__ */ React.createElement("polyline", { points: "3.29 7 12 12 20.71 7" }), /* @__PURE__ */ React.createElement("line", { x1: "12", y1: "22", x2: "12", y2: "12" }));
+const TrendingUp = ({ size = 24, ...p }) => /* @__PURE__ */ React.createElement("svg", { width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", ...p }, /* @__PURE__ */ React.createElement("polyline", { points: "22 7 13.5 15.5 8.5 10.5 2 17" }), /* @__PURE__ */ React.createElement("polyline", { points: "16 7 22 7 22 13" }));
+const Send = ({ size = 24, ...p }) => /* @__PURE__ */ React.createElement("svg", { width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", ...p }, /* @__PURE__ */ React.createElement("line", { x1: "22", y1: "2", x2: "11", y2: "13" }), /* @__PURE__ */ React.createElement("polygon", { points: "22 2 15 22 11 13 2 9 22 2" }));
+const Save = ({ size = 24, ...p }) => /* @__PURE__ */ React.createElement("svg", { width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", ...p }, /* @__PURE__ */ React.createElement("path", { d: "M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" }), /* @__PURE__ */ React.createElement("polyline", { points: "17 21 17 13 7 13 7 21" }), /* @__PURE__ */ React.createElement("polyline", { points: "7 3 7 8 15 8" }));
+const Search = ({ size = 24, ...p }) => /* @__PURE__ */ React.createElement("svg", { width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", ...p }, /* @__PURE__ */ React.createElement("circle", { cx: "11", cy: "11", r: "8" }), /* @__PURE__ */ React.createElement("line", { x1: "21", y1: "21", x2: "16.65", y2: "16.65" }));
+const X = ({ size = 24, ...p }) => /* @__PURE__ */ React.createElement("svg", { width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", ...p }, /* @__PURE__ */ React.createElement("line", { x1: "18", y1: "6", x2: "6", y2: "18" }), /* @__PURE__ */ React.createElement("line", { x1: "6", y1: "6", x2: "18", y2: "18" }));
+const SB_URL = "https://wtocvytzakfzetxvoduj.supabase.co";
+const SB_KEY = "sb_publishable_d8MDw2wnT_uigdaztsGnuw_rKyilUlz";
+const SB_REST = SB_URL + "/rest/v1/app_state";
+const SB_H = { apikey: SB_KEY, "Content-Type": "application/json" };
+async function cloudGet() {
+  const r = await fetch(SB_REST + "?id=eq.sysco&select=data,updated_at", { headers: SB_H });
+  if (!r.ok) throw new Error("GET " + r.status);
+  const rows = await r.json();
+  return rows && rows.length ? rows[0] : null;
+}
+async function cloudPut(dataObj, iso) {
+  const r = await fetch(SB_REST + "?on_conflict=id", {
+    method: "POST",
+    headers: Object.assign({}, SB_H, { Prefer: "resolution=merge-duplicates,return=minimal" }),
+    body: JSON.stringify([{ id: "sysco", data: dataObj, updated_at: iso }])
+  });
+  if (!r.ok) throw new Error("PUT " + r.status);
+}
+const C = {
+  bg: "#14181D",
+  card: "#1E242B",
+  cardUp: "#252C35",
+  line: "#2E3640",
+  naan: "#EDE3D0",
+  steel: "#8A94A0",
+  saffron: "#F2A33C",
+  mint: "#58C99A",
+  ember: "#E4584B",
+  ink: "#10141A"
+};
+const STATIONS = [
+  { id: "food", label: "Food", rail: "#C8531B" },
+  { id: "pkg", label: "Packaging", rail: "#B07A1E" },
+  { id: "gloves", label: "Gloves", rail: "#3F7A6B" },
+  { id: "clean", label: "Cleaning", rail: "#5B6B8C" },
+  { id: "front", label: "Front desk", rail: "#8A6D3B" }
+];
+const ITEMS = [
+  { id: "paneer", st: "food", name: "Paneer", code: "Cheese Paneer Malai · 24/350 GR", alt: "", pack: "cs", use: 0, lt: 1, ss: 1 },
+  { id: "flour", st: "food", name: "Flour", code: "brand & bag size to confirm", alt: "", pack: "cs", use: 0, lt: 1, ss: 1, tag: "TBC" },
+  { id: "salt", st: "food", name: "Salt", code: "Morton fine sea salt · pack size TBD", alt: "", pack: "cs", use: 0, lt: 1, ss: 1, tag: "TBC" },
+  { id: "oil", st: "food", name: "Oil", code: "Canola JIB (or veg soya) · 16 L", alt: "#5507154", pack: "cs", use: 0, lt: 1, ss: 1 },
+  { id: "fries", st: "food", name: "Fries", code: "McCain KK 3/8 coat · 6×5 lb", alt: "", pack: "cs", use: 0, lt: 1, ss: 1 },
+  { id: "doogh", st: "food", name: "Doogh", code: "Ayran Naan mint · 24/473 mL", alt: "#7911929", pack: "cs", use: 0, lt: 1, ss: 1 },
+  { id: "water", st: "food", name: "Water bottles", code: "Spring water · 24/500 mL", alt: "#8333271", pack: "cs", use: 0, lt: 1, ss: 1 },
+  { id: "apple", st: "food", name: "Apple slices", code: "Apple red wedge · 24×48 g", alt: "", pack: "cs", use: 0, lt: 1, ss: 1 },
+  { id: "ketchupbtl", st: "food", name: "Ketchup bottles", code: "House Recipe tomato ketchup · 4/4.5 kg?", alt: "", pack: "cs", use: 0, lt: 1, ss: 1, tag: "TBC" },
+  { id: "ketchuppkt", st: "food", name: "Ketchup packets", code: "Heinz Canada · 504/8 mL", alt: "#2484TEDC", pack: "cs", use: 0, lt: 1, ss: 1 },
+  { id: "chickpeas", st: "food", name: "Chickpeas", code: "Biena Sea Salt · 5/1 lb", alt: "", pack: "cs", use: 0, lt: 1, ss: 1 },
+  { id: "kabobfoil", st: "pkg", name: "Kabob wrap foil", code: "Foil insul-wrap 12×12 (30.5 cm)", alt: "#S61513474", pack: "cs", use: 0, lt: 1, ss: 1 },
+  { id: "alufoil", st: "pkg", name: "Aluminum foil", code: "size to confirm", alt: "", pack: "cs", use: 0, lt: 1, ss: 1, tag: "TBC" },
+  { id: "bigfilm", st: "pkg", name: "Big film wrap", code: "Cling w/ cutterbox · 24 in", alt: "#C-BX1472", pack: "cs", use: 0, lt: 1, ss: 1 },
+  { id: "smallfilm", st: "pkg", name: "Small film wrap", code: "18 in × 2000 ft", alt: "", pack: "cs", use: 0, lt: 1, ss: 1 },
+  { id: "friesbox", st: "pkg", name: "Fries container (#8 kraft box)", code: "200/cs", alt: "", pack: "cs", use: 0, lt: 1, ss: 1 },
+  { id: "fohbox", st: "pkg", name: "FOH / leftover box", code: "Same as Champion PH188 · Sysco backup", alt: "", pack: "cs", use: 0, lt: 1, ss: 1 },
+  { id: "bolanibox", st: "pkg", name: "Bolani box", code: "Calibre corr 14×7×2", alt: "", pack: "cs", use: 0, lt: 1, ss: 1 },
+  { id: "straws", st: "pkg", name: "Straws", code: "Sysco Classic 8in paper straw · 4×625", alt: "#5280443", pack: "cs", use: 0, lt: 1, ss: 1 },
+
+  { id: "burgerbags", st: "pkg", name: "Burger bags", code: "McNairn large foil bags · 1000/cs", alt: "#321701", pack: "cs", use: 0, lt: 1, ss: 1 },
+  { id: "pattypaper", st: "pkg", name: "Patty paper", code: "Sysco Classic 5.5×5.5 · 1000 sht", alt: "#004807", pack: "cs", use: 0, lt: 1, ss: 1 },
+  { id: "vinyl", st: "gloves", name: "Vinyl gloves", code: "Foodservice · Large · powder-free · 100/bx", alt: "#4226605", pack: "cs", use: 0, lt: 1, ss: 1 },
+  { id: "poly", st: "gloves", name: "Poly gloves", code: "Embossed · Large · 500 ct", alt: "", pack: "cs", use: 0, lt: 1, ss: 1 },
+  { id: "grillcleaner", st: "clean", name: "Grill & fryer cleaner", code: "Keystone fryer & grill cleaner · 3.78 L", alt: "#6100409", pack: "cs", use: 0, lt: 1, ss: 1 },
+  { id: "quat", st: "clean", name: "Multi-Quat sanitizer", code: "Keystone liquid · use QT-40 strips", alt: "", pack: "cs", use: 0, lt: 1, ss: 1 },
+  { id: "floorfinish", st: "clean", name: "Floor finish", code: "Keystone Finish Floor · verify", alt: "", pack: "cs", use: 0, lt: 1, ss: 1, tag: "TBC" },
+  { id: "liquidsoap", st: "clean", name: "Liquid soap", code: "Ecolab Clean & Smooth · 6/750 mL", alt: "#6100706", pack: "cs", use: 0, lt: 1, ss: 1 },
+  { id: "mophead", st: "clean", name: "Mop head", code: "Cotton cut-end · #24", alt: "", pack: "cs", use: 0, lt: 1, ss: 1 },
+  { id: "dishstone", st: "clean", name: "Dishwasher stone", code: "Keystone Ultimate dishmachine detergent", alt: "#7189563", pack: "cs", use: 0, lt: 1, ss: 1 },
+  { id: "greenpads", st: "clean", name: "Dishwashing green pads", code: "Palmolive · backup (usually Champion)", alt: "", pack: "cs", use: 0, lt: 1, ss: 1 },
+  { id: "steelscrub", st: "clean", name: "Steel scrubber", code: "Stainless · 1¾ oz · 1/12 CT", alt: "", pack: "cs", use: 0, lt: 1, ss: 1 },
+  { id: "rinseaid", st: "clean", name: "Dishwasher rinse aid", code: "Keystone rinse additive · verify which", alt: "", pack: "cs", use: 0, lt: 1, ss: 1, tag: "TBC" },
+  { id: "bleach", st: "clean", name: "Bleach", code: "Sysco Reliance bleach · size TBD", alt: "", pack: "cs", use: 0, lt: 1, ss: 1, tag: "TBC" },
+  { id: "gb2422", st: "front", name: "Garbage 24×22 (clear)", code: "Industrial · regular · 500/cs", alt: "#337936", pack: "cs", use: 0, lt: 1, ss: 1 },
+  { id: "gb2636", st: "front", name: "Garbage 26×36 (black)", code: "Industrial · regular · 250/cs", alt: "#0860660", pack: "cs", use: 0, lt: 1, ss: 1 },
+  { id: "gb3038", st: "front", name: "Garbage 30×38 (black)", code: "Industrial · ex-strong · 200/cs", alt: "#7183124", pack: "cs", use: 0, lt: 1, ss: 1 },
+  { id: "gb3550", st: "front", name: "Garbage 35×50 (black)", code: "Industrial · strong · 150/cs", alt: "#7183134", pack: "cs", use: 0, lt: 1, ss: 1 },
+  { id: "printer", st: "front", name: "Printer paper rolls", code: "Thermal roll 3-1/8 in", alt: "#6312318", pack: "cs", use: 0, lt: 1, ss: 1 }
+];
+const CAP = {
+  paneer: 2, flour: 2, salt: 2, oil: 2, fries: 2, doogh: 2, water: 2, apple: 2, ketchupbtl: 2, ketchuppkt: 2, chickpeas: 2,
+  kabobfoil: 2, alufoil: 2, bigfilm: 2, smallfilm: 2, friesbox: 2, fohbox: 2, bolanibox: 2, straws: 2, burgerbags: 2, pattypaper: 2,
+  vinyl: 2, poly: 2,
+  grillcleaner: 2, quat: 2, floorfinish: 2, liquidsoap: 2, mophead: 2, dishstone: 2, greenpads: 2, steelscrub: 2, rinseaid: 2, bleach: 2,
+  gb2422: 2, gb2636: 2, gb3038: 2, gb3550: 2, printer: 2
+};
+const capOf = (it) => CAP[it.id] != null ? CAP[it.id] : Math.max(1, Math.round(it.use * 0.75));
+const REORD = {};
+const STORE_KEY = "sysco-inventory-v1";
+const railOf = (st) => (STATIONS.find((s) => s.id === st) || {}).rail || C.steel;
+const round1 = (n) => Math.round(n * 10) / 10;
+const daysBetween = (a, b) => Math.max(0, (new Date(b) - new Date(a)) / 864e5);
+const shortDate = (iso) => new Date(iso).toLocaleDateString(void 0, { month: "short", day: "numeric" });
+function statusOf(cur, cap, rp) {
+  if (cur === void 0 || cur === null) return "none";
+  if (cur <= rp) return "order";
+  if (cur < cap) return "low";
+  return "ok";
+}
+const STATUS_META = {
+  order: { label: "ORDER", color: C.ember },
+  low: { label: "LOW", color: C.saffron },
+  ok: { label: "OK", color: C.mint },
+  none: { label: "COUNT", color: C.steel }
+};
+function ChampionTracker() {
+  const [stocks, setStocks] = useState({});
+  const [cycle, setCycle] = useState(2);
+  const [counts, setCounts] = useState([]);
+  const [receipts, setReceipts] = useState([]);
+  const [caps, setCaps] = useState({});
+  const [reord, setReord] = useState({});
+  const [orderOv, setOrderOv] = useState({});
+  const [showSync, setShowSync] = useState(false);
+  const [importText, setImportText] = useState("");
+  const [view, setView] = useState("count");
+  const [countMode, setCountMode] = useState("walk");
+  const [recv, setRecv] = useState({});
+  const [recvNote, setRecvNote] = useState("");
+  const [loaded, setLoaded] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [toast, setToast] = useState("");
+  const [undoSnap, setUndoSnap] = useState(null);
+  const saveT = useRef(null);
+  const toastT = useRef(null);
+  const undoT = useRef(null);
+  const flash = (m) => {
+    setToast(m);
+    if (toastT.current) clearTimeout(toastT.current);
+    toastT.current = setTimeout(() => setToast(""), 2400);
+  };
+  const dataRef = useRef({});
+  const localStampRef = useRef(0);
+  const applyingRef = useRef(false);
+  const loadOkRef = useRef(false);
+  dataRef.current = { stocks, cycle, counts, receipts, caps, reord, orderOv };
+  const applyData = (d, suppressSave) => {
+    if (suppressSave) applyingRef.current = true;
+    setStocks(d.stocks || {});
+    setCycle(d.cycle || 2);
+    setCounts(Array.isArray(d.counts) ? d.counts : []);
+    setReceipts(Array.isArray(d.receipts) ? d.receipts : []);
+    setCaps(d.caps || {});
+    setReord(d.reord || {});
+    setOrderOv(d.orderOv || {});
+  };
+  const pull = async () => {
+    try {
+      const row = await cloudGet();
+      loadOkRef.current = true;
+      if (!row || !row.data) return;
+      const stamp = new Date(row.updated_at).getTime();
+      if (stamp <= localStampRef.current) return;
+      const ae = document.activeElement;
+      if (ae && (ae.tagName === "INPUT" || ae.tagName === "TEXTAREA")) return;
+      if (JSON.stringify(row.data) === JSON.stringify(dataRef.current)) {
+        localStampRef.current = stamp;
+        return;
+      }
+      localStampRef.current = stamp;
+      applyData(row.data, true);
+      flash("Synced from your other device");
+    } catch (e) {
+    }
+  };
+  useEffect(() => {
+    (async () => {
+      try {
+        const row = await cloudGet();
+        loadOkRef.current = true;
+        if (row && row.data) {
+          localStampRef.current = new Date(row.updated_at).getTime();
+          applyData(row.data, true);
+        } else {
+          const ls = localStorage.getItem(STORE_KEY);
+          if (ls) {
+            try {
+              applyData(JSON.parse(ls), true);
+            } catch (e) {
+            }
+          }
+        }
+      } catch (e) {
+        loadOkRef.current = false;
+        const ls = localStorage.getItem(STORE_KEY);
+        if (ls) {
+          try {
+            applyData(JSON.parse(ls), true);
+          } catch (e2) {
+          }
+        }
+        flash("Offline \u2014 showing last saved; will sync when back online");
+      }
+      setLoaded(true);
+    })();
+  }, []);
+  useEffect(() => {
+    if (!loaded) return;
+    if (applyingRef.current) {
+      applyingRef.current = false;
+      return;
+    }
+    try {
+      localStorage.setItem(STORE_KEY, JSON.stringify(dataRef.current));
+    } catch (e) {
+    }
+    if (!loadOkRef.current) return;
+    if (saveT.current) clearTimeout(saveT.current);
+    saveT.current = setTimeout(async () => {
+      const stamp = Date.now();
+      localStampRef.current = stamp;
+      try {
+        await cloudPut(dataRef.current, new Date(stamp).toISOString());
+      } catch (e) {
+      }
+    }, 600);
+    return () => saveT.current && clearTimeout(saveT.current);
+  }, [stocks, cycle, counts, receipts, caps, reord, orderOv, loaded]);
+  useEffect(() => {
+    if (!loaded) return;
+    const onVis = () => {
+      if (document.visibilityState === "visible") pull();
+    };
+    window.addEventListener("focus", pull);
+    document.addEventListener("visibilitychange", onVis);
+    const iv = setInterval(() => {
+      if (document.visibilityState === "visible") pull();
+    }, 15e3);
+    return () => {
+      window.removeEventListener("focus", pull);
+      document.removeEventListener("visibilitychange", onVis);
+      clearInterval(iv);
+    };
+  }, [loaded]);
+  const setStock = (id, v) => {
+    const num = parseFloat(v);
+    setStocks((s) => {
+      const n = { ...s };
+      if (v === null || v === "" || isNaN(num)) delete n[id];
+      else n[id] = Math.max(0, round1(num));
+      return n;
+    });
+    setOrderOv((o) => {
+      if (o[id] == null) return o;
+      const n = { ...o };
+      delete n[id];
+      return n;
+    });
+  };
+  const setCap = (id, v) => {
+    const num = parseFloat(v);
+    setCaps((c) => {
+      const n = { ...c };
+      if (v === "" || v === null || isNaN(num) || num <= 0) delete n[id];
+      else n[id] = Math.max(0.1, round1(num));
+      return n;
+    });
+    setOrderOv((o) => {
+      if (o[id] == null) return o;
+      const n = { ...o };
+      delete n[id];
+      return n;
+    });
+  };
+  const setReorder = (id, v) => {
+    const num = parseFloat(v);
+    setReord((r) => {
+      const n = { ...r };
+      if (v === "" || v === null || isNaN(num) || num < 0) delete n[id];
+      else n[id] = Math.max(0, round1(num));
+      return n;
+    });
+  };
+  const setOrderQty = (id, v) => {
+    const num = parseFloat(v);
+    setOrderOv((o) => {
+      const n = { ...o };
+      if (v === "" || v === null || isNaN(num) || num < 0) delete n[id];
+      else n[id] = Math.max(0, round1(num));
+      return n;
+    });
+  };
+  const setRecvQty = (id, v) => {
+    const num = parseFloat(v);
+    setRecv((s) => {
+      const n = { ...s };
+      if (v === null || v === "" || isNaN(num) || num <= 0) delete n[id];
+      else n[id] = Math.max(0, round1(num));
+      return n;
+    });
+  };
+  const saveCount = () => {
+    const snap = { date: (/* @__PURE__ */ new Date()).toISOString(), stocks: { ...stocks } };
+    setCounts((c) => [...c, snap].slice(-12));
+    flash("Count saved \u2014 baseline set for variance");
+  };
+  const resetCounts = () => {
+    if (!window.confirm("Reset all shelf counts?\n\nThis clears every on-hand number so you can recount from scratch. Your saved count history, deliveries, and max/reorder settings are kept.\n\nYou can still tap Undo right after.")) return;
+    setUndoSnap({ stocks: { ...stocks }, orderOv: { ...orderOv } });
+    setStocks({});
+    setOrderOv({});
+    if (undoT.current) clearTimeout(undoT.current);
+    undoT.current = setTimeout(() => setUndoSnap(null), 3e4);
+  };
+  const undoReset = () => {
+    if (!undoSnap) return;
+    setStocks(undoSnap.stocks);
+    setOrderOv(undoSnap.orderOv);
+    setUndoSnap(null);
+    if (undoT.current) clearTimeout(undoT.current);
+    flash("Counts restored");
+  };
+  const logDelivery = () => {
+    const items = { ...recv };
+    if (!Object.keys(items).length) {
+      flash("Nothing entered to receive");
+      return;
+    }
+    setStocks((s) => {
+      const n = { ...s };
+      for (const [id, q] of Object.entries(items)) n[id] = round1((n[id] ?? 0) + q);
+      return n;
+    });
+    setReceipts((r) => [...r, { date: (/* @__PURE__ */ new Date()).toISOString(), items, note: recvNote.trim() }].slice(-50));
+    const count = Object.keys(items).length;
+    setRecv({});
+    setRecvNote("");
+    flash(`Logged ${count} item${count > 1 ? "s" : ""} into stock`);
+  };
+  const rows = useMemo(() => ITEMS.map((it) => {
+    const cap = caps[it.id] != null ? caps[it.id] : capOf(it);
+    const rp = reord[it.id] != null ? reord[it.id] : REORD[it.id] != null ? REORD[it.id] : cap / 2;
+    const cur = stocks[it.id];
+    const st = statusOf(cur, cap, rp);
+    const autoNeed = cur === void 0 ? 0 : Math.max(0, round1(cap - cur));
+    const ov = orderOv[it.id] != null;
+    const need = ov ? orderOv[it.id] : autoNeed;
+    const wks = it.use > 0 && cur !== void 0 ? cur / it.use : null;
+    return { ...it, cap, cur, status: st, rp, need, autoNeed, ov, wks };
+  }), [stocks, caps, reord, orderOv]);
+  const counted = useMemo(() => rows.filter((r) => r.cur !== void 0).length, [rows]);
+  const variance = useMemo(() => {
+    if (counts.length < 2) return null;
+    const prev = counts[counts.length - 2];
+    const curr = counts[counts.length - 1];
+    const days = daysBetween(prev.date, curr.date);
+    const recvBetween = {};
+    for (const r of receipts) {
+      if (new Date(r.date) > new Date(prev.date) && new Date(r.date) <= new Date(curr.date)) {
+        for (const [id, q] of Object.entries(r.items)) recvBetween[id] = (recvBetween[id] ?? 0) + q;
+      }
+    }
+    const items = ITEMS.map((it) => {
+      const p = prev.stocks[it.id];
+      const c = curr.stocks[it.id];
+      if (p === void 0 || c === void 0) return { ...it, skip: true };
+      const received = recvBetween[it.id] ?? 0;
+      const actual = round1(p + received - c);
+      const expected = round1(it.use * (days / 7));
+      const v = round1(actual - expected);
+      let flag = "ok";
+      if (it.use === 0) {
+        if (actual >= 1) flag = "over";
+      } else if (v > 0 && (v >= 0.5 || v / Math.max(expected, 0.01) >= 0.25)) flag = "over";
+      else if (v < 0 && (Math.abs(v) >= 0.5 || Math.abs(v) / Math.max(expected, 0.01) >= 0.25)) flag = "under";
+      return { ...it, p, c, received, actual, expected, v, flag, skip: false };
+    }).filter((x) => !x.skip);
+    const order = { over: 0, under: 1, ok: 2 };
+    items.sort((a, b) => order[a.flag] - order[b.flag] || Math.abs(b.v) - Math.abs(a.v));
+    const summary = { over: 0, under: 0, ok: 0 };
+    items.forEach((i) => summary[i.flag]++);
+    return { prev, curr, days: Math.round(days * 10) / 10, items, summary };
+  }, [counts, receipts]);
+  const orderRows = rows.filter((r) => r.need > 0 && (r.status === "order" || r.ov));
+  const orderText = useMemo(() => {
+    if (!orderRows.length) return "";
+    const logo = {};
+    const unitOf = (r) => {
+      const p = r.pack.toLowerCase();
+      return p.includes("bn") ? "bn" : p.includes("bx") ? "bx" : p.includes("bg") ? "bg" : "cs";
+    };
+    const lines = orderRows.map((r) => `${r.name} (${r.code}) \u2014 ${r.need}\xA0${unitOf(r)}${logo[r.id] ? "\xA0+logo" : ""}`);
+    return `SYSCO ORDER \u2014 Naan Kabob
+
+${lines.join("\n")}`;
+  }, [orderRows]);
+  const copyOrder = async () => {
+    try {
+      await navigator.clipboard.writeText(orderText);
+      setCopied(true);
+    } catch (e) {
+      const ta = document.createElement("textarea");
+      ta.value = orderText;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      setCopied(true);
+    }
+    setTimeout(() => setCopied(false), 2e3);
+  };
+  const lastCount = counts.length ? counts[counts.length - 1] : null;
+  const exportCode = useMemo(() => {
+    try {
+      return btoa(encodeURIComponent(JSON.stringify({ stocks, cycle, counts, receipts, caps, reord, orderOv })));
+    } catch (e) {
+      return "";
+    }
+  }, [stocks, cycle, counts, receipts, caps, reord, orderOv]);
+  const copyExport = async () => {
+    try {
+      await navigator.clipboard.writeText(exportCode);
+    } catch (e) {
+      const ta = document.createElement("textarea");
+      ta.value = exportCode;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+    }
+    flash("Copied \u2014 now paste it on your other device");
+  };
+  const doImport = () => {
+    try {
+      const d = JSON.parse(decodeURIComponent(atob(importText.trim())));
+      if (d.stocks) setStocks(d.stocks);
+      if (typeof d.cycle === "number") setCycle(d.cycle);
+      if (Array.isArray(d.counts)) setCounts(d.counts);
+      if (Array.isArray(d.receipts)) setReceipts(d.receipts);
+      if (d.caps) setCaps(d.caps);
+      if (d.reord) setReord(d.reord);
+      if (d.orderOv) setOrderOv(d.orderOv);
+      setImportText("");
+      setShowSync(false);
+      flash("Done \u2014 your data is now on this device");
+    } catch (e) {
+      flash("That code didn't read \u2014 copy the whole thing and try again");
+    }
+  };
+  if (!loaded) return /* @__PURE__ */ React.createElement("div", { style: { background: C.bg, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", color: C.steel, fontFamily: "ui-sans-serif, system-ui" } }, "Loading\u2026");
+  const TABS = [
+    { id: "count", label: "Count", Icon: ListChecks },
+    { id: "receive", label: "Receive", Icon: PackagePlus },
+    { id: "variance", label: "Variance", Icon: TrendingUp },
+    { id: "order", label: "Order", Icon: Send }
+  ];
+  return /* @__PURE__ */ React.createElement("div", { style: { background: C.bg, minHeight: "100vh", color: C.naan, fontFamily: "ui-sans-serif, system-ui", paddingBottom: "calc(92px + env(safe-area-inset-bottom))" } }, /* @__PURE__ */ React.createElement("style", null, `* { -webkit-tap-highlight-color: transparent; } button, a { -webkit-user-select: none; user-select: none; touch-action: manipulation; }`), view === "count" && /* @__PURE__ */ React.createElement(CountView, { ...{ rows, counted, countMode, setCountMode, setStock, setCap, setReorder, setOrderQty, cycle, setCycle, saveCount, resetCounts, lastCount, setShowSync } }), view === "receive" && /* @__PURE__ */ React.createElement(ReceiveView, { ...{ recv, setRecvQty, recvNote, setRecvNote, logDelivery, receipts } }), view === "variance" && /* @__PURE__ */ React.createElement(VarianceView, { variance, counts, lastCount }), view === "order" && /* @__PURE__ */ React.createElement(OrderView, { ...{ orderRows, orderText, cycle, copyOrder, copied } }), showSync && /* @__PURE__ */ React.createElement("div", { className: "fixed inset-0 z-50 flex items-end justify-center", style: { background: "rgba(0,0,0,0.6)" }, onClick: () => setShowSync(false) }, /* @__PURE__ */ React.createElement("div", { className: "w-full rounded-t-2xl p-4", style: { background: C.card, maxWidth: 520, paddingBottom: "calc(28px + env(safe-area-inset-bottom))" }, onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between mb-1" }, /* @__PURE__ */ React.createElement("div", { className: "text-lg font-black" }, "Move data between devices"), /* @__PURE__ */ React.createElement("button", { onClick: () => setShowSync(false), className: "text-sm font-bold", style: { color: C.steel } }, "Close")), /* @__PURE__ */ React.createElement("div", { className: "mt-3" }, /* @__PURE__ */ React.createElement("div", { className: "text-[11px] font-black uppercase tracking-wider mb-1", style: { color: C.saffron } }, "1 \xB7 On the device that HAS your data"), /* @__PURE__ */ React.createElement("div", { className: "text-xs mb-2", style: { color: C.steel } }, "Tap Copy, then send the code to your other device (text it to yourself, email, or Notes)."), /* @__PURE__ */ React.createElement(
+    "textarea",
+    {
+      readOnly: true,
+      value: exportCode,
+      onFocus: (e) => e.target.select(),
+      className: "w-full h-16 rounded-lg p-2 font-mono outline-none",
+      style: { background: C.ink, color: C.naan, border: `1px solid ${C.line}`, fontSize: 16 }
+    }
+  ), /* @__PURE__ */ React.createElement("button", { onClick: copyExport, className: "w-full mt-2 rounded-xl py-3 font-black", style: { background: C.saffron, color: C.ink } }, "Copy my data")), /* @__PURE__ */ React.createElement("div", { className: "mt-5" }, /* @__PURE__ */ React.createElement("div", { className: "text-[11px] font-black uppercase tracking-wider mb-1", style: { color: C.mint } }, "2 \xB7 On THIS device"), /* @__PURE__ */ React.createElement("div", { className: "text-xs mb-2", style: { color: C.steel } }, "Paste the code below and tap Load."), /* @__PURE__ */ React.createElement(
+    "textarea",
+    {
+      value: importText,
+      onChange: (e) => setImportText(e.target.value),
+      placeholder: "Paste the code here\u2026",
+      className: "w-full h-16 rounded-lg p-2 font-mono outline-none",
+      style: { background: C.ink, color: C.naan, border: `1px solid ${C.line}`, fontSize: 16 }
+    }
+  ), /* @__PURE__ */ React.createElement(
+    "button",
+    {
+      onClick: doImport,
+      disabled: !importText.trim(),
+      className: "w-full mt-2 rounded-xl py-3 font-black",
+      style: importText.trim() ? { background: C.mint, color: C.ink } : { background: C.cardUp, color: C.steel }
+    },
+    "Load onto this device"
+  )))), toast && /* @__PURE__ */ React.createElement(
+    "div",
+    {
+      className: "fixed left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-xl text-sm font-bold shadow-lg",
+      style: { bottom: "calc(86px + env(safe-area-inset-bottom))", background: C.mint, color: C.ink }
+    },
+    toast
+  ), undoSnap && /* @__PURE__ */ React.createElement(
+    "div",
+    {
+      className: "fixed left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold shadow-lg",
+      style: { bottom: "calc(86px + env(safe-area-inset-bottom))", background: C.cardUp, color: C.naan, border: `1px solid ${C.ember}` }
+    },
+    /* @__PURE__ */ React.createElement("span", null, "Counts cleared"),
+    /* @__PURE__ */ React.createElement("button", { onClick: undoReset, className: "font-black px-3 py-1 rounded-lg active:scale-95", style: { background: C.saffron, color: C.ink } }, "Undo")
+  ), /* @__PURE__ */ React.createElement("div", { className: "fixed bottom-0 left-0 right-0 z-40 flex", style: { background: C.ink, borderTop: `1px solid ${C.line}`, paddingBottom: "env(safe-area-inset-bottom)" } }, TABS.map(({ id, label, Icon }) => {
+    const active = view === id;
+    const badge = id === "order" ? orderRows.length : id === "variance" && variance ? variance.summary.over : 0;
+    return /* @__PURE__ */ React.createElement("button", { key: id, onClick: () => setView(id), className: "flex-1 py-2.5 flex flex-col items-center gap-0.5 relative" }, /* @__PURE__ */ React.createElement(Icon, { size: 20, color: active ? C.saffron : C.steel }), /* @__PURE__ */ React.createElement("span", { className: "text-[10px] font-bold", style: { color: active ? C.saffron : C.steel } }, label), badge > 0 && /* @__PURE__ */ React.createElement(
+      "span",
+      {
+        className: "absolute top-1 right-1/2 translate-x-4 text-[9px] font-black px-1.5 rounded-full",
+        style: { background: C.ember, color: "#fff" }
+      },
+      badge
+    ));
+  })));
+}
+function CountView({ rows, counted, countMode, setCountMode, setStock, setCap, setReorder, setOrderQty, cycle, setCycle, saveCount, resetCounts, lastCount, setShowSync }) {
+  const [query, setQuery] = useState("");
+  const counts = { order: 0, low: 0, ok: 0, none: 0 };
+  rows.forEach((r) => counts[r.status]++);
+  const q = query.trim().toLowerCase();
+  const filtered = q ? rows.filter((r) => [r.name, r.code, r.alt, r.tag, r.desc].some((f) => f && String(f).toLowerCase().includes(q))) : rows;
+  const sorted = countMode === "status" ? [...filtered].sort((a, b) => {
+    const rank = { order: 0, low: 1, none: 2, ok: 3 };
+    return rank[a.status] - rank[b.status] || b.use - a.use;
+  }) : filtered;
+  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "px-4 pt-5 pb-3 sticky top-0 z-20", style: { background: C.bg, borderBottom: `1px solid ${C.line}` } }, /* @__PURE__ */ React.createElement("div", { className: "text-[10px] uppercase tracking-[0.25em]", style: { color: C.saffron } }, "Naan Kabob"), /* @__PURE__ */ React.createElement("div", { className: "text-2xl font-black tracking-tight" }, "Sysco shelf count"), /* @__PURE__ */ React.createElement("div", { className: "relative mt-3" }, /* @__PURE__ */ React.createElement(Search, { size: 16, style: { color: C.steel, position: "absolute", left: 11, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" } }), /* @__PURE__ */ React.createElement("input", { value: query, onChange: (e) => setQuery(e.target.value), placeholder: "Search name, code, or alt #…", inputMode: "search", autoCapitalize: "none", autoCorrect: "off", spellCheck: false, className: "w-full h-11 rounded-lg outline-none", style: { background: C.ink, color: C.naan, border: `1px solid ${q ? C.saffron : C.line}`, paddingLeft: 36, paddingRight: query ? 60 : 12, fontSize: 16 } }), query && /* @__PURE__ */ React.createElement("button", { onClick: () => setQuery(""), "aria-label": "clear search", className: "absolute flex items-center justify-center rounded-md active:scale-95", style: { right: 8, top: "50%", transform: "translateY(-50%)", width: 28, height: 28, background: C.cardUp, color: C.steel } }, /* @__PURE__ */ React.createElement(X, { size: 15 }))), q && /* @__PURE__ */ React.createElement("div", { className: "text-[11px] mt-1.5 px-0.5", style: { color: C.steel } }, filtered.length, " match", filtered.length === 1 ? "" : "es", " for “", query.trim(), "”"), /* @__PURE__ */ React.createElement("div", { className: "flex gap-2 mt-3" }, [["order", counts.order], ["low", counts.low], ["ok", counts.ok], ["none", counts.none]].map(([k, n]) => /* @__PURE__ */ React.createElement("div", { key: k, className: "flex-1 rounded-lg py-2 text-center", style: { background: C.card } }, /* @__PURE__ */ React.createElement("div", { className: "text-lg font-black", style: { color: STATUS_META[k].color } }, n), /* @__PURE__ */ React.createElement("div", { className: "text-[9px] uppercase tracking-wider", style: { color: C.steel } }, STATUS_META[k].label)))), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2 mt-3" }, /* @__PURE__ */ React.createElement("div", { className: "flex rounded-lg overflow-hidden text-xs font-bold", style: { border: `1px solid ${C.line}` } }, [["walk", "Shelf walk"], ["status", "By status"]].map(([v, lbl]) => /* @__PURE__ */ React.createElement(
+    "button",
+    {
+      key: v,
+      onClick: () => setCountMode(v),
+      className: "px-3 py-1.5",
+      style: countMode === v ? { background: C.naan, color: C.ink } : { color: C.steel }
+    },
+    lbl
+  )))), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2 mt-2" }, /* @__PURE__ */ React.createElement(
+    "button",
+    {
+      onClick: saveCount,
+      className: "flex items-center gap-1.5 text-xs font-black px-3 py-2 rounded-lg",
+      style: { background: C.saffron, color: C.ink }
+    },
+    /* @__PURE__ */ React.createElement(Save, { size: 14 }),
+    " Save count (",
+    counted,
+    "/",
+    rows.length,
+    ")"
+  ), /* @__PURE__ */ React.createElement("div", { className: "text-[10px]", style: { color: C.steel } }, lastCount ? `last saved ${shortDate(lastCount.date)}` : "no count saved yet"), /* @__PURE__ */ React.createElement(
+    "button",
+    {
+      onClick: resetCounts,
+      className: "ml-auto text-xs font-bold px-3 py-2 rounded-lg",
+      style: { border: `1px solid ${C.ember}`, color: C.ember }
+    },
+    "↺ Reset"
+  ), /* @__PURE__ */ React.createElement(
+    "button",
+    {
+      onClick: () => setShowSync(true),
+      className: "text-xs font-bold px-3 py-2 rounded-lg",
+      style: { border: `1px solid ${C.line}`, color: C.naan }
+    },
+    "\u21C4 Sync"
+  ))), /* @__PURE__ */ React.createElement("div", { className: "px-3 pt-3" }, q && filtered.length === 0 ? /* @__PURE__ */ React.createElement("div", { className: "rounded-xl p-6 text-center mt-2", style: { background: C.card } }, /* @__PURE__ */ React.createElement("div", { className: "font-bold", style: { color: C.naan } }, "No items match"), /* @__PURE__ */ React.createElement("div", { className: "text-sm mt-1", style: { color: C.steel } }, "Nothing for “", query.trim(), "” — try a product code or part of the name.")) : countMode === "walk" ? STATIONS.map((stn) => {
+    const its = sorted.filter((r) => r.st === stn.id);
+    if (!its.length) return null;
+    return /* @__PURE__ */ React.createElement("div", { key: stn.id }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2 px-1 pt-3 pb-1.5" }, /* @__PURE__ */ React.createElement("div", { className: "w-2 h-2 rounded-full", style: { background: stn.rail } }), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] font-black uppercase tracking-[0.2em]", style: { color: C.steel } }, stn.label)), /* @__PURE__ */ React.createElement("div", { className: "space-y-2" }, its.map((r) => /* @__PURE__ */ React.createElement(CountCard, { key: r.id, r, rail: stn.rail, setStock, setCap, setReorder, setOrderQty }))));
+  }) : /* @__PURE__ */ React.createElement("div", { className: "space-y-2 pt-2" }, sorted.map((r) => /* @__PURE__ */ React.createElement(CountCard, { key: r.id, r, rail: railOf(r.st), setStock, setCap, setReorder, setOrderQty })))));
+}
+function NumField({ value, onCommit, placeholder, className, style }) {
+  const [draft, setDraft] = useState(value == null ? "" : String(value));
+  const [focused, setFocused] = useState(false);
+  useEffect(() => {
+    if (!focused) setDraft(value == null ? "" : String(value));
+  }, [value, focused]);
+  return /* @__PURE__ */ React.createElement(
+    "input",
+    {
+      inputMode: "decimal",
+      value: draft,
+      placeholder,
+      className,
+      style,
+      onFocus: (e) => {
+        setFocused(true);
+        e.target.select();
+      },
+      onBlur: () => setFocused(false),
+      onChange: (e) => {
+        setDraft(e.target.value);
+        onCommit(e.target.value);
+      }
+    }
+  );
+}
+function CountCard({ r, rail, setStock, setCap, setReorder, setOrderQty }) {
+  const meta = STATUS_META[r.status];
+  const segMax = Math.min(16, Math.max(1, Math.round(r.cap)));
+  const filled = r.cur === void 0 ? 0 : Math.min(segMax, r.cur);
+  const tickAt = Math.min(segMax, r.rp);
+  return /* @__PURE__ */ React.createElement("div", { className: "rounded-xl p-3", style: { background: C.card, borderLeft: `3px solid ${rail}` } }, /* @__PURE__ */ React.createElement("div", { className: "flex items-start justify-between gap-2" }, /* @__PURE__ */ React.createElement("div", { className: "min-w-0" }, /* @__PURE__ */ React.createElement("div", { className: "font-bold leading-tight truncate" }, r.name, r.tag && /* @__PURE__ */ React.createElement("span", { className: "ml-2 text-[8px] font-black tracking-widest px-1.5 py-0.5 rounded align-middle", style: { background: C.ink, color: C.saffron } }, r.tag)), /* @__PURE__ */ React.createElement("div", { className: "text-[11px] font-mono mt-0.5", style: { color: C.steel } }, r.code, r.alt ? ` \xB7 ${r.alt}` : "", " \xB7 ", r.pack)), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] font-black px-2 py-1 rounded-md shrink-0", style: { background: meta.color + "22", color: meta.color } }, meta.label)), /* @__PURE__ */ React.createElement("div", { className: "relative mt-2.5 mb-1" }, /* @__PURE__ */ React.createElement("div", { className: "flex gap-[3px]" }, Array.from({ length: segMax }).map((_, i) => {
+    const on = i < Math.round(filled);
+    return /* @__PURE__ */ React.createElement("div", { key: i, className: "h-3 flex-1 rounded-[2px]", style: { background: on ? meta.color : C.ink, transition: "background 200ms" } });
+  })), /* @__PURE__ */ React.createElement("div", { className: "absolute -top-1 bottom-[-2px] w-[2px]", style: { left: `${tickAt / segMax * 100}%`, background: C.saffron } })), /* @__PURE__ */ React.createElement("div", { className: "flex justify-between items-center text-[10px] gap-1", style: { color: C.steel } }, /* @__PURE__ */ React.createElement("span", { className: "flex items-center gap-1" }, "max", /* @__PURE__ */ React.createElement(
+    NumField,
+    {
+      value: r.cap,
+      onCommit: (s) => setCap(r.id, s),
+      className: "w-9 text-center font-black rounded outline-none",
+      style: { background: C.ink, color: C.naan, border: `1px solid ${C.line}`, fontSize: 16, height: 28 }
+    }
+  )), /* @__PURE__ */ React.createElement("span", { className: "flex items-center gap-1" }, "reorder", /* @__PURE__ */ React.createElement(
+    NumField,
+    {
+      value: r.rp,
+      onCommit: (s) => setReorder(r.id, s),
+      className: "w-9 text-center font-black rounded outline-none",
+      style: { background: C.ink, color: C.saffron, border: `1px solid ${C.line}`, fontSize: 16, height: 28 }
+    }
+  )), /* @__PURE__ */ React.createElement("span", { className: "shrink-0" }, r.cur === void 0 ? "count?" : r.wks === null ? "" : `\u2248 ${round1(r.wks)} wk`)), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2 mt-2" }, /* @__PURE__ */ React.createElement(
+    "button",
+    {
+      onClick: () => setStock(r.id, (r.cur ?? 0) - 1),
+      "aria-label": "minus",
+      className: "w-11 h-11 rounded-lg flex items-center justify-center active:scale-95",
+      style: { background: C.cardUp, color: C.naan }
+    },
+    /* @__PURE__ */ React.createElement(Minus, { size: 18 })
+  ), /* @__PURE__ */ React.createElement(
+    NumField,
+    {
+      value: r.cur,
+      placeholder: "\u2014",
+      onCommit: (s) => setStock(r.id, s),
+      className: "flex-1 h-11 rounded-lg text-center text-xl font-black bg-transparent outline-none",
+      style: { background: C.ink, color: r.cur === void 0 ? C.steel : C.naan, border: `1px solid ${C.line}` }
+    }
+  ), /* @__PURE__ */ React.createElement(
+    "button",
+    {
+      onClick: () => setStock(r.id, (r.cur ?? 0) + 1),
+      "aria-label": "plus",
+      className: "w-11 h-11 rounded-lg flex items-center justify-center active:scale-95",
+      style: { background: C.cardUp, color: C.naan }
+    },
+    /* @__PURE__ */ React.createElement(Plus, { size: 18 })
+  ), /* @__PURE__ */ React.createElement("div", { className: "flex flex-col items-center shrink-0 pl-1" }, /* @__PURE__ */ React.createElement(
+    NumField,
+    {
+      value: r.ov || r.need > 0 ? r.need : null,
+      placeholder: "0",
+      onCommit: (s) => setOrderQty(r.id, s),
+      className: "w-12 h-11 rounded-lg text-center text-lg font-black outline-none",
+      style: { background: C.ink, color: r.need > 0 ? r.status === "order" ? C.ember : C.saffron : C.steel, border: `1px solid ${r.need > 0 && r.status === "order" ? C.ember : C.line}` }
+    }
+  ), /* @__PURE__ */ React.createElement("div", { className: "text-[9px] uppercase", style: { color: C.steel } }, "order"))));
+}
+function ReceiveView({ recv, setRecvQty, recvNote, setRecvNote, logDelivery, receipts }) {
+  const total = Object.keys(recv).length;
+  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "px-4 pt-5 pb-3 sticky top-0 z-20", style: { background: C.bg, borderBottom: `1px solid ${C.line}` } }, /* @__PURE__ */ React.createElement("div", { className: "text-[10px] uppercase tracking-[0.25em]", style: { color: C.saffron } }, "Receiving"), /* @__PURE__ */ React.createElement("div", { className: "text-2xl font-black tracking-tight" }, "Check in a delivery"), /* @__PURE__ */ React.createElement("div", { className: "text-[11px] mt-1", style: { color: C.steel } }, "Enter what actually arrived (cases). It adds to your on-hand count and feeds the variance math."), /* @__PURE__ */ React.createElement(
+    "input",
+    {
+      value: recvNote,
+      onChange: (e) => setRecvNote(e.target.value),
+      placeholder: "Note \u2014 invoice #, anything short or wrong\u2026",
+      className: "w-full mt-3 h-11 px-3 rounded-lg text-base outline-none",
+      style: { background: C.ink, color: C.naan, border: `1px solid ${C.line}` }
+    }
+  )), /* @__PURE__ */ React.createElement("div", { className: "px-3 pt-3" }, STATIONS.map((stn) => {
+    const its = ITEMS.filter((i) => i.st === stn.id);
+    return /* @__PURE__ */ React.createElement("div", { key: stn.id }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2 px-1 pt-3 pb-1.5" }, /* @__PURE__ */ React.createElement("div", { className: "w-2 h-2 rounded-full", style: { background: stn.rail } }), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] font-black uppercase tracking-[0.2em]", style: { color: C.steel } }, stn.label)), /* @__PURE__ */ React.createElement("div", { className: "space-y-1.5" }, its.map((it) => {
+      const q = recv[it.id];
+      return /* @__PURE__ */ React.createElement("div", { key: it.id, className: "rounded-xl p-3", style: { background: C.card, borderLeft: `3px solid ${stn.rail}`, opacity: q ? 1 : 0.92 } }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between gap-2" }, /* @__PURE__ */ React.createElement("div", { className: "min-w-0" }, /* @__PURE__ */ React.createElement("div", { className: "font-bold leading-tight truncate" }, it.name), /* @__PURE__ */ React.createElement("div", { className: "text-[11px] font-mono", style: { color: C.steel } }, it.code, " \xB7 ", it.pack)), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2 shrink-0" }, /* @__PURE__ */ React.createElement(
+        "button",
+        {
+          onClick: () => setRecvQty(it.id, (q ?? 0) - 1),
+          "aria-label": "minus",
+          className: "w-10 h-10 rounded-lg flex items-center justify-center active:scale-95",
+          style: { background: C.cardUp }
+        },
+        /* @__PURE__ */ React.createElement(Minus, { size: 16 })
+      ), /* @__PURE__ */ React.createElement(
+        NumField,
+        {
+          value: q,
+          placeholder: "0",
+          onCommit: (s) => setRecvQty(it.id, s),
+          className: "w-14 h-10 rounded-lg text-center text-lg font-black outline-none",
+          style: { background: C.ink, color: q ? C.naan : C.steel, border: `1px solid ${q ? C.mint : C.line}` }
+        }
+      ), /* @__PURE__ */ React.createElement(
+        "button",
+        {
+          onClick: () => setRecvQty(it.id, (q ?? 0) + 1),
+          "aria-label": "plus",
+          className: "w-10 h-10 rounded-lg flex items-center justify-center active:scale-95",
+          style: { background: C.cardUp }
+        },
+        /* @__PURE__ */ React.createElement(Plus, { size: 16 })
+      ))));
+    })));
+  }), receipts.length > 0 && /* @__PURE__ */ React.createElement("div", { className: "mt-5" }, /* @__PURE__ */ React.createElement("div", { className: "text-[10px] font-black uppercase tracking-[0.2em] px-1 pb-2", style: { color: C.steel } }, "Recent deliveries"), /* @__PURE__ */ React.createElement("div", { className: "space-y-1.5" }, [...receipts].reverse().slice(0, 5).map((r, idx) => /* @__PURE__ */ React.createElement("div", { key: idx, className: "rounded-lg px-3 py-2 text-xs", style: { background: C.card, color: C.steel } }, /* @__PURE__ */ React.createElement("span", { style: { color: C.naan, fontWeight: 700 } }, shortDate(r.date)), " \xB7 ", Object.keys(r.items).length, " items", r.note ? ` \xB7 ${r.note}` : ""))))), /* @__PURE__ */ React.createElement("div", { className: "fixed left-0 right-0 px-3 z-30", style: { bottom: "calc(64px + env(safe-area-inset-bottom))" } }, /* @__PURE__ */ React.createElement(
+    "button",
+    {
+      onClick: logDelivery,
+      disabled: !total,
+      className: "w-full rounded-xl py-4 font-black text-base flex items-center justify-center gap-2",
+      style: total ? { background: C.mint, color: C.ink } : { background: C.card, color: C.steel }
+    },
+    /* @__PURE__ */ React.createElement(PackagePlus, { size: 18 }),
+    " ",
+    total ? `Log delivery \u2014 ${total} item${total > 1 ? "s" : ""}` : "Enter what arrived"
+  )));
+}
+function VarianceView({ variance, counts, lastCount }) {
+  const Frame = ({ children }) => /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "px-4 pt-5 pb-3 sticky top-0 z-20", style: { background: C.bg, borderBottom: `1px solid ${C.line}` } }, /* @__PURE__ */ React.createElement("div", { className: "text-[10px] uppercase tracking-[0.25em]", style: { color: C.saffron } }, "Usage variance"), /* @__PURE__ */ React.createElement("div", { className: "text-2xl font-black tracking-tight" }, "Expected vs actual"), /* @__PURE__ */ React.createElement("div", { className: "text-[11px] mt-1", style: { color: C.steel } }, "What your sales predict you'd use, against what your counts say you actually used.")), /* @__PURE__ */ React.createElement("div", { className: "px-4 pt-4" }, children));
+  if (!variance) {
+    return /* @__PURE__ */ React.createElement(Frame, null, /* @__PURE__ */ React.createElement("div", { className: "rounded-xl p-5", style: { background: C.card } }, counts.length === 0 ? /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "font-bold mb-1" }, "No counts saved yet"), /* @__PURE__ */ React.createElement("div", { className: "text-sm", style: { color: C.steel } }, "Do a full shelf count, then tap ", /* @__PURE__ */ React.createElement("span", { style: { color: C.saffron, fontWeight: 700 } }, "Save count"), " to set your baseline. After your next saved count, the gap between expected and actual usage shows up here.")) : /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "font-bold mb-1" }, "Baseline saved ", shortDate(lastCount.date)), /* @__PURE__ */ React.createElement("div", { className: "text-sm", style: { color: C.steel } }, "One count down. Keep counting through the week, log any deliveries under Receive, then on your next order day recount and tap Save count again \u2014 this screen will compare the two."))));
+  }
+  return /* @__PURE__ */ React.createElement(Frame, null, /* @__PURE__ */ React.createElement("div", { className: "rounded-xl px-4 py-3 mb-3 flex items-center justify-between", style: { background: C.card } }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "text-sm font-black" }, variance.days, "-day period"), /* @__PURE__ */ React.createElement("div", { className: "text-[11px]", style: { color: C.steel } }, shortDate(variance.prev.date), " \u2192 ", shortDate(variance.curr.date))), /* @__PURE__ */ React.createElement("div", { className: "flex gap-2" }, [["over", variance.summary.over, C.ember], ["under", variance.summary.under, C.saffron], ["ok", variance.summary.ok, C.mint]].map(([k, n, col]) => /* @__PURE__ */ React.createElement("div", { key: k, className: "text-center px-2" }, /* @__PURE__ */ React.createElement("div", { className: "text-lg font-black", style: { color: col } }, n), /* @__PURE__ */ React.createElement("div", { className: "text-[8px] uppercase tracking-wide", style: { color: C.steel } }, k === "over" ? "over" : k === "under" ? "under" : "on track"))))), /* @__PURE__ */ React.createElement("div", { className: "space-y-2 pb-2" }, variance.items.map((r) => {
+    const col = r.flag === "over" ? C.ember : r.flag === "under" ? C.saffron : C.mint;
+    const note = r.flag === "over" ? "Burning faster than sales predict \u2014 check waste, portioning, or a miscount." : r.flag === "under" ? "Lower than expected \u2014 possible miscount, found stock, or an unlogged delivery." : "Tracks your sales.";
+    return /* @__PURE__ */ React.createElement("div", { key: r.id, className: "rounded-xl p-3", style: { background: C.card, borderLeft: `3px solid ${col}` } }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between gap-2" }, /* @__PURE__ */ React.createElement("div", { className: "min-w-0" }, /* @__PURE__ */ React.createElement("div", { className: "font-bold leading-tight truncate" }, r.name), /* @__PURE__ */ React.createElement("div", { className: "text-[11px] font-mono", style: { color: C.steel } }, r.code)), /* @__PURE__ */ React.createElement("div", { className: "text-right shrink-0" }, /* @__PURE__ */ React.createElement("div", { className: "text-lg font-black leading-none", style: { color: col } }, r.v > 0 ? "+" : "", r.v, " cs"), /* @__PURE__ */ React.createElement("div", { className: "text-[9px] uppercase tracking-wide", style: { color: C.steel } }, "variance"))), /* @__PURE__ */ React.createElement("div", { className: "flex gap-3 mt-2 text-[11px]", style: { color: C.steel } }, /* @__PURE__ */ React.createElement("span", null, "expected ", /* @__PURE__ */ React.createElement("span", { style: { color: C.naan, fontWeight: 700 } }, r.expected)), /* @__PURE__ */ React.createElement("span", null, "actual ", /* @__PURE__ */ React.createElement("span", { style: { color: C.naan, fontWeight: 700 } }, r.actual)), r.received > 0 && /* @__PURE__ */ React.createElement("span", null, "received ", /* @__PURE__ */ React.createElement("span", { style: { color: C.naan, fontWeight: 700 } }, round1(r.received)))), r.flag !== "ok" && /* @__PURE__ */ React.createElement("div", { className: "text-[11px] mt-1.5", style: { color: col } }, note));
+  })), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] px-1 pb-2", style: { color: C.steel } }, "Actual usage = baseline count + deliveries received \u2212 latest count. Most accurate right after a fresh full count at both ends."));
+}
+function OrderView({ orderRows, orderText, cycle, copyOrder, copied }) {
+  const sms = orderText ? "sms:&body=" + encodeURIComponent(orderText) : "";
+  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "px-4 pt-5 pb-3 sticky top-0 z-20", style: { background: C.bg, borderBottom: `1px solid ${C.line}` } }, /* @__PURE__ */ React.createElement("div", { className: "text-[10px] uppercase tracking-[0.25em]", style: { color: C.saffron } }, "Sysco order"), /* @__PURE__ */ React.createElement("div", { className: "text-2xl font-black tracking-tight" }, orderRows.length, " item", orderRows.length !== 1 ? "s" : "", " at reorder point"), /* @__PURE__ */ React.createElement("div", { className: "text-[11px] mt-1", style: { color: C.steel } }, "Built from your counts \u2014 each item topped up to its shelf max.")), orderRows.length === 0 ? /* @__PURE__ */ React.createElement("div", { className: "px-6 py-16 text-center", style: { color: C.steel } }, "Nothing at reorder point. Count the shelves, then check back.") : /* @__PURE__ */ React.createElement("div", { className: "px-4 py-4 space-y-2" }, orderRows.map((r) => /* @__PURE__ */ React.createElement("div", { key: r.id, className: "flex items-center justify-between rounded-xl px-4 py-3", style: { background: C.card } }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "font-bold" }, r.name), /* @__PURE__ */ React.createElement("div", { className: "text-xs font-mono", style: { color: C.steel } }, r.code, r.alt ? ` \xB7 ${r.alt}` : "")), /* @__PURE__ */ React.createElement("div", { className: "text-right" }, /* @__PURE__ */ React.createElement("div", { className: "text-2xl font-black", style: { color: C.saffron } }, r.need), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] uppercase tracking-wide", style: { color: C.steel } }, r.pack.includes("bn") ? "bundles" : r.pack.includes("bx") ? "boxes" : r.pack.includes("bg") ? "bags" : "cases")))), /* @__PURE__ */ React.createElement("div", { className: "rounded-xl p-4 mt-4", style: { background: C.ink, border: `1px solid ${C.line}` } }, /* @__PURE__ */ React.createElement("pre", { className: "text-xs whitespace-pre-wrap font-mono leading-relaxed", style: { color: C.naan } }, orderText)), /* @__PURE__ */ React.createElement(
+    "a",
+    {
+      href: sms,
+      className: "w-full rounded-xl py-4 font-black text-base flex items-center justify-center gap-2 no-underline",
+      style: { background: C.mint, color: C.ink }
+    },
+    /* @__PURE__ */ React.createElement(Send, { size: 18 }),
+    " Open in Messages"
+  ), /* @__PURE__ */ React.createElement(
+    "button",
+    {
+      onClick: copyOrder,
+      className: "w-full rounded-xl py-3.5 font-black text-base flex items-center justify-center gap-2 mt-2",
+      style: copied ? { background: C.mint, color: C.ink } : { background: "transparent", color: C.naan, border: `1px solid ${C.line}` }
+    },
+    copied ? /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(Check, { size: 18 }), " Copied \u2014 paste anywhere") : /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(Copy, { size: 18 }), " Copy text")
+  ), /* @__PURE__ */ React.createElement("div", { className: "text-[11px] text-center px-4 mt-2", style: { color: C.steel } }, '"Open in Messages" pre-fills iMessage \u2014 pick your manager and send. If your device blocks it, use Copy.')));
+}
+const _root = ReactDOM.createRoot(document.getElementById("root"));
+_root.render(/* @__PURE__ */ React.createElement(ChampionTracker, null));
+
+</script>
+</body>
+</html>
