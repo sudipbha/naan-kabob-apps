@@ -79,7 +79,7 @@ const STATIONS = [
 const ITEMS = [
   { id: "clx200", st: "pack", name: "Rice clamshell", code: "CLX200-CL · 2 sleeves × 75", alt: "2353099", pack: "150/cs", use: 6.4, lt: 1, ss: 1, cu: "sleeve", cpc: 2 },
   { id: "ph188", st: "pack", name: "Leftovers box", code: "RPPH188", alt: "PH188", pack: "200/cs", use: 5, lt: 1, ss: 1 },
-  { id: "friesbox", st: "pack", name: "Fries box (#8 kraft)", code: "5817AECO · 6 sleeves × 50", alt: "EB Box #8", pack: "300/cs", use: 0, lt: 1, ss: 1, cu: "sleeve", cpc: 6 },
+  { id: "friesbox", st: "pack", name: "Fries box (#8 kraft)", code: "5817AECO · 6 sleeves × 50", alt: "EB Box #8", pack: "300/cs", use: 0, lt: 1, ss: 1, cu: "sleeve", cpc: 6, cpcTBD: true },
   { id: "sides", st: "pack", name: "Sides box", code: "RPMR8628W", alt: "MR8628W", pack: "150/cs", use: 4.7, lt: 1, ss: 1 },
   { id: "ad12", st: "pack", name: "Salad clamshell 12oz", code: "DH12", alt: "2353078", pack: "200/cs", use: 4.7, lt: 1, ss: 1 },
   { id: "cutlery", st: "pack", name: "Cutlery kit", code: "RECK6004NAK", alt: "CK6004NAK", pack: "250/cs", use: 3.4, lt: 1, ss: 1 },
@@ -407,11 +407,13 @@ function ChampionTracker() {
     const pk = packcfg[it.id] || {};
     const cu = pk.u || it.cu || classifyUnit(it);
     const cpcSet = pk.pc != null ? pk.pc : it.cpc != null ? it.cpc : null;
-    const packTBD = cu !== "cs" && cpcSet == null;
+    const confirmed = pk.pc != null || (it.cpc != null && !it.cpcTBD);
+    const packTBD = cu !== "cs" && !confirmed;
+    const packVerify = packTBD && it.cpc != null;
     const cpc = (cu === "cs" ? 1 : cpcSet != null ? cpcSet : guessPerCase(it, cu)) || 1;
     const ou = packUnitOf(it);
     const wks = it.use > 0 && cur !== void 0 ? cur / (it.use * cpc) : null;
-    return { ...it, cap, cur, status: st, rp, need, autoNeed, ov, wks, cpc, cu, ou, packTBD, orderCs: Math.ceil(need / cpc), caseOnHand: cur !== void 0 ? round1(cur / cpc) : null };
+    return { ...it, cap, cur, status: st, rp, need, autoNeed, ov, wks, cpc, cu, ou, packTBD, packVerify, orderCs: Math.ceil(need / cpc), caseOnHand: cur !== void 0 ? round1(cur / cpc) : null };
   }), [stocks, caps, reord, orderOv, packcfg]);
   const counted = useMemo(() => rows.filter((r) => r.cur !== void 0).length, [rows]);
   const variance = useMemo(() => {
@@ -694,7 +696,7 @@ function CountCard({ r, rail, setStock, setCap, setReorder, setOrderQty, setPack
         React.createElement("div", { className: "text-[9px] uppercase mt-0.5", style: { color: C.steel } }, r.cpc > 1 ? r.cu : "order"))),
     React.createElement("div", { className: "flex items-center justify-between mt-2.5" },
       React.createElement("button", { onClick: () => setShowLevels((v) => !v), className: "text-[10px] font-bold flex items-center gap-1 px-1 py-0.5 -ml-1 rounded active:scale-95", style: { color: C.steel } }, showLevels ? "▴ Hide levels" : "▾ Levels"),
-      r.packTBD ? React.createElement("button", { onClick: () => setShowLevels(true), className: "text-[10px] font-black px-2 py-0.5 rounded active:scale-95", style: { background: C.saffron + "22", color: C.saffron } }, "⚠ set " + r.cu + "/case") : React.createElement("span", { className: "text-[10px]", style: { color: C.steel } }, foot)),
+      r.packTBD ? React.createElement("button", { onClick: () => setShowLevels(true), className: "text-[10px] font-black px-2 py-0.5 rounded active:scale-95", style: { background: C.saffron + "22", color: C.saffron } }, (r.packVerify ? "⚠ verify " : "⚠ set ") + r.cu + "/case") : React.createElement("span", { className: "text-[10px]", style: { color: C.steel } }, foot)),
     showLevels && React.createElement("div", { className: "mt-2 pt-2.5 space-y-2.5", style: { borderTop: "1px solid " + C.line } },
       React.createElement("div", { className: "flex items-center gap-5" },
         React.createElement("label", { className: "flex items-center gap-1.5 text-[11px]", style: { color: C.steel } }, "Max", React.createElement(NumField, { value: r.cap, onCommit: (s) => setCap(r.id, s), className: "w-12 text-center font-black rounded outline-none", style: fld({ color: C.naan }) })),
