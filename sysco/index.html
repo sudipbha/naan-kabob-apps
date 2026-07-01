@@ -123,6 +123,17 @@ const CAP = {
   grillcleaner: 2, glasscleaner: 2, quat: 2, floorfinish: 4, liquidsoap: 2, mophead: 2, dishstone: 2, greenpads: 2, steelscrub: 2, rinseaid: 2, bleach: 2,
   gb2422: 2, gb2636: 2, gb3038: 2, gb3550: 2, printer: 2
 };
+const PACK_NAME_RULES = [
+  { u: "jug", re: /\bjug\b|4\.27/i },
+  { u: "bag", re: /brown bag|paper bag/i },
+  { u: "bottle", re: /sauce(?! cup)|dressing|\boil\b|syrup|ketchup bottle|cleaner|liquid soap|green liquid|\bsoap\b|sanitizer|\bquat\b|bleach|rinse aid|rinse additive|palmolive|clean ?& ?smooth|finish floor|dishmachine/i },
+  { u: "box", re: /#8|bolan|carton|leftover|sides box|foil (pan|lid)|kraft box|\bglove|cutlery|hairnet/i },
+  { u: "sleeve", re: /clamshell|\bcup\b|\blid\b|napkin|patty paper|straw|bowl/i }
+];
+const classifyUnit = (it) => { const h = (it.name + " " + (it.code || "")).toLowerCase(); for (const r of PACK_NAME_RULES) if (r.re.test(h)) return r.u; return "cs"; };
+const packUnitOf = (it) => { const p = String(it.pack || "").toLowerCase(); return p.includes("bn") ? "bn" : p.includes("bx") ? "bx" : p.includes("bg") ? "bg" : "cs"; };
+const guessPerCase = (it, u) => { const p = String(it.pack || ""); let m = p.match(/(\d+)\s*(rl|jg|bx|bn|bg)\s*\/\s*cs/i); if (m) return parseInt(m[1]); m = p.match(/(\d+)\s*\/\s*(cs|bx|bn|bg)/i) || String(it.code || "").match(/(\d+)\s*\/\s*(cs|bx|bn|bg)/i); const t = m ? parseInt(m[1]) : null; if (u === "sleeve") return t ? Math.max(1, Math.round(t / 25)) : 4; if (u === "jug" || u === "roll") return t || 4; return t || 6; };
+const unitLabel = (u) => u === "box" ? "boxes" : u + "s";
 const capOf = (it) => CAP[it.id] != null ? CAP[it.id] : Math.max(1, Math.round(it.use * 0.75));
 const REORD = {};
 const STORE_KEY = "sysco-inventory-v1";
@@ -378,10 +389,13 @@ function ChampionTracker() {
     const ov = orderOv[it.id] != null;
     const need = ov ? orderOv[it.id] : autoNeed;
     const pk = packcfg[it.id] || {};
-    const cpc = (pk.pc != null ? pk.pc : it.cpc) || 1;
-    const cu = pk.u || it.cu || "cs";
+    const cu = pk.u || it.cu || classifyUnit(it);
+    const cpcSet = pk.pc != null ? pk.pc : it.cpc != null ? it.cpc : null;
+    const packTBD = cu !== "cs" && cpcSet == null;
+    const cpc = (cu === "cs" ? 1 : cpcSet != null ? cpcSet : guessPerCase(it, cu)) || 1;
+    const ou = packUnitOf(it);
     const wks = it.use > 0 && cur !== void 0 ? cur / (it.use * cpc) : null;
-    return { ...it, cap, cur, status: st, rp, need, autoNeed, ov, wks, cpc, cu, orderCs: Math.ceil(need / cpc), caseOnHand: cur !== void 0 ? round1(cur / cpc) : null };
+    return { ...it, cap, cur, status: st, rp, need, autoNeed, ov, wks, cpc, cu, ou, packTBD, orderCs: Math.ceil(need / cpc), caseOnHand: cur !== void 0 ? round1(cur / cpc) : null };
   }), [stocks, caps, reord, orderOv, packcfg]);
   const counted = useMemo(() => rows.filter((r) => r.cur !== void 0).length, [rows]);
   const variance = useMemo(() => {
@@ -424,7 +438,7 @@ function ChampionTracker() {
       const p = r.pack.toLowerCase();
       return p.includes("bn") ? "bn" : p.includes("bx") ? "bx" : p.includes("bg") ? "bg" : "cs";
     };
-    const lines = orderRows.map((r) => `${r.name} (${r.code}) \u2014 ${r.cpc > 1 ? r.orderCs : r.need}\xA0${r.cpc > 1 ? "cs" : unitOf(r)}${logo[r.id] ? "\xA0+logo" : ""}`);
+    const lines = orderRows.map((r) => `${r.name} (${r.code}) \u2014 ${r.cpc > 1 ? r.orderCs : r.need}\xA0${unitOf(r)}${logo[r.id] ? "\xA0+logo" : ""}`);
     return `SYSCO ORDER \u2014 Naan Kabob
 
 ${lines.join("\n")}`;
@@ -640,8 +654,8 @@ function CountCard({ r, rail, setStock, setCap, setReorder, setOrderQty, setPack
   const segMax = Math.min(16, Math.max(1, Math.round(r.cap)));
   const filled = r.cur === void 0 ? 0 : Math.min(segMax, r.cur);
   const tickAt = Math.min(segMax, r.rp);
-  const sub = r.cpc > 1 ? " · in " + r.cu + "s" : "";
-  const foot = r.cpc > 1 && r.caseOnHand != null ? "≈ " + r.caseOnHand + " cs" + (r.orderCs > 0 ? " · order " + r.orderCs + " cs" : "") : (r.cur === void 0 ? "not counted yet" : r.wks === null ? "" : "≈ " + round1(r.wks) + " wk left");
+  const sub = r.cpc > 1 ? " · in " + unitLabel(r.cu) : "";
+  const foot = r.cpc > 1 && r.caseOnHand != null ? "≈ " + r.caseOnHand + " " + r.ou + (r.orderCs > 0 ? " · order " + r.orderCs + " " + r.ou : "") : (r.cur === void 0 ? "not counted yet" : r.wks === null ? "" : "≈ " + round1(r.wks) + " wk left");
   const fld = (extra) => Object.assign({ background: C.ink, color: C.naan, border: "1px solid " + C.line, fontSize: 16, height: 32 }, extra || {});
   return React.createElement("div", { className: "rounded-xl p-3.5", style: { background: C.card, borderLeft: "3px solid " + rail } },
     React.createElement("div", { className: "flex items-start justify-between gap-2" },
@@ -664,7 +678,7 @@ function CountCard({ r, rail, setStock, setCap, setReorder, setOrderQty, setPack
         React.createElement("div", { className: "text-[9px] uppercase mt-0.5", style: { color: C.steel } }, r.cpc > 1 ? r.cu : "order"))),
     React.createElement("div", { className: "flex items-center justify-between mt-2.5" },
       React.createElement("button", { onClick: () => setShowLevels((v) => !v), className: "text-[10px] font-bold flex items-center gap-1 px-1 py-0.5 -ml-1 rounded active:scale-95", style: { color: C.steel } }, showLevels ? "▴ Hide levels" : "▾ Levels"),
-      React.createElement("span", { className: "text-[10px]", style: { color: C.steel } }, foot)),
+      r.packTBD ? React.createElement("button", { onClick: () => setShowLevels(true), className: "text-[10px] font-black px-2 py-0.5 rounded active:scale-95", style: { background: C.saffron + "22", color: C.saffron } }, "⚠ set " + r.cu + "/case") : React.createElement("span", { className: "text-[10px]", style: { color: C.steel } }, foot)),
     showLevels && React.createElement("div", { className: "mt-2 pt-2.5 space-y-2.5", style: { borderTop: "1px solid " + C.line } },
       React.createElement("div", { className: "flex items-center gap-5" },
         React.createElement("label", { className: "flex items-center gap-1.5 text-[11px]", style: { color: C.steel } }, "Max", React.createElement(NumField, { value: r.cap, onCommit: (s) => setCap(r.id, s), className: "w-12 text-center font-black rounded outline-none", style: fld({ color: C.naan }) })),
@@ -672,7 +686,7 @@ function CountCard({ r, rail, setStock, setCap, setReorder, setOrderQty, setPack
       React.createElement("div", { className: "flex items-center gap-4" },
         React.createElement("label", { className: "flex items-center gap-1.5 text-[11px]", style: { color: C.steel } }, "Count in", React.createElement("input", { value: r.cu && r.cu !== "cs" ? r.cu : "", placeholder: "cs", autoCapitalize: "none", autoCorrect: "off", spellCheck: false, onChange: (e) => setPackVal(r.id, { u: e.target.value.trim() || null }), className: "w-16 text-center font-bold rounded outline-none", style: fld() })),
         React.createElement("label", { className: "flex items-center gap-1.5 text-[11px]", style: { color: C.steel } }, "per case", React.createElement(NumField, { value: r.cpc > 1 ? r.cpc : null, placeholder: "1", onCommit: (s) => setPackVal(r.id, { pc: s === "" || Number(s) <= 1 ? null : Math.round(Number(s)) }), className: "w-12 text-center font-black rounded outline-none", style: fld({ color: C.naan }) }))),
-      r.cpc > 1 && React.createElement("div", { className: "text-[10px]", style: { color: C.steel } }, "1 case = " + r.cpc + " " + r.cu + "s · count in " + r.cu + "s, order in cases")));
+      r.cpc > 1 && React.createElement("div", { className: "text-[10px]", style: { color: C.steel } }, "1 " + r.ou + " = " + r.cpc + " " + unitLabel(r.cu) + " · order in " + r.ou)));
 }
 const BarChart3 = ({ size = 24, ...p }) => React.createElement("svg", { width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", ...p }, React.createElement("path", { d: "M3 3v18h18" }), React.createElement("rect", { x: "7", y: "12", width: "3", height: "5", rx: "1" }), React.createElement("rect", { x: "12", y: "8", width: "3", height: "9", rx: "1" }), React.createElement("rect", { x: "17", y: "5", width: "3", height: "12", rx: "1" }));
 function computeUsage(counts, receipts) {
