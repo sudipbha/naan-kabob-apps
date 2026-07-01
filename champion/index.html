@@ -605,7 +605,7 @@ function CountView({ rows, counted, countMode, setCountMode, setStock, setCap, s
   ), /* @__PURE__ */ React.createElement(
     "button",
     {
-      onClick: () => window.location.reload(),
+      onClick: () => { const u = new URL(window.location.href); u.searchParams.set("r", String(Date.now())); window.location.replace(u.toString()); },
       className: "text-xs font-bold px-3 py-2 rounded-lg",
       style: { border: `1px solid ${C.line}`, color: C.naan }
     },

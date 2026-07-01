@@ -1,5 +1,7 @@
 # Skip this site's deploy when nothing in the champion/ folder changed.
 # Netlify runs `ignore` from the site's base directory (champion/); exit 0 = skip build.
-# Compares the last successfully-built commit ($CACHED_COMMIT_REF) to the current one.
+# Prefer the last successfully-built commit; on deploy previews with no cached
+# build ($CACHED_COMMIT_REF empty) fall back to this commit's parent (HEAD^),
+# so a sysco-only change doesn't rebuild champion (and vice versa).
 [build]
-  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF ."
+  ignore = "git diff --quiet ${CACHED_COMMIT_REF:-HEAD^} ${COMMIT_REF:-HEAD} ."
