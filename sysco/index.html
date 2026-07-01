@@ -681,6 +681,8 @@ function CountCard({ r, rail, setStock, setCap, setReorder, setOrderQty, setPack
     React.createElement("div", { className: "flex items-center justify-between mt-2.5" },
       React.createElement("button", { onClick: () => setShowLevels((v) => !v), className: "text-[10px] font-bold flex items-center gap-1 px-1 py-0.5 -ml-1 rounded active:scale-95", style: { color: C.steel } }, showLevels ? "▴ Hide levels" : "▾ Levels"),
       r.packTBD ? React.createElement("button", { onClick: () => setShowLevels(true), className: "text-[10px] font-black px-2 py-0.5 rounded active:scale-95", style: { background: C.saffron + "22", color: C.saffron } }, (r.packVerify ? "⚠ verify " : "⚠ set ") + r.cu + "/case") : React.createElement("span", { className: "text-[10px]", style: { color: C.steel } }, foot)),
+    r.packTBD && r.cpc > 1 && r.caseOnHand != null && React.createElement("div", { className: "text-[10px] mt-1 text-right", style: { color: C.steel } }, foot),
+    r.cur !== void 0 && r.cap < r.rp && React.createElement("div", { className: "text-[10px] mt-1 text-right", style: { color: C.ember } }, "⚠ Max " + r.cap + " is below reorder " + r.rp + " — update Levels"),
     showLevels && React.createElement("div", { className: "mt-2 pt-2.5 space-y-2.5", style: { borderTop: "1px solid " + C.line } },
       React.createElement("div", { className: "flex items-center gap-5" },
         React.createElement("label", { className: "flex items-center gap-1.5 text-[11px]", style: { color: C.steel } }, "Max", React.createElement(NumField, { value: r.cap, onCommit: (s) => setCap(r.id, s), className: "w-12 text-center font-black rounded outline-none", style: fld({ color: C.naan }) })),
