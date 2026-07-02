@@ -1,7 +1,5 @@
-# Skip this site's deploy when nothing in the sysco/ folder changed.
-# Netlify runs `ignore` from the site's base directory (sysco/); exit 0 = skip build.
-# Prefer the last successfully-built commit; on deploy previews with no cached
-# build ($CACHED_COMMIT_REF empty) fall back to this commit's parent (HEAD^),
-# so a champion-only change doesn't rebuild sysco (and vice versa).
+# Netlify deploys are FROZEN (account out of credits) — GitHub Pages is the live host.
+# `ignore` exiting 0 tells Netlify to skip every build; the last deployed version stays up.
+# To re-enable: restore  ignore = "git diff --quiet ${CACHED_COMMIT_REF:-HEAD^} ${COMMIT_REF:-HEAD} ."
 [build]
-  ignore = "git diff --quiet ${CACHED_COMMIT_REF:-HEAD^} ${COMMIT_REF:-HEAD} ."
+  ignore = "exit 0"
