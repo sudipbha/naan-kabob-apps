@@ -1,0 +1,10 @@
+{
+  "name": "NK Sysco Tracker",
+  "short_name": "NK Sysco",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#14181D",
+  "theme_color": "#14181D",
+  "icons": [{ "src": "icon-180.png", "sizes": "180x180", "type": "image/png" }]
+}
