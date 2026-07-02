@@ -79,7 +79,7 @@ const ITEMS = [
   { id: "flour", st: "food", name: "Flour", code: "brand & bag size to confirm", alt: "", pack: "cs", use: 0, lt: 1, ss: 1, tag: "TBC" },
   { id: "salt", st: "food", name: "Salt", code: "Windsor Hi-Grade granulated salt · 20 kg", alt: "", pack: "cs", use: 0, lt: 1, ss: 1 },
   { id: "oil", st: "food", name: "Oil", code: "Canola JIB (or veg soya) · 16 L", alt: "#5507154", pack: "cs", use: 0, lt: 1, ss: 1, cu: "cs" },
-  { id: "fries", st: "food", name: "Fries", code: "McCain KK 3/8 coat · 6×5 lb", alt: "", pack: "cs", use: 0, lt: 1, ss: 1, cu: "bag", cpc: 6 },
+  { id: "fries", st: "food", name: "Fries", code: "McCain KK 3/8 coat · 6×5 lb", alt: "", pack: "cs", use: 0, lt: 1, ss: 1, cu: "cs" },
   { id: "doogh", st: "food", name: "Doogh", code: "Ayran Naan mint · 24/473 mL", alt: "#7911929", pack: "cs", use: 0, lt: 1, ss: 1, cu: "bottle", cpc: 24 },
   { id: "water", st: "food", name: "Water bottles", code: "Spring water · 24/500 mL", alt: "#8333271", pack: "cs", use: 0, lt: 1, ss: 1, cu: "bottle", cpc: 24 },
   { id: "apple", st: "food", name: "Apple slices", code: "Apple red wedge · 24×48 g", alt: "", pack: "cs", use: 0, lt: 1, ss: 1 },
@@ -92,14 +92,14 @@ const ITEMS = [
   { id: "smallfilm", st: "pkg", name: "Small film wrap", code: "18 in × 2000 ft", alt: "", pack: "cs", use: 0, lt: 1, ss: 1 },
   { id: "friesbox", st: "pkg", name: "Fries container (#8 kraft box)", code: "200/cs · 4 sleeves × 50", alt: "", pack: "cs", use: 0, lt: 1, ss: 1, cu: "sleeve", cpc: 4, cpcTBD: true },
   { id: "fohbox", st: "pkg", name: "FOH / leftover box", code: "Same as Champion PH188 · Sysco backup", alt: "", pack: "cs", use: 0, lt: 1, ss: 1, cu: "pack", cpc: 2, cpcTBD: true },
-  { id: "bolanibox", st: "pkg", name: "Bolani box", code: "Calibre corr 14×7×2", alt: "", pack: "cs", use: 0, lt: 1, ss: 1, cu: "cs" },
+  { id: "bolanibox", st: "pkg", name: "Bolani box", code: "Calibre corr 14×7×2 · 50/bundle", alt: "", pack: "cs", use: 0, lt: 1, ss: 1, cu: "cs" },
   { id: "straws", st: "pkg", name: "Straws", code: "Sysco Classic 8in paper straw · 4×625", alt: "#5280443", pack: "cs", use: 0, lt: 1, ss: 1, cu: "box", cpc: 4 },
 
   { id: "burgerbags", st: "pkg", name: "Burger bags", code: "McNairn large foil bags · 1000/cs", alt: "#321701", pack: "cs", use: 0, lt: 1, ss: 1, cu: "pack", cpc: 4, cpcTBD: true },
   { id: "pattypaper", st: "pkg", name: "Patty paper", code: "Sysco Classic 5.5×5.5 · 1000 sht", alt: "#004807", pack: "cs", use: 0, lt: 1, ss: 1, cu: "cs" },
   { id: "vinyl", st: "gloves", name: "Vinyl gloves", code: "Foodservice · Large · powder-free · 100/bx", alt: "#4226605", pack: "cs", use: 0, lt: 1, ss: 1, cu: "box", cpc: 10 },
   { id: "poly", st: "gloves", name: "Poly gloves", code: "Embossed · Large · 500 ct", alt: "", pack: "cs", use: 0, lt: 1, ss: 1, cu: "cs" },
-  { id: "grillcleaner", st: "clean", name: "Grill & fryer cleaner", code: "Keystone fryer & grill cleaner · 3.78 L", alt: "#6100409", pack: "cs", use: 0, lt: 1, ss: 1, cu: "jug", cpc: 2 },
+  { id: "grillcleaner", st: "clean", name: "Grill & fryer cleaner", code: "Keystone fryer & grill cleaner · 2/3.78 L", alt: "#6100409", pack: "cs", use: 0, lt: 1, ss: 1, cu: "jug", cpc: 2 },
   { id: "glasscleaner", st: "clean", name: "Glass cleaner", code: "Keystone non-ammoniated · 2/2 L", alt: "#6100065", pack: "cs", use: 0, lt: 1, ss: 1, cu: "bottle", cpc: 2 },
   { id: "quat", st: "clean", name: "Multi-Quat sanitizer", code: "Keystone liquid · use QT-40 strips", alt: "", pack: "cs", use: 0, lt: 1, ss: 1, cu: "jug", cpc: 2, cpcTBD: true },
   { id: "floorfinish", st: "clean", name: "Floor finish", code: "Keystone Finish Floor", alt: "", pack: "2/cs", use: 0, lt: 1, ss: 1, cu: "bottle", cpc: 2 },
@@ -109,7 +109,7 @@ const ITEMS = [
   { id: "greenpads", st: "clean", name: "Green liquid soap", code: "Palmolive 4.27 L", alt: "", pack: "4 jg/cs", use: 0, lt: 1, ss: 1, cu: "jug", cpc: 4 },
   { id: "steelscrub", st: "clean", name: "Steel scrubber", code: "Stainless · 1¾ oz · 1/12 CT", alt: "", pack: "cs", use: 0, lt: 1, ss: 1 },
   { id: "rinseaid", st: "clean", name: "Dishwasher rinse aid (blue-green)", code: "Ecolab SmartPower rinse additive · 1.1 kg", alt: "#6101203", pack: "cs", use: 0, lt: 1, ss: 1, cu: "capsule", cpc: 2 },
-  { id: "bleach", st: "clean", name: "Bleach", code: "Sysco Reliance bleach · size TBD", alt: "", pack: "cs", use: 0, lt: 1, ss: 1, tag: "TBC", cu: "bottle", cpc: 6, cpcTBD: true },
+  { id: "bleach", st: "clean", name: "Bleach", code: "Sysco Reliance bleach · 6/3.79 L · verify", alt: "", pack: "cs", use: 0, lt: 1, ss: 1, tag: "TBC", cu: "bottle", cpc: 6, cpcTBD: true },
   { id: "gb2422", st: "front", name: "Garbage bags 24×22 (clear)", code: "Industrial · regular · 500/cs", alt: "#337936", pack: "cs", use: 0, lt: 1, ss: 1 },
   { id: "gb2636", st: "front", name: "Garbage bags 26×36 (black)", code: "Industrial · regular · 250/cs", alt: "#0860660", pack: "cs", use: 0, lt: 1, ss: 1 },
   { id: "gb3038", st: "front", name: "Garbage bags 30×38 (black)", code: "Industrial · ex-strong · 200/cs", alt: "#7183124", pack: "cs", use: 0, lt: 1, ss: 1 },
@@ -117,10 +117,10 @@ const ITEMS = [
   { id: "printer", st: "front", name: "Printer paper rolls", code: "Thermal roll 3-1/8 in", alt: "#6312318", pack: "cs", use: 0, lt: 1, ss: 1 }
 ];
 const CAP = {
-  paneer: 2, flour: 2, salt: 2, oil: 2, fries: 2, doogh: 2, water: 2, apple: 2, ketchupbtl: 2, ketchuppkt: 2, chickpeas: 2,
-  kabobfoil: 2, alufoil: 2, bigfilm: 2, smallfilm: 2, friesbox: 2, fohbox: 2, bolanibox: 2, straws: 2, burgerbags: 2, pattypaper: 2,
-  vinyl: 2, poly: 2,
-  grillcleaner: 2, glasscleaner: 2, quat: 2, floorfinish: 4, liquidsoap: 2, mophead: 2, dishstone: 2, greenpads: 8, steelscrub: 2, rinseaid: 2, bleach: 2,
+  paneer: 2, flour: 2, salt: 2, oil: 2, fries: 2, doogh: 48, water: 48, apple: 2, ketchupbtl: 8, ketchuppkt: 2, chickpeas: 10,
+  kabobfoil: 2, alufoil: 2, bigfilm: 2, smallfilm: 2, friesbox: 8, fohbox: 4, bolanibox: 2, straws: 8, burgerbags: 8, pattypaper: 2,
+  vinyl: 20, poly: 2,
+  grillcleaner: 4, glasscleaner: 4, quat: 4, floorfinish: 4, liquidsoap: 12, mophead: 2, dishstone: 8, greenpads: 8, steelscrub: 2, rinseaid: 4, bleach: 12,
   gb2422: 2, gb2636: 2, gb3038: 2, gb3550: 2, printer: 2
 };
 const PACK_NAME_RULES = [
