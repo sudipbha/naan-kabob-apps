@@ -85,8 +85,8 @@ const ITEMS = [
   { id: "cutlery", st: "pack", name: "Cutlery kit", code: "RECK6004NAK", alt: "CK6004NAK", pack: "250/cs", use: 3.4, lt: 1, ss: 1, cu: "cs" },
   { id: "bag", st: "pack", name: "5lb brown bag (with logo)", code: "025369", alt: "", pack: "500/bn", use: 1.5, lt: 1, ss: 2, cu: "cs" },
   { id: "napkin", st: "pack", name: "Dinner napkin", code: "RTND210", alt: "ND210", pack: "2400/cs", use: 1.4, lt: 1, ss: 1, cu: "pack", cpc: 8, cpcTBD: true },
-  { id: "pc200", st: "pack", name: "Sauce cup 2oz", code: "RPPC200", alt: "PC200", pack: "2500/cs", use: 0.7, lt: 1, ss: 1, cu: "sleeve", cpc: 50, cpcTBD: true },
-  { id: "pl200", st: "pack", name: "Sauce cup lid", code: "RPPL200", alt: "PL200", pack: "2500/cs", use: 0.3, lt: 1, ss: 1, cu: "sleeve", cpc: 20, cpcTBD: true },
+  { id: "pc200", st: "pack", name: "Sauce cup 2oz", code: "RPPC200", alt: "PC200", pack: "2500/cs", use: 0.7, lt: 1, ss: 1, cu: "cs" },
+  { id: "pl200", st: "pack", name: "Sauce cup lid", code: "RPPL200", alt: "PL200", pack: "2500/cs", use: 0.3, lt: 1, ss: 1, cu: "cs" },
   { id: "fc1612", st: "kraft", name: "Kraft cup 12oz", code: "REFC1612K", alt: "FC1612K", pack: "500/cs", use: 0.3, lt: 1, ss: 1, cu: "sleeve", cpc: 20, cpcTBD: true },
   { id: "fc1616", st: "kraft", name: "Kraft cup 16oz", code: "REFC1616K", alt: "FC1616K", pack: "500/cs", use: 0.1, lt: 1, ss: 1, cu: "sleeve", cpc: 20, cpcTBD: true },
   { id: "pp160", st: "kraft", name: "Kraft-cup lid", code: "PP160K", alt: "", pack: "500/cs", use: 0.4, lt: 1, ss: 1, cu: "sleeve", cpc: 10, cpcTBD: true },
@@ -117,8 +117,8 @@ const CAP = {
   cutlery: 2,
   bag: 2,
   napkin: 16,
-  pc200: 100,
-  pl200: 20,
+  pc200: 2,
+  pl200: 1,
   fc1612: 20,
   fc1616: 20,
   pp160: 10,
@@ -151,7 +151,7 @@ const packUnitOf = (it) => { const p = String(it.pack || "").toLowerCase(); retu
 const guessPerCase = (it, u) => { const p = String(it.pack || ""); let m = p.match(/(\d+)\s*(rl|jg|bx|bn|bg)\s*\/\s*cs/i); if (m) return parseInt(m[1]); m = p.match(/(\d+)\s*\/\s*(cs|bx|bn|bg)/i) || String(it.code || "").match(/(\d+)\s*\/\s*(cs|bx|bn|bg)/i); const t = m ? parseInt(m[1]) : null; if (u === "sleeve") return t ? Math.max(1, Math.round(t / 25)) : 4; if (u === "jug" || u === "roll") return t || 4; return t || 6; };
 const unitLabel = (u) => u === "box" ? "boxes" : u + "s";
 const capOf = (it) => CAP[it.id] != null ? CAP[it.id] : Math.max(1, Math.round(it.use * 0.75));
-const REORD = { pc200: 75 };
+const REORD = { pc200: 1.5 };
 const STORE_KEY = "nk-champion-tracker-v1";
 const railOf = (st) => (STATIONS.find((s) => s.id === st) || {}).rail || C.steel;
 const round1 = (n) => Math.round(n * 10) / 10;
