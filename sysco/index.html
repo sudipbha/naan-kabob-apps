@@ -9,10 +9,11 @@
 <meta name="apple-mobile-web-app-title" content="NK Sysco"/>
 <meta name="theme-color" content="#14181D"/>
 <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png"/>
+<link rel="manifest" href="manifest.webmanifest"/>
 <link rel="icon" type="image/png" href="icon-180.png"/>
 <title>Naan Kabob — Sysco Tracker</title>
-<script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="react.production.min.js"></script>
+<script src="react-dom.production.min.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
   html,body{margin:0;padding:0;background:#14181D;-webkit-text-size-adjust:100%;}
@@ -22,6 +23,7 @@
 </head>
 <body>
 <div id="root"><div style="color:#8A94A0;font-family:-apple-system,system-ui,sans-serif;padding:48px 24px;text-align:center;font-size:15px">Loading Naan Kabob tracker…</div></div>
+<script>window.React || (document.getElementById("root").innerHTML = '<div style="color:#8A94A0;font-family:-apple-system,system-ui,sans-serif;padding:48px 24px;text-align:center;font-size:15px">Connect to the internet once to load the app, then it works offline.</div>');</script>
 <script>
 const { useState, useEffect, useMemo, useRef } = React;
 const _ic = (size, p, children) => React.createElement("svg", Object.assign({ width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round" }, p), children);
@@ -613,7 +615,7 @@ function CountView({ rows, counted, countMode, setCountMode, setStock, setCap, s
   ), /* @__PURE__ */ React.createElement(
     "button",
     {
-      onClick: () => { const u = new URL(window.location.href); u.searchParams.set("r", String(Date.now())); window.location.replace(u.toString()); },
+      onClick: () => window.location.reload(),
       className: "text-xs font-bold px-3 py-2 rounded-lg",
       style: { border: `1px solid ${C.line}`, color: C.naan }
     },
@@ -837,6 +839,9 @@ function OrderView({ orderRows, orderText, cycle, copyOrder, copied }) {
 }
 const _root = ReactDOM.createRoot(document.getElementById("root"));
 _root.render(/* @__PURE__ */ React.createElement(ChampionTracker, null));
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => { navigator.serviceWorker.register("sw.js").catch(() => {}); });
+}
 
 </script>
 </body>
