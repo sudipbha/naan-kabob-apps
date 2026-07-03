@@ -154,6 +154,15 @@ function deliveryWindows(now) {
   const today = new Date(n.getFullYear(), n.getMonth(), n.getDate());
   return { next, following, toNext: bucket(today, next), full: bucket(today, following, 1), nextName: DAYW[next.getDay()], followingName: DAYW[following.getDay()] };
 }
+const MAX_DELIVERY_GAP = (() => {
+  const ds = [...DELIVERY_DAYS].sort((a, b) => a - b);
+  let g = 0;
+  for (let i = 0; i < ds.length; i++) {
+    const d = (ds[(i + 1) % ds.length] - ds[i] + 7) % 7 || 7;
+    if (d > g) g = d;
+  }
+  return g;
+})();
 const packTotalOf = (it) => { const m = String(it.pack || "").match(/^(\d+)/); return m ? parseInt(m[1]) : null; };
 const baselineOf = (it, cpc) => {
   if (it.bwd == null && it.bwe == null) return null;
@@ -460,7 +469,7 @@ function ChampionTracker() {
     const daily = dailyOf[it.id] != null ? dailyOf[it.id] : base ? base.daily : void 0;
     const dailySrc = dailyOf[it.id] != null ? "measured" : base ? "baseline" : null;
     const daysLeft = daily > 0 && cur !== void 0 ? cur / daily : null;
-    const horizon = (it.lt || 1) * 7 + 2;
+    const horizon = MAX_DELIVERY_GAP + 1;
     const sugg = daily > 0 ? Math.ceil(daily * horizon) : null;
     const rWd = rateOf[it.id] ? rateOf[it.id].wd : base ? base.bwd / base.ppcu : null;
     const rWe = rateOf[it.id] ? rateOf[it.id].we : base ? base.bwe / base.ppcu : null;
@@ -789,7 +798,7 @@ function CountCard({ r, rail, setStock, setCap, setReorder, setOrderQty, setPack
     showLevels && React.createElement("div", { className: "mt-2 pt-2.5 space-y-2.5", style: { borderTop: "1px solid " + C.line } },
       React.createElement("div", { className: "flex items-center gap-5" },
         React.createElement("label", { className: "flex items-center gap-1.5 text-[11px]", style: { color: C.steel } }, "Max", React.createElement(NumField, { value: r.cap, onCommit: (s) => setCap(r.id, s), className: "w-12 text-center font-black rounded outline-none", style: fld({ color: C.naan }) })),
-        React.createElement("label", { className: "flex items-center gap-1.5 text-[11px]", style: { color: C.steel } }, "Reorder at", React.createElement(NumField, { value: r.rp, onCommit: (s) => setReorder(r.id, s), className: "w-12 text-center font-black rounded outline-none", style: fld({ color: C.saffron }) }))), r.sugg != null ? React.createElement("div", { className: "flex items-center flex-wrap gap-2 text-[11px]", style: { color: C.steel } }, "suggested reorder:", React.createElement("span", { style: { color: C.naan, fontWeight: 800 } }, r.sugg), React.createElement("span", null, "(≈" + r.horizon + "d at " + (r.dailySrc === "measured" ? "your measured usage" : "baseline") + ")"), r.sugg === r.rp ? React.createElement("span", { style: { color: C.mint, fontWeight: 800 } }, "✓ applied") : React.createElement("button", { onClick: () => setReorder(r.id, r.sugg), className: "px-2.5 py-1 rounded-lg font-black active:scale-95", style: { background: C.saffron, color: C.ink } }, "Apply")) : React.createElement("div", { className: "text-[10px]", style: { color: C.steel } }, "No usage data yet — save two counts a few days apart and a suggested reorder appears here."), r.base && React.createElement("div", { className: "text-[10px]", style: { color: C.steel } }, "baseline: " + r.base.bwd + "/day wk · " + r.base.bwe + "/day wknd (pieces)"),
+        React.createElement("label", { className: "flex items-center gap-1.5 text-[11px]", style: { color: C.steel } }, "Reorder at", React.createElement(NumField, { value: r.rp, onCommit: (s) => setReorder(r.id, s), className: "w-12 text-center font-black rounded outline-none", style: fld({ color: C.saffron }) }))), r.sugg != null ? React.createElement("div", { className: "flex items-center flex-wrap gap-2 text-[11px]", style: { color: C.steel } }, "suggested reorder:", React.createElement("span", { style: { color: C.naan, fontWeight: 800 } }, r.sugg), React.createElement("span", null, "(≈" + r.horizon + "d — longest delivery gap + 1 · " + (r.dailySrc === "measured" ? "measured usage" : "baseline") + ")"), r.sugg === r.rp ? React.createElement("span", { style: { color: C.mint, fontWeight: 800 } }, "✓ applied") : React.createElement("button", { onClick: () => setReorder(r.id, r.sugg), className: "px-2.5 py-1 rounded-lg font-black active:scale-95", style: { background: C.saffron, color: C.ink } }, "Apply")) : React.createElement("div", { className: "text-[10px]", style: { color: C.steel } }, "No usage data yet — save two counts a few days apart and a suggested reorder appears here."), r.base && React.createElement("div", { className: "text-[10px]", style: { color: C.steel } }, "baseline: " + r.base.bwd + "/day wk · " + r.base.bwe + "/day wknd (pieces)"),
       React.createElement("div", { className: "flex items-center gap-4" },
         React.createElement("label", { className: "flex items-center gap-1.5 text-[11px]", style: { color: C.steel } }, "Count in", React.createElement("input", { value: r.cu && r.cu !== "cs" ? r.cu : "", placeholder: "cs", autoCapitalize: "none", autoCorrect: "off", spellCheck: false, onChange: (e) => setPackVal(r.id, { u: e.target.value.trim() || null }), className: "w-16 text-center font-bold rounded outline-none", style: fld() })),
         React.createElement("label", { className: "flex items-center gap-1.5 text-[11px]", style: { color: C.steel } }, "per case", React.createElement(NumField, { value: r.cpc > 1 ? r.cpc : null, placeholder: "1", onCommit: (s) => setPackVal(r.id, { pc: s === "" || Number(s) <= 1 ? null : Math.round(Number(s)) }), className: "w-12 text-center font-black rounded outline-none", style: fld({ color: C.naan }) }))),
