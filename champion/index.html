@@ -79,36 +79,36 @@ const STATIONS = [
   { id: "rest", label: "Restroom", rail: "#9B7FC2" }
 ];
 const ITEMS = [
-  { id: "clx200", st: "pack", name: "Rice clamshell", code: "CLX200-CL · 2 sleeves × 75", alt: "2353099", pack: "150/cs", use: 6.4, lt: 1, ss: 1, cu: "sleeve", cpc: 2 },
-  { id: "ph188", st: "pack", name: "Leftovers box", code: "RPPH188", alt: "PH188", pack: "200/cs", use: 5, lt: 1, ss: 1, cu: "pack", cpc: 2, cpcTBD: true },
+  { id: "clx200", st: "pack", name: "Rice clamshell", code: "CLX200-CL · 2 sleeves × 75", alt: "2353099", pack: "150/cs", use: 6.4, lt: 1, ss: 1, cu: "sleeve", cpc: 2, bwd: 100, bwe: 170 },
+  { id: "ph188", st: "pack", name: "Leftovers box", code: "RPPH188", alt: "PH188", pack: "200/cs", use: 5, lt: 1, ss: 1, cu: "pack", cpc: 2, cpcTBD: true, bwd: 50, bwe: 100 },
   { id: "friesbox", st: "pack", name: "Fries box (#8 kraft)", code: "5817AECO · 6 sleeves × 50", alt: "EB Box #8", pack: "300/cs", use: 0, lt: 1, ss: 1, cu: "sleeve", cpc: 6, cpcTBD: true },
-  { id: "sides", st: "pack", name: "Sides box", code: "RPMR8628W", alt: "MR8628W", pack: "150/cs", use: 4.7, lt: 1, ss: 1, cu: "sleeve", cpc: 3, cpcTBD: true },
-  { id: "ad12", st: "pack", name: "Salad clamshell 12oz", code: "DH12 · 4 sleeves × 50", alt: "2353078", pack: "200/cs", use: 4.7, lt: 1, ss: 1, cu: "sleeve", cpc: 4 },
-  { id: "cutlery", st: "pack", name: "Cutlery kit", code: "RECK6004NAK", alt: "CK6004NAK", pack: "250/cs", use: 3.4, lt: 1, ss: 1, cu: "cs" },
-  { id: "bag", st: "pack", name: "5lb brown bag (with logo)", code: "025369", alt: "", pack: "500/bn", use: 1.5, lt: 1, ss: 2, cu: "cs", logo: true },
-  { id: "napkin", st: "pack", name: "Dinner napkin", code: "RTND210", alt: "ND210", pack: "2400/cs", use: 1.4, lt: 1, ss: 1, cu: "pack", cpc: 8, cpcTBD: true },
-  { id: "pc200", st: "pack", name: "Sauce cup 2oz", code: "RPPC200", alt: "PC200", pack: "2500/cs", use: 0.7, lt: 1, ss: 1, cu: "cs" },
-  { id: "pl200", st: "pack", name: "Sauce cup lid", code: "RPPL200", alt: "PL200", pack: "2500/cs", use: 0.3, lt: 1, ss: 1, cu: "cs" },
-  { id: "fc1612", st: "kraft", name: "Kraft cup 12oz", code: "REFC1612K", alt: "FC1612K", pack: "500/cs", use: 0.3, lt: 1, ss: 1, cu: "sleeve", cpc: 20, cpcTBD: true },
-  { id: "fc1616", st: "kraft", name: "Kraft cup 16oz", code: "REFC1616K", alt: "FC1616K", pack: "500/cs", use: 0.1, lt: 1, ss: 1, cu: "sleeve", cpc: 20, cpcTBD: true },
-  { id: "pp160", st: "kraft", name: "Kraft-cup lid", code: "PP160K", alt: "", pack: "500/cs", use: 0.4, lt: 1, ss: 1, cu: "sleeve", cpc: 10, cpcTBD: true },
-  { id: "bowl", st: "bowls", name: "Bagasse bowl 32oz", code: "REBC8532", alt: "BC8532", pack: "300/cs", use: 0.75, lt: 1, ss: 1, cu: "sleeve", cpc: 4, cpcTBD: true },
-  { id: "bowllid", st: "bowls", name: "Bowl low-dome lid", code: "REBL85LD", alt: "BL85LD", pack: "300/cs", use: 0.75, lt: 1, ss: 1, cu: "pack", cpc: 4 },
-  { id: "cup16", st: "drinks", name: "Smoothie cup 16oz (with logo)", code: "M9816", alt: "Champion SKU pending", pack: "1000/cs", use: 0.2, lt: 2, ss: 1, cu: "sleeve", cpc: 20, cpcTBD: true, logo: true },
-  { id: "lid16", st: "drinks", name: "Smoothie lid 16oz \xB7 FLAT", code: "KP-98-FL", alt: "KGTKP98FL pending", pack: "1000/cs", use: 0.2, lt: 2, ss: 1, cu: "sleeve", cpc: 20, cpcTBD: true },
-  { id: "cup9", st: "drinks", name: "Smoothie cup 9oz \xB7 kids", code: "RWPEC1209", alt: "PEC1209", pack: "1000/cs", use: 0.05, lt: 1, ss: 1, cu: "sleeve", cpc: 20, cpcTBD: true },
-  { id: "lid9", st: "drinks", name: "Smoothie lid 9oz", code: "RWPLS12", alt: "PLS12", pack: "1000/cs", use: 0.05, lt: 1, ss: 1, cu: "sleeve", cpc: 10, cpcTBD: true },
-  { id: "fp3240", st: "line", name: "Half foil pan", code: "RFFP3240", alt: "FP3240", pack: "100/cs", use: 0.7, lt: 1, ss: 1, cu: "cs" },
-  { id: "fp3030", st: "line", name: "Half foil lid", code: "RFFP3030", alt: "FP3030", pack: "100/cs", use: 0.7, lt: 1, ss: 1, cu: "cs" },
-  { id: "fp4270", st: "line", name: "Full foil pan", code: "RFFP4270", alt: "FP4270", pack: "50/cs", use: 0, lt: 1, ss: 1, tag: "CATERING", cu: "cs" },
-  { id: "fp4045", st: "line", name: "Full foil lid", code: "RFFP4045", alt: "FP4045", pack: "50/cs", use: 0, lt: 1, ss: 1, tag: "CATERING", cu: "cs" },
-  { id: "foil", st: "line", name: "Foil roll 45cm", code: "RFFR45100", alt: "", pack: "6 rl/cs", use: 0.04, lt: 1, ss: 0.2, cu: "roll", cpc: 6 },
-  { id: "palm", st: "dish", name: "Palmolive 4.27L", code: "CGP3203251", alt: "", pack: "4 jg/cs", use: 0.25, lt: 1, ss: 1, cu: "jug", cpc: 4 },
-  { id: "gloves", st: "dish", name: "Vinyl gloves L", code: "RTGVP100L", alt: "GVP100L", pack: "100/bx", use: 1, lt: 1, ss: 1, cu: "cs" },
-  { id: "polygloves", st: "dish", name: "Poly gloves L", code: "POLY100L", alt: "POLY-L", pack: "100/bx", use: 1, lt: 1, ss: 1, cu: "cs" },
-  { id: "hairnet", st: "dish", name: "Hairnet 21in brown mesh", code: "RNC1818BR", alt: "1818BR", pack: "100/bg", use: 0, lt: 1, ss: 1, cu: "cs" },
-  { id: "hwt", st: "rest", name: "Hand-towel roll", code: "SUN350K", alt: "HWT350K", pack: "12 rl/cs", use: 0.7, lt: 1, ss: 1, cu: "roll", cpc: 12 },
-  { id: "jrt", st: "rest", name: "Toilet roll jumbo", code: "SUNJ600", alt: "JRT600", pack: "8 rl/cs", use: 1, lt: 1, ss: 1, cu: "roll", cpc: 8 }
+  { id: "sides", st: "pack", name: "Sides box", code: "RPMR8628W", alt: "MR8628W", pack: "150/cs", use: 4.7, lt: 1, ss: 1, cu: "sleeve", cpc: 3, cpcTBD: true, bwd: 20, bwe: 30 },
+  { id: "ad12", st: "pack", name: "Salad clamshell 12oz", code: "DH12 · 4 sleeves × 50", alt: "2353078", pack: "200/cs", use: 4.7, lt: 1, ss: 1, cu: "sleeve", cpc: 4, bwd: 70, bwe: 120 },
+  { id: "cutlery", st: "pack", name: "Cutlery kit", code: "RECK6004NAK", alt: "CK6004NAK", pack: "250/cs", use: 3.4, lt: 1, ss: 1, cu: "cs", bwd: 143, bwe: 143 },
+  { id: "bag", st: "pack", name: "5lb brown bag (with logo)", code: "025369", alt: "", pack: "500/bn", use: 1.5, lt: 1, ss: 2, cu: "cs", logo: true, bwd: 100, bwe: 150 },
+  { id: "napkin", st: "pack", name: "Dinner napkin", code: "RTND210", alt: "ND210", pack: "2400/cs", use: 1.4, lt: 1, ss: 1, cu: "pack", cpc: 8, cpcTBD: true, bwd: 600, bwe: 800 },
+  { id: "pc200", st: "pack", name: "Sauce cup 2oz", code: "RPPC200", alt: "PC200", pack: "2500/cs", use: 0.7, lt: 1, ss: 1, cu: "cs", bwd: 200, bwe: 400 },
+  { id: "pl200", st: "pack", name: "Sauce cup lid", code: "RPPL200", alt: "PL200", pack: "2500/cs", use: 0.3, lt: 1, ss: 1, cu: "cs", bwd: 200, bwe: 400 },
+  { id: "fc1612", st: "kraft", name: "Kraft cup 12oz", code: "REFC1612K", alt: "FC1612K", pack: "500/cs", use: 0.3, lt: 1, ss: 1, cu: "sleeve", cpc: 20, cpcTBD: true, bwd: 30, bwe: 50 },
+  { id: "fc1616", st: "kraft", name: "Kraft cup 16oz", code: "REFC1616K", alt: "FC1616K", pack: "500/cs", use: 0.1, lt: 1, ss: 1, cu: "sleeve", cpc: 20, cpcTBD: true, bwd: 15, bwe: 15 },
+  { id: "pp160", st: "kraft", name: "Kraft-cup lid", code: "PP160K", alt: "", pack: "500/cs", use: 0.4, lt: 1, ss: 1, cu: "sleeve", cpc: 10, cpcTBD: true, bwd: 45, bwe: 65 },
+  { id: "bowl", st: "bowls", name: "Bagasse bowl 32oz", code: "REBC8532", alt: "BC8532", pack: "300/cs", use: 0.75, lt: 1, ss: 1, cu: "sleeve", cpc: 4, cpcTBD: true, bwd: 20, bwe: 20 },
+  { id: "bowllid", st: "bowls", name: "Bowl low-dome lid", code: "REBL85LD", alt: "BL85LD", pack: "300/cs", use: 0.75, lt: 1, ss: 1, cu: "pack", cpc: 4, bwd: 30, bwe: 30 },
+  { id: "cup16", st: "drinks", name: "Smoothie cup 16oz (with logo)", code: "M9816", alt: "Champion SKU pending", pack: "1000/cs", use: 0.2, lt: 2, ss: 1, cu: "sleeve", cpc: 20, cpcTBD: true, logo: true, bwd: 20, bwe: 35 },
+  { id: "lid16", st: "drinks", name: "Smoothie lid 16oz \xB7 FLAT", code: "KP-98-FL", alt: "KGTKP98FL pending", pack: "1000/cs", use: 0.2, lt: 2, ss: 1, cu: "sleeve", cpc: 20, cpcTBD: true, bwd: 20, bwe: 35 },
+  { id: "cup9", st: "drinks", name: "Smoothie cup 9oz \xB7 kids", code: "RWPEC1209", alt: "PEC1209", pack: "1000/cs", use: 0.05, lt: 1, ss: 1, cu: "sleeve", cpc: 20, cpcTBD: true, bwd: 20, bwe: 20 },
+  { id: "lid9", st: "drinks", name: "Smoothie lid 9oz", code: "RWPLS12", alt: "PLS12", pack: "1000/cs", use: 0.05, lt: 1, ss: 1, cu: "sleeve", cpc: 10, cpcTBD: true, bwd: 20, bwe: 20 },
+  { id: "fp3240", st: "line", name: "Half foil pan", code: "RFFP3240", alt: "FP3240", pack: "100/cs", use: 0.7, lt: 1, ss: 1, cu: "cs", bwd: 25, bwe: 35 },
+  { id: "fp3030", st: "line", name: "Half foil lid", code: "RFFP3030", alt: "FP3030", pack: "100/cs", use: 0.7, lt: 1, ss: 1, cu: "cs", bwd: 25, bwe: 35 },
+  { id: "fp4270", st: "line", name: "Full foil pan", code: "RFFP4270", alt: "FP4270", pack: "50/cs", use: 0, lt: 1, ss: 1, tag: "CATERING", cu: "cs", bwd: 15, bwe: 25 },
+  { id: "fp4045", st: "line", name: "Full foil lid", code: "RFFP4045", alt: "FP4045", pack: "50/cs", use: 0, lt: 1, ss: 1, tag: "CATERING", cu: "cs", bwd: 15, bwe: 25 },
+  { id: "foil", st: "line", name: "Foil roll 45cm", code: "RFFR45100", alt: "", pack: "6 rl/cs", use: 0.04, lt: 1, ss: 0.2, cu: "roll", cpc: 6, bwd: 0.022, bwe: 0.022 },
+  { id: "palm", st: "dish", name: "Palmolive 4.27L", code: "CGP3203251", alt: "", pack: "4 jg/cs", use: 0.25, lt: 1, ss: 1, cu: "jug", cpc: 4, bwd: 0.21, bwe: 0.21 },
+  { id: "gloves", st: "dish", name: "Vinyl gloves L", code: "RTGVP100L", alt: "GVP100L", pack: "100/bx", use: 1, lt: 1, ss: 1, cu: "cs", bwd: 150, bwe: 150 },
+  { id: "polygloves", st: "dish", name: "Poly gloves L", code: "POLY100L", alt: "POLY-L", pack: "100/bx", use: 1, lt: 1, ss: 1, cu: "cs", bwd: 14, bwe: 14 },
+  { id: "hairnet", st: "dish", name: "Hairnet 21in brown mesh", code: "RNC1818BR", alt: "1818BR", pack: "100/bg", use: 0, lt: 1, ss: 1, cu: "cs", bwd: 0.67, bwe: 0.67 },
+  { id: "hwt", st: "rest", name: "Hand-towel roll", code: "SUN350K", alt: "HWT350K", pack: "12 rl/cs", use: 0.7, lt: 1, ss: 1, cu: "roll", cpc: 12, bwd: 1.14, bwe: 1.14 },
+  { id: "jrt", st: "rest", name: "Toilet roll jumbo", code: "SUNJ600", alt: "JRT600", pack: "8 rl/cs", use: 1, lt: 1, ss: 1, cu: "roll", cpc: 8, bwd: 1.71, bwe: 1.71 }
 ];
 const CAP = {
   clx200: 14,
@@ -152,6 +152,17 @@ const classifyUnit = (it) => { const h = (it.name + " " + (it.code || "")).toLow
 const packUnitOf = (it) => { const p = String(it.pack || "").toLowerCase(); return p.includes("bn") ? "bn" : p.includes("bx") ? "bx" : p.includes("bg") ? "bg" : "cs"; };
 const guessPerCase = (it, u) => { const p = String(it.pack || ""); let m = p.match(/(\d+)\s*(rl|jg|bx|bn|bg)\s*\/\s*cs/i); if (m) return parseInt(m[1]); m = p.match(/(\d+)\s*\/\s*(cs|bx|bn|bg)/i) || String(it.code || "").match(/(\d+)\s*\/\s*(cs|bx|bn|bg)/i); const t = m ? parseInt(m[1]) : null; if (u === "sleeve") return t ? Math.max(1, Math.round(t / 25)) : 4; if (u === "jug" || u === "roll") return t || 4; return t || 6; };
 const unitLabel = (u) => u === "box" ? "boxes" : u + "s";
+const packTotalOf = (it) => { const m = String(it.pack || "").match(/^(\d+)/); return m ? parseInt(m[1]) : null; };
+const baselineOf = (it, cpc) => {
+  if (it.bwd == null && it.bwe == null) return null;
+  const total = packTotalOf(it);
+  if (!total) return null;
+  const ppcu = total / (cpc || 1);
+  if (!(ppcu > 0)) return null;
+  const bwd = it.bwd != null ? it.bwd : it.bwe;
+  const bwe = it.bwe != null ? it.bwe : it.bwd;
+  return { bwd, bwe, ppcu, daily: (bwd * 4 + bwe * 3) / 7 / ppcu };
+};
 const capOf = (it) => CAP[it.id] != null ? CAP[it.id] : Math.max(1, Math.round(it.use * 0.75));
 const REORD = { pc200: 1.5 };
 const STORE_KEY = "nk-champion-tracker-v1";
@@ -436,12 +447,14 @@ function ChampionTracker() {
     const packVerify = packTBD && it.cpc != null;
     const cpc = (cu === "cs" ? 1 : cpcSet != null ? cpcSet : guessPerCase(it, cu)) || 1;
     const ou = packUnitOf(it);
-    const daily = dailyOf[it.id];
+    const base = baselineOf(it, cpc);
+    const daily = dailyOf[it.id] != null ? dailyOf[it.id] : base ? base.daily : void 0;
+    const dailySrc = dailyOf[it.id] != null ? "measured" : base ? "baseline" : null;
     const daysLeft = daily > 0 && cur !== void 0 ? cur / daily : null;
     const horizon = (it.lt || 1) * 7 + 2;
     const sugg = daily > 0 ? Math.ceil(daily * horizon) : null;
     const wks = it.use > 0 && cur !== void 0 ? cur / (it.use * cpc) : null;
-    return { ...it, cap, cur, status: st, rp, need, autoNeed, ov, wks, cpc, cu, ou, packTBD, packVerify, orderedDaysAgo: orderAge[it.id], daily, daysLeft, horizon, sugg, orderLastsDays: daily > 0 && need > 0 ? Math.round((cpc > 1 ? Math.ceil(need / cpc) * cpc : need) / daily) : null, orderCs: Math.ceil(need / cpc), caseOnHand: cur !== void 0 ? round1(cur / cpc) : null };
+    return { ...it, cap, cur, status: st, rp, need, autoNeed, ov, wks, cpc, cu, ou, packTBD, packVerify, orderedDaysAgo: orderAge[it.id], daily, dailySrc, base, daysLeft, horizon, sugg, orderLastsDays: daily > 0 && need > 0 ? Math.round((cpc > 1 ? Math.ceil(need / cpc) * cpc : need) / daily) : null, orderCs: Math.ceil(need / cpc), caseOnHand: cur !== void 0 ? round1(cur / cpc) : null };
   }), [stocks, caps, reord, orderOv, packcfg, orderAge, dailyOf]);
   const counted = useMemo(() => rows.filter((r) => r.cur !== void 0).length, [rows]);
   const variance = useMemo(() => {
@@ -461,10 +474,21 @@ function ChampionTracker() {
       if (p === void 0 || c === void 0) return { ...it, skip: true };
       const received = recvBetween[it.id] ?? 0;
       const actual = round1(p + received - c);
-      const expected = round1(it.use * (days / 7));
+      const pkV = packcfg[it.id] || {};
+      const cpcV = (pkV.pc != null ? pkV.pc : it.cpc) || 1;
+      const baseV = baselineOf(it, cpcV);
+      let expected;
+      if (dailyOf[it.id] != null) expected = round1(dailyOf[it.id] * days);
+      else if (baseV) {
+        let wdN = 0, weN = 0;
+        const d0v = new Date(prev.date);
+        const nD = Math.round(days);
+        for (let k = 1; k <= nD; k++) { const g = new Date(d0v.getTime() + k * 864e5).getDay(); if (g === 5 || g === 6 || g === 0) weN += 1; else wdN += 1; }
+        expected = round1((baseV.bwd * wdN + baseV.bwe * weN) / baseV.ppcu);
+      } else expected = round1(it.use * (days / 7) * cpcV);
       const v = round1(actual - expected);
       let flag = "ok";
-      if (it.use === 0) {
+      if (expected === 0) {
         if (actual >= 1) flag = "over";
       } else if (v > 0 && (v >= 0.5 || v / Math.max(expected, 0.01) >= 0.25)) flag = "over";
       else if (v < 0 && (Math.abs(v) >= 0.5 || Math.abs(v) / Math.max(expected, 0.01) >= 0.25)) flag = "under";
@@ -475,7 +499,7 @@ function ChampionTracker() {
     const summary = { over: 0, under: 0, ok: 0 };
     items.forEach((i) => summary[i.flag]++);
     return { prev, curr, days: Math.round(days * 10) / 10, items, summary };
-  }, [counts, receipts]);
+  }, [counts, receipts, dailyOf, packcfg]);
   const orderRows = rows.filter((r) => r.need > 0 && (r.status === "order" || r.ov));
   const orderText = useMemo(() => {
     if (!orderRows.length) return "";
@@ -746,7 +770,7 @@ function CountCard({ r, rail, setStock, setCap, setReorder, setOrderQty, setPack
     showLevels && React.createElement("div", { className: "mt-2 pt-2.5 space-y-2.5", style: { borderTop: "1px solid " + C.line } },
       React.createElement("div", { className: "flex items-center gap-5" },
         React.createElement("label", { className: "flex items-center gap-1.5 text-[11px]", style: { color: C.steel } }, "Max", React.createElement(NumField, { value: r.cap, onCommit: (s) => setCap(r.id, s), className: "w-12 text-center font-black rounded outline-none", style: fld({ color: C.naan }) })),
-        React.createElement("label", { className: "flex items-center gap-1.5 text-[11px]", style: { color: C.steel } }, "Reorder at", React.createElement(NumField, { value: r.rp, onCommit: (s) => setReorder(r.id, s), className: "w-12 text-center font-black rounded outline-none", style: fld({ color: C.saffron }) }))), r.sugg != null ? React.createElement("div", { className: "flex items-center flex-wrap gap-2 text-[11px]", style: { color: C.steel } }, "suggested reorder:", React.createElement("span", { style: { color: C.naan, fontWeight: 800 } }, r.sugg), React.createElement("span", null, "(≈" + r.horizon + " days at your usage)"), r.sugg === r.rp ? React.createElement("span", { style: { color: C.mint, fontWeight: 800 } }, "✓ applied") : React.createElement("button", { onClick: () => setReorder(r.id, r.sugg), className: "px-2.5 py-1 rounded-lg font-black active:scale-95", style: { background: C.saffron, color: C.ink } }, "Apply")) : React.createElement("div", { className: "text-[10px]", style: { color: C.steel } }, "No usage data yet — save two counts a few days apart and a suggested reorder appears here."),
+        React.createElement("label", { className: "flex items-center gap-1.5 text-[11px]", style: { color: C.steel } }, "Reorder at", React.createElement(NumField, { value: r.rp, onCommit: (s) => setReorder(r.id, s), className: "w-12 text-center font-black rounded outline-none", style: fld({ color: C.saffron }) }))), r.sugg != null ? React.createElement("div", { className: "flex items-center flex-wrap gap-2 text-[11px]", style: { color: C.steel } }, "suggested reorder:", React.createElement("span", { style: { color: C.naan, fontWeight: 800 } }, r.sugg), React.createElement("span", null, "(≈" + r.horizon + "d at " + (r.dailySrc === "measured" ? "your measured usage" : "baseline") + ")"), r.sugg === r.rp ? React.createElement("span", { style: { color: C.mint, fontWeight: 800 } }, "✓ applied") : React.createElement("button", { onClick: () => setReorder(r.id, r.sugg), className: "px-2.5 py-1 rounded-lg font-black active:scale-95", style: { background: C.saffron, color: C.ink } }, "Apply")) : React.createElement("div", { className: "text-[10px]", style: { color: C.steel } }, "No usage data yet — save two counts a few days apart and a suggested reorder appears here."), r.base && React.createElement("div", { className: "text-[10px]", style: { color: C.steel } }, "baseline: " + r.base.bwd + "/day wk · " + r.base.bwe + "/day wknd (pieces)"),
       React.createElement("div", { className: "flex items-center gap-4" },
         React.createElement("label", { className: "flex items-center gap-1.5 text-[11px]", style: { color: C.steel } }, "Count in", React.createElement("input", { value: r.cu && r.cu !== "cs" ? r.cu : "", placeholder: "cs", autoCapitalize: "none", autoCorrect: "off", spellCheck: false, onChange: (e) => setPackVal(r.id, { u: e.target.value.trim() || null }), className: "w-16 text-center font-bold rounded outline-none", style: fld() })),
         React.createElement("label", { className: "flex items-center gap-1.5 text-[11px]", style: { color: C.steel } }, "per case", React.createElement(NumField, { value: r.cpc > 1 ? r.cpc : null, placeholder: "1", onCommit: (s) => setPackVal(r.id, { pc: s === "" || Number(s) <= 1 ? null : Math.round(Number(s)) }), className: "w-12 text-center font-black rounded outline-none", style: fld({ color: C.naan }) }))),
