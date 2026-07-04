@@ -49,14 +49,93 @@ async function cloudGet() {
   const rows = await r.json();
   return rows && rows.length ? rows[0] : null;
 }
-async function cloudPut(dataObj, iso) {
-  const r = await fetch(SB_REST + "?on_conflict=id", {
+async function cloudPutIf(dataObj, iso, lastSeenIso, keepalive) {
+  if (lastSeenIso) {
+    const r = await fetch(SB_REST + "?id=eq.sysco&updated_at=eq." + encodeURIComponent(lastSeenIso) + "&select=id", {
+      method: "PATCH",
+      headers: Object.assign({}, SB_H, { Prefer: "return=representation" }),
+      body: JSON.stringify({ data: dataObj, updated_at: iso }),
+      keepalive: !!keepalive
+    });
+    if (!r.ok) throw new Error("PUT " + r.status);
+    const rows = await r.json();
+    return rows && rows.length > 0;
+  }
+  const r = await fetch(SB_REST, {
     method: "POST",
-    headers: Object.assign({}, SB_H, { Prefer: "resolution=merge-duplicates,return=minimal" }),
-    body: JSON.stringify([{ id: "sysco", data: dataObj, updated_at: iso }])
+    headers: Object.assign({}, SB_H, { Prefer: "return=minimal" }),
+    body: JSON.stringify([{ id: "sysco", data: dataObj, updated_at: iso }]),
+    keepalive: !!keepalive
   });
+  if (r.status === 409) return false;
   if (!r.ok) throw new Error("PUT " + r.status);
+  return true;
 }
+const parseNum = (v) => {
+  if (v === null || v === void 0 || v === "") return NaN;
+  const s = String(v).trim().replace(",", ".");
+  return /^-?\d*\.?\d*$/.test(s) && s !== "" && s !== "." && s !== "-" && s !== "-." ? parseFloat(s) : NaN;
+};
+const sanitizeData = (d) => {
+  if (!d || typeof d !== "object" || Array.isArray(d)) return null;
+  const isNum = (v) => typeof v === "number" && isFinite(v) && v >= 0;
+  const numMap = (m, extra) => { const o = {}; if (m && typeof m === "object" && !Array.isArray(m)) for (const k of Object.keys(m)) { const v = m[k]; if (isNum(v) && (!extra || extra(v))) o[k] = v; } return o; };
+  const objMap = (m) => { const o = {}; if (m && typeof m === "object" && !Array.isArray(m)) for (const k of Object.keys(m)) { const v = m[k]; if (v && typeof v === "object" && !Array.isArray(v)) o[k] = v; } return o; };
+  const recArr = (a, field, cap) => !Array.isArray(a) ? [] : a.filter((x) => x && typeof x === "object" && typeof x.date === "string" && !isNaN(new Date(x.date).getTime()) && x[field] && typeof x[field] === "object").map((x) => Object.assign({}, x, { [field]: numMap(x[field]) })).slice(-cap);
+  return {
+    stocks: numMap(d.stocks),
+    caps: numMap(d.caps, (v) => v > 0),
+    reord: numMap(d.reord),
+    orderOv: numMap(d.orderOv),
+    packcfg: objMap(d.packcfg),
+    counts: recArr(d.counts, "stocks", 12),
+    receipts: recArr(d.receipts, "items", 50),
+    orders: recArr(d.orders, "items", 20),
+    cycle: typeof d.cycle === "number" && isFinite(d.cycle) && d.cycle > 0 ? d.cycle : 2
+  };
+};
+const mergeData = (base, local, remote) => {
+  base = base || {};
+  const out = {};
+  ["stocks", "caps", "reord", "orderOv", "packcfg"].forEach((f) => {
+    const b = base[f] || {}, l = local[f] || {}, r = remote[f] || {};
+    const m = Object.assign({}, r);
+    const ids = Object.keys(Object.assign({}, b, l));
+    for (const id of ids) {
+      if (JSON.stringify(l[id]) !== JSON.stringify(b[id])) {
+        if (l[id] === void 0) delete m[id]; else m[id] = l[id];
+      }
+    }
+    out[f] = m;
+  });
+  [["counts", 12], ["receipts", 50], ["orders", 20]].forEach(([f, cap]) => {
+    const b = base[f] || [], l = local[f] || [], r = remote[f] || [];
+    const bD = {}, lD = {}, rD = {};
+    b.forEach((x) => { if (x && x.date) bD[x.date] = 1; });
+    l.forEach((x) => { if (x && x.date) lD[x.date] = 1; });
+    r.forEach((x) => { if (x && x.date) rD[x.date] = 1; });
+    const kept = l.filter((x) => !(x && x.date && bD[x.date] && !rD[x.date]));
+    r.forEach((x) => { if (x && x.date && !lD[x.date] && !bD[x.date]) kept.push(x); });
+    kept.sort((a, b2) => new Date(a.date) - new Date(b2.date));
+    out[f] = kept.slice(-cap);
+  });
+  out.cycle = (local.cycle ?? 2) !== (base.cycle ?? 2) ? local.cycle : typeof remote.cycle === "number" ? remote.cycle : 2;
+  return out;
+};
+const persistLocal = (data, stamp, dirty, base, baseIso) => { try { localStorage.setItem(STORE_KEY, JSON.stringify({ __v: 2, stamp, data, dirty: !!dirty, base: base || null, baseIso: baseIso || null })); } catch (e) {} };
+const readLocal = () => {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (!raw) return null;
+    const p = JSON.parse(raw);
+    if (p && p.__v === 2 && p.data && typeof p.data === "object") {
+      const c = sanitizeData(p.data);
+      return c ? { data: c, stamp: Number(p.stamp) || 0, dirty: !!p.dirty, base: p.base && typeof p.base === "object" ? sanitizeData(p.base) : null, baseIso: typeof p.baseIso === "string" ? p.baseIso : null } : null;
+    }
+    if (p && typeof p === "object") { const c = sanitizeData(p); return c ? { data: c, stamp: 0, dirty: false, base: null, baseIso: null } : null; }
+    return null;
+  } catch (e) { return null; }
+};
 const C = {
   bg: "#14181D",
   card: "#1E242B",
@@ -214,6 +293,7 @@ function ChampionTracker() {
   const [copied, setCopied] = useState(false);
   const [toast, setToast] = useState("");
   const [undoSnap, setUndoSnap] = useState(null);
+  const [syncErr, setSyncErr] = useState(false);
   const saveT = useRef(null);
   const toastT = useRef(null);
   const undoT = useRef(null);
@@ -224,6 +304,12 @@ function ChampionTracker() {
   };
   const dataRef = useRef({});
   const localStampRef = useRef(0);
+  const remoteStampRef = useRef(0);
+  const remoteIsoRef = useRef(null);
+  const baseRef = useRef({});
+  const dirtyRef = useRef(false);
+  const inflightRef = useRef(false);
+  const failsRef = useRef(0);
   const applyingRef = useRef(false);
   const loadOkRef = useRef(false);
   dataRef.current = { stocks, cycle, counts, receipts, caps, reord, orderOv, packcfg, orders };
@@ -239,52 +325,132 @@ function ChampionTracker() {
     setPackcfg(d.packcfg || {});
     setOrderOv(d.orderOv || {});
   };
+  const flushSave = async (keepalive) => {
+    if (!loadOkRef.current) return;
+    if (saveT.current) { clearTimeout(saveT.current); saveT.current = null; }
+    if (!dirtyRef.current || inflightRef.current) return;
+    inflightRef.current = true;
+    try {
+      let candidate = null;
+      for (let attempt = 0; attempt < 3; attempt++) {
+        const body = candidate || JSON.parse(JSON.stringify(dataRef.current));
+        const stamp = Math.max(Date.now(), remoteStampRef.current + 1, localStampRef.current);
+        const iso = new Date(stamp).toISOString();
+        const okPut = await cloudPutIf(body, iso, remoteIsoRef.current, keepalive);
+        if (okPut) {
+          remoteStampRef.current = stamp;
+          remoteIsoRef.current = iso;
+          localStampRef.current = Math.max(localStampRef.current, stamp);
+          baseRef.current = body;
+          if (JSON.stringify(dataRef.current) === JSON.stringify(body)) dirtyRef.current = false;
+          persistLocal(dataRef.current, localStampRef.current, dirtyRef.current, baseRef.current, remoteIsoRef.current);
+          failsRef.current = 0;
+          setSyncErr(false);
+          return;
+        }
+        const row = await cloudGet();
+        if (row && row.data) {
+          const clean = sanitizeData(row.data);
+          if (clean) {
+            candidate = mergeData(baseRef.current, body, clean);
+            remoteStampRef.current = new Date(row.updated_at).getTime();
+            remoteIsoRef.current = row.updated_at;
+            baseRef.current = clean;
+            applyData(candidate, false);
+          } else {
+            remoteIsoRef.current = row.updated_at;
+          }
+        } else {
+          remoteIsoRef.current = null;
+        }
+      }
+    } catch (e) {
+      setSyncErr(true);
+    } finally {
+      inflightRef.current = false;
+    }
+  };
   const pull = async () => {
     try {
       const row = await cloudGet();
       loadOkRef.current = true;
-      if (!row || !row.data) return;
-      const stamp = new Date(row.updated_at).getTime();
-      if (stamp <= localStampRef.current) return;
-      const ae = document.activeElement;
-      if (ae && (ae.tagName === "INPUT" || ae.tagName === "TEXTAREA")) return;
-      if (JSON.stringify(row.data) === JSON.stringify(dataRef.current)) {
-        localStampRef.current = stamp;
-        return;
+      failsRef.current = 0;
+      if (row && row.data) {
+        const stamp = new Date(row.updated_at).getTime();
+        if (stamp > remoteStampRef.current) {
+          const ae = document.activeElement;
+          const focused = ae && (ae.tagName === "INPUT" || ae.tagName === "TEXTAREA");
+          if (!focused) {
+            const clean = sanitizeData(row.data);
+            if (clean) {
+              if (JSON.stringify(clean) === JSON.stringify(dataRef.current)) {
+                remoteStampRef.current = stamp;
+                remoteIsoRef.current = row.updated_at;
+                localStampRef.current = Math.max(localStampRef.current, stamp);
+                baseRef.current = clean;
+                dirtyRef.current = false;
+                persistLocal(dataRef.current, localStampRef.current, false, baseRef.current, remoteIsoRef.current);
+              } else if (dirtyRef.current || saveT.current || inflightRef.current || stamp <= localStampRef.current) {
+                const merged = mergeData(baseRef.current, dataRef.current, clean);
+                remoteStampRef.current = stamp;
+                remoteIsoRef.current = row.updated_at;
+                baseRef.current = clean;
+                applyData(merged, false);
+                flash("Synced — merged with your changes");
+              } else {
+                remoteStampRef.current = stamp;
+                remoteIsoRef.current = row.updated_at;
+                localStampRef.current = stamp;
+                baseRef.current = clean;
+                applyData(clean, true);
+                flash("Synced from your other device");
+              }
+            }
+          }
+        }
       }
-      localStampRef.current = stamp;
-      applyData(row.data, true);
-      flash("Synced from your other device");
+      if (dirtyRef.current && !saveT.current) flushSave();
+      else if (!dirtyRef.current) setSyncErr(false);
     } catch (e) {
+      failsRef.current += 1;
+      if (failsRef.current >= 2) setSyncErr(true);
     }
   };
   useEffect(() => {
     (async () => {
+      const localSnap = readLocal();
       try {
         const row = await cloudGet();
         loadOkRef.current = true;
-        if (row && row.data) {
-          localStampRef.current = new Date(row.updated_at).getTime();
-          applyData(row.data, true);
-        } else {
-          const ls = localStorage.getItem(STORE_KEY);
-          if (ls) {
-            try {
-              applyData(JSON.parse(ls), true);
-            } catch (e) {
-            }
-          }
+        const remoteStamp = row && row.data ? new Date(row.updated_at).getTime() : 0;
+        const clean = row && row.data ? sanitizeData(row.data) : null;
+        remoteStampRef.current = remoteStamp;
+        remoteIsoRef.current = row ? row.updated_at : null;
+        if (localSnap && (localSnap.dirty || localSnap.stamp > remoteStamp)) {
+          baseRef.current = clean || {};
+          localStampRef.current = Math.max(localSnap.stamp, remoteStamp);
+          applyData(clean ? mergeData(localSnap.base || {}, localSnap.data, clean) : localSnap.data, false);
+          if (clean) flash("Recovered changes that hadn't reached the cloud");
+        } else if (clean) {
+          localStampRef.current = remoteStamp;
+          baseRef.current = clean;
+          applyData(clean, true);
+        } else if (localSnap) {
+          localStampRef.current = localSnap.stamp;
+          baseRef.current = {};
+          applyData(localSnap.data, false);
         }
       } catch (e) {
         loadOkRef.current = false;
-        const ls = localStorage.getItem(STORE_KEY);
-        if (ls) {
-          try {
-            applyData(JSON.parse(ls), true);
-          } catch (e2) {
-          }
+        if (localSnap) {
+          localStampRef.current = localSnap.stamp;
+          dirtyRef.current = !!localSnap.dirty;
+          baseRef.current = localSnap.base || {};
+          remoteIsoRef.current = localSnap.baseIso;
+          applyData(localSnap.data, true);
         }
-        flash("Offline \u2014 showing last saved; will sync when back online");
+        setSyncErr(true);
+        flash("Offline \u2014 changes save on this phone and sync when you're back online");
       }
       setLoaded(true);
     })();
@@ -293,101 +459,129 @@ function ChampionTracker() {
     if (!loaded) return;
     if (applyingRef.current) {
       applyingRef.current = false;
+      persistLocal(dataRef.current, localStampRef.current, dirtyRef.current, baseRef.current, remoteIsoRef.current);
       return;
     }
-    try {
-      localStorage.setItem(STORE_KEY, JSON.stringify(dataRef.current));
-    } catch (e) {
-    }
-    if (!loadOkRef.current) return;
+    localStampRef.current = Math.max(Date.now(), remoteStampRef.current + 1, localStampRef.current + 1);
+    dirtyRef.current = true;
+    persistLocal(dataRef.current, localStampRef.current, true, baseRef.current, remoteIsoRef.current);
     if (saveT.current) clearTimeout(saveT.current);
-    saveT.current = setTimeout(async () => {
-      const stamp = Date.now();
-      localStampRef.current = stamp;
-      try {
-        await cloudPut(dataRef.current, new Date(stamp).toISOString());
-      } catch (e) {
-      }
+    saveT.current = setTimeout(() => {
+      saveT.current = null;
+      flushSave();
     }, 600);
-    return () => saveT.current && clearTimeout(saveT.current);
+    return () => {
+      if (saveT.current) {
+        clearTimeout(saveT.current);
+        saveT.current = null;
+      }
+    };
   }, [stocks, cycle, counts, receipts, caps, reord, orderOv, packcfg, orders, loaded]);
   useEffect(() => {
     if (!loaded) return;
     const onVis = () => {
       if (document.visibilityState === "visible") pull();
+      else flushSave(true);
     };
+    const onHide = () => flushSave(true);
     window.addEventListener("focus", pull);
+    window.addEventListener("pagehide", onHide);
     document.addEventListener("visibilitychange", onVis);
     const iv = setInterval(() => {
       if (document.visibilityState === "visible") pull();
     }, 15e3);
     return () => {
       window.removeEventListener("focus", pull);
+      window.removeEventListener("pagehide", onHide);
       document.removeEventListener("visibilitychange", onVis);
       clearInterval(iv);
     };
   }, [loaded]);
-  const setStock = (id, v) => {
-    const num = parseFloat(v);
-    setStocks((s) => {
-      const n = { ...s };
-      if (v === null || v === "" || isNaN(num)) delete n[id];
-      else n[id] = Math.max(0, round1(num));
-      return n;
-    });
+  const clearOrderOv = (id) => {
+    if (orderOv[id] != null) flash("Order qty reset to auto (was " + orderOv[id] + ")");
     setOrderOv((o) => {
       if (o[id] == null) return o;
       const n = { ...o };
       delete n[id];
       return n;
     });
+  };
+  const setStock = (id, v) => {
+    if (v === null || v === "") {
+      setStocks((s) => {
+        const n = { ...s };
+        delete n[id];
+        return n;
+      });
+    } else {
+      const num = parseNum(v);
+      if (isNaN(num)) return;
+      setStocks((s) => ({ ...s, [id]: Math.max(0, round1(num)) }));
+    }
+    clearOrderOv(id);
   };
   const setCap = (id, v) => {
-    const num = parseFloat(v);
-    setCaps((c) => {
-      const n = { ...c };
-      if (v === "" || v === null || isNaN(num) || num <= 0) delete n[id];
-      else n[id] = Math.max(0.1, round1(num));
-      return n;
-    });
-    setOrderOv((o) => {
-      if (o[id] == null) return o;
-      const n = { ...o };
-      delete n[id];
-      return n;
-    });
+    const num = parseNum(v);
+    if (v !== "" && v !== null && isNaN(num)) return;
+    if (v === "" || v === null || num <= 0) {
+      setCaps((c) => {
+        const n = { ...c };
+        delete n[id];
+        return n;
+      });
+    } else {
+      setCaps((c) => ({ ...c, [id]: Math.max(0.1, round1(num)) }));
+    }
+    clearOrderOv(id);
   };
   const setReorder = (id, v) => {
-    const num = parseFloat(v);
+    const num = parseNum(v);
+    if (v !== "" && v !== null && isNaN(num)) return;
     setReord((r) => {
       const n = { ...r };
-      if (v === "" || v === null || isNaN(num) || num < 0) delete n[id];
-      else n[id] = Math.max(0, round1(num));
+      if (v === "" || v === null || num < 0) delete n[id];
+      else {
+        const it = ITEMS.find((x) => x.id === id);
+        const capNow = caps[id] != null ? caps[id] : it ? capOf(it) : round1(num);
+        n[id] = Math.min(Math.max(0, round1(num)), capNow);
+      }
       return n;
     });
   };
   const setOrderQty = (id, v) => {
-    const num = parseFloat(v);
+    const num = parseNum(v);
+    if (v !== "" && v !== null && isNaN(num)) return;
     setOrderOv((o) => {
       const n = { ...o };
-      if (v === "" || v === null || isNaN(num) || num < 0) delete n[id];
+      if (v === "" || v === null || num < 0) delete n[id];
       else n[id] = Math.max(0, round1(num));
       return n;
     });
   };
   const setRecvQty = (id, v) => {
-    const num = parseFloat(v);
+    const num = parseNum(v);
+    if (v !== "" && v !== null && isNaN(num)) return;
     setRecv((s) => {
       const n = { ...s };
-      if (v === null || v === "" || isNaN(num) || num <= 0) delete n[id];
+      if (v === null || v === "" || num <= 0) delete n[id];
       else n[id] = Math.max(0, round1(num));
       return n;
     });
   };
   const saveCount = () => {
+    if (!Object.keys(stocks).length) {
+      flash("Nothing counted yet \u2014 count at least one item first");
+      return;
+    }
     const snap = { date: (/* @__PURE__ */ new Date()).toISOString(), stocks: { ...stocks } };
-    setCounts((c) => [...c, snap].slice(-12));
-    flash("Count saved \u2014 baseline set for variance");
+    const last = counts.length ? counts[counts.length - 1] : null;
+    if (last && Date.now() - new Date(last.date).getTime() < 36e5) {
+      setCounts((c) => [...c.slice(0, -1), snap].slice(-12));
+      flash("Updated the count you saved a moment ago");
+    } else {
+      setCounts((c) => [...c, snap].slice(-12));
+      flash("Count saved \u2014 baseline set for variance");
+    }
   };
   const resetCounts = () => {
     if (!window.confirm("Reset all shelf counts?\n\nThis clears every on-hand number so you can recount from scratch. Your saved count history, deliveries, and max/reorder settings are kept.\n\nYou can still tap Undo right after.")) return;
@@ -399,11 +593,14 @@ function ChampionTracker() {
   };
   const undoReset = () => {
     if (!undoSnap) return;
-    setStocks(undoSnap.stocks);
-    setOrderOv(undoSnap.orderOv);
+    if (undoSnap.data) applyData(undoSnap.data, false);
+    else {
+      setStocks(undoSnap.stocks);
+      setOrderOv(undoSnap.orderOv);
+    }
     setUndoSnap(null);
     if (undoT.current) clearTimeout(undoT.current);
-    flash("Counts restored");
+    flash("Restored");
   };
   const logDelivery = () => {
     const items = { ...recv };
@@ -411,16 +608,37 @@ function ChampionTracker() {
       flash("Nothing entered to receive");
       return;
     }
+    const applied = Object.keys(items).filter((id) => stocks[id] !== void 0);
+    const skipped = Object.keys(items).length - applied.length;
     setStocks((s) => {
       const n = { ...s };
-      for (const [id, q] of Object.entries(items)) n[id] = round1((n[id] ?? 0) + q);
+      for (const [id, q] of Object.entries(items)) {
+        if (n[id] === void 0) continue;
+        n[id] = round1(n[id] + q);
+      }
       return n;
     });
-    setReceipts((r) => [...r, { date: (/* @__PURE__ */ new Date()).toISOString(), items, note: recvNote.trim() }].slice(-50));
+    setReceipts((r) => [...r, { date: (/* @__PURE__ */ new Date()).toISOString(), items, note: recvNote.trim(), applied }].slice(-50));
     const count = Object.keys(items).length;
     setRecv({});
     setRecvNote("");
-    flash(`Logged ${count} item${count > 1 ? "s" : ""} into stock`);
+    flash(`Logged ${count} item${count > 1 ? "s" : ""} into stock` + (skipped ? ` · ${skipped} uncounted — receipt only` : ""));
+  };
+  const undoReceipt = () => {
+    if (!receipts.length) return;
+    const last = receipts[receipts.length - 1];
+    if (!window.confirm("Remove the delivery logged " + shortDate(last.date) + (last.note ? " (" + last.note + ")" : "") + "?\n\nIts quantities are subtracted back out of your on-hand counts.")) return;
+    const appl = Array.isArray(last.applied) ? last.applied : null;
+    setStocks((s) => {
+      const n = { ...s };
+      for (const [id, q] of Object.entries(last.items || {})) {
+        if (appl && appl.indexOf(id) === -1) continue;
+        if (n[id] !== void 0) n[id] = Math.max(0, round1(n[id] - q));
+      }
+      return n;
+    });
+    setReceipts((r) => r.slice(0, -1));
+    flash("Delivery removed — stock adjusted back");
   };
   const setPackVal = (id, patch) => setPackcfg((p) => ({ ...p, [id]: { ...(p[id] || {}), ...patch } }));
   const measured = useMemo(() => computeUsage(counts, receipts), [counts, receipts]);
@@ -450,10 +668,10 @@ function ChampionTracker() {
   }, [orders, receipts]);
   const rows = useMemo(() => ITEMS.map((it) => {
     const cap = caps[it.id] != null ? caps[it.id] : capOf(it);
-    const rp = reord[it.id] != null ? reord[it.id] : REORD[it.id] != null ? REORD[it.id] : cap / 2;
+    const rp = Math.min(cap, reord[it.id] != null ? reord[it.id] : REORD[it.id] != null ? REORD[it.id] : cap / 2);
     const cur = stocks[it.id];
     const st = statusOf(cur, cap, rp);
-    let autoNeed = cur === void 0 ? 0 : Math.max(0, round1(cap - cur));
+    let autoNeed = cur === void 0 ? 0 : Math.max(0, Math.ceil(round1(cap - cur)));
     let projShort = false;
     let covered = false;
     const ov = orderOv[it.id] != null;
@@ -475,7 +693,7 @@ function ChampionTracker() {
     const rWe = rateOf[it.id] ? rateOf[it.id].we : base ? base.bwe / base.ppcu : null;
     if (rWd != null && rWe != null && cur !== void 0) {
       const target = Math.min(cap, rWd * dwin.full.wd + rWe * dwin.full.we);
-      autoNeed = Math.max(0, round1(target - cur));
+      autoNeed = Math.max(0, Math.ceil(round1(target - cur)));
       projShort = cur < rWd * dwin.toNext.wd + rWe * dwin.toNext.we;
       covered = st === "order" && autoNeed <= 0;
     }
@@ -517,8 +735,8 @@ function ChampionTracker() {
       let flag = "ok";
       if (expected === 0) {
         if (actual >= 1) flag = "over";
-      } else if (v > 0 && (v >= 0.5 || v / Math.max(expected, 0.01) >= 0.25)) flag = "over";
-      else if (v < 0 && (Math.abs(v) >= 0.5 || Math.abs(v) / Math.max(expected, 0.01) >= 0.25)) flag = "under";
+      } else if (v > 0 && v >= Math.max(0.5, expected * 0.25)) flag = "over";
+      else if (v < 0 && Math.abs(v) >= Math.max(0.5, expected * 0.25)) flag = "under";
       return { ...it, p, c, received, actual, expected, v, flag, skip: false };
     }).filter((x) => !x.skip);
     const order = { over: 0, under: 1, ok: 2 };
@@ -592,23 +810,26 @@ ${lines.join("\n")}`;
     flash("Copied \u2014 now paste it on your other device");
   };
   const doImport = () => {
+    let d;
     try {
-      const d = JSON.parse(decodeURIComponent(atob(importText.trim())));
-      if (d.stocks) setStocks(d.stocks);
-      if (typeof d.cycle === "number") setCycle(d.cycle);
-      if (Array.isArray(d.counts)) setCounts(d.counts);
-      if (Array.isArray(d.receipts)) setReceipts(d.receipts);
-      if (Array.isArray(d.orders)) setOrders(d.orders);
-      if (d.caps) setCaps(d.caps);
-      if (d.reord) setReord(d.reord);
-      if (d.packcfg) setPackcfg(d.packcfg);
-      if (d.orderOv) setOrderOv(d.orderOv);
-      setImportText("");
-      setShowSync(false);
-      flash("Done \u2014 your data is now on this device");
+      d = JSON.parse(decodeURIComponent(atob(importText.trim())));
     } catch (e) {
       flash("That code didn't read \u2014 copy the whole thing and try again");
+      return;
     }
+    const clean = d && typeof d === "object" && (d.stocks || d.counts || d.caps || d.receipts) ? sanitizeData(d) : null;
+    if (!clean) {
+      flash("That code doesn't look like tracker data");
+      return;
+    }
+    if (!window.confirm("Load this data onto this device?\n\nIt replaces what's here and syncs to your other devices. Tap Undo right after if it looks wrong.")) return;
+    setUndoSnap({ label: "Data replaced", data: JSON.parse(JSON.stringify(dataRef.current)) });
+    if (undoT.current) clearTimeout(undoT.current);
+    undoT.current = setTimeout(() => setUndoSnap(null), 3e4);
+    applyData(clean, false);
+    setImportText("");
+    setShowSync(false);
+    flash("Done \u2014 your data is now on this device");
   };
   if (!loaded) return /* @__PURE__ */ React.createElement("div", { style: { background: C.bg, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", color: C.steel, fontFamily: "ui-sans-serif, system-ui" } }, "Loading\u2026");
   const TABS = [
@@ -618,7 +839,7 @@ ${lines.join("\n")}`;
     { id: "usage", label: "Usage", Icon: BarChart3 },
     { id: "order", label: "Order", Icon: Send }
   ];
-  return /* @__PURE__ */ React.createElement("div", { style: { background: C.bg, minHeight: "100vh", color: C.naan, fontFamily: "ui-sans-serif, system-ui", paddingBottom: "calc(92px + env(safe-area-inset-bottom))" } }, /* @__PURE__ */ React.createElement("style", null, `* { -webkit-tap-highlight-color: transparent; } button, a { -webkit-user-select: none; user-select: none; touch-action: manipulation; }`), view === "count" && /* @__PURE__ */ React.createElement(CountView, { ...{ rows, counted, countMode, setCountMode, setStock, setCap, setReorder, setOrderQty, setPackVal, cycle, setCycle, saveCount, resetCounts, lastCount, setShowSync } }), view === "receive" && /* @__PURE__ */ React.createElement(ReceiveView, { ...{ recv, setRecvQty, recvNote, setRecvNote, logDelivery, receipts, lastOrder } }), view === "variance" && /* @__PURE__ */ React.createElement(VarianceView, { variance, counts, lastCount }), view === "usage" && React.createElement(UsageView, { counts, receipts }), view === "order" && /* @__PURE__ */ React.createElement(OrderView, { ...{ orderRows, orderText, cycle, copyOrder, copied, shareOrder, sentPrompt, setSentPrompt, markOrdered, orders, dwin } }), showSync && /* @__PURE__ */ React.createElement("div", { className: "fixed inset-0 z-50 flex items-end justify-center", style: { background: "rgba(0,0,0,0.6)" }, onClick: () => setShowSync(false) }, /* @__PURE__ */ React.createElement("div", { className: "w-full rounded-t-2xl p-4", style: { background: C.card, maxWidth: 520, paddingBottom: "calc(28px + env(safe-area-inset-bottom))" }, onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between mb-1" }, /* @__PURE__ */ React.createElement("div", { className: "text-lg font-black" }, "Move data between devices"), /* @__PURE__ */ React.createElement("button", { onClick: () => setShowSync(false), className: "text-sm font-bold", style: { color: C.steel } }, "Close")), /* @__PURE__ */ React.createElement("div", { className: "mt-3" }, /* @__PURE__ */ React.createElement("div", { className: "text-[11px] font-black uppercase tracking-wider mb-1", style: { color: C.saffron } }, "1 \xB7 On the device that HAS your data"), /* @__PURE__ */ React.createElement("div", { className: "text-xs mb-2", style: { color: C.steel } }, "Tap Copy, then send the code to your other device (text it to yourself, email, or Notes)."), /* @__PURE__ */ React.createElement(
+  return /* @__PURE__ */ React.createElement("div", { style: { background: C.bg, minHeight: "100vh", color: C.naan, fontFamily: "ui-sans-serif, system-ui", paddingBottom: "calc(92px + env(safe-area-inset-bottom))" } }, /* @__PURE__ */ React.createElement("style", null, `* { -webkit-tap-highlight-color: transparent; } button, a { -webkit-user-select: none; user-select: none; touch-action: manipulation; }`), view === "count" && /* @__PURE__ */ React.createElement(CountView, { ...{ rows, counted, countMode, setCountMode, setStock, setCap, setReorder, setOrderQty, setPackVal, cycle, setCycle, saveCount, resetCounts, lastCount, setShowSync } }), view === "receive" && /* @__PURE__ */ React.createElement(ReceiveView, { ...{ recv, setRecvQty, recvNote, setRecvNote, logDelivery, receipts, lastOrder, undoReceipt } }), view === "variance" && /* @__PURE__ */ React.createElement(VarianceView, { variance, counts, lastCount }), view === "usage" && React.createElement(UsageView, { counts, receipts }), view === "order" && /* @__PURE__ */ React.createElement(OrderView, { ...{ orderRows, orderText, cycle, copyOrder, copied, shareOrder, sentPrompt, setSentPrompt, markOrdered, orders, dwin } }), showSync && /* @__PURE__ */ React.createElement("div", { className: "fixed inset-0 z-50 flex items-end justify-center", style: { background: "rgba(0,0,0,0.6)" }, onClick: () => setShowSync(false) }, /* @__PURE__ */ React.createElement("div", { className: "w-full rounded-t-2xl p-4", style: { background: C.card, maxWidth: 520, paddingBottom: "calc(28px + env(safe-area-inset-bottom))" }, onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between mb-1" }, /* @__PURE__ */ React.createElement("div", { className: "text-lg font-black" }, "Move data between devices"), /* @__PURE__ */ React.createElement("button", { onClick: () => setShowSync(false), className: "text-sm font-bold", style: { color: C.steel } }, "Close")), /* @__PURE__ */ React.createElement("div", { className: "mt-3" }, /* @__PURE__ */ React.createElement("div", { className: "text-[11px] font-black uppercase tracking-wider mb-1", style: { color: C.saffron } }, "1 \xB7 On the device that HAS your data"), /* @__PURE__ */ React.createElement("div", { className: "text-xs mb-2", style: { color: C.steel } }, "Tap Copy, then send the code to your other device (text it to yourself, email, or Notes)."), /* @__PURE__ */ React.createElement(
     "textarea",
     {
       readOnly: true,
@@ -645,7 +866,14 @@ ${lines.join("\n")}`;
       style: importText.trim() ? { background: C.mint, color: C.ink } : { background: C.cardUp, color: C.steel }
     },
     "Load onto this device"
-  )))), toast && /* @__PURE__ */ React.createElement(
+  )))), syncErr && React.createElement(
+    "div",
+    {
+      className: "fixed left-1/2 -translate-x-1/2 z-50 px-3 py-1.5 rounded-lg text-[11px] font-black shadow-lg",
+      style: { top: "calc(8px + env(safe-area-inset-top))", background: C.ember, color: "#fff" }
+    },
+    "⚠ Not synced — changes are saved on this phone"
+  ), toast && /* @__PURE__ */ React.createElement(
     "div",
     {
       className: "fixed left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-xl text-sm font-bold shadow-lg",
@@ -658,7 +886,7 @@ ${lines.join("\n")}`;
       className: "fixed left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold shadow-lg",
       style: { bottom: "calc(86px + env(safe-area-inset-bottom))", background: C.cardUp, color: C.naan, border: `1px solid ${C.ember}` }
     },
-    /* @__PURE__ */ React.createElement("span", null, "Counts cleared"),
+    /* @__PURE__ */ React.createElement("span", null, undoSnap.label || "Counts cleared"),
     /* @__PURE__ */ React.createElement("button", { onClick: undoReset, className: "font-black px-3 py-1 rounded-lg active:scale-95", style: { background: C.saffron, color: C.ink } }, "Undo")
   ), /* @__PURE__ */ React.createElement("div", { className: "fixed bottom-0 left-0 right-0 z-40 flex", style: { background: C.ink, borderTop: `1px solid ${C.line}`, paddingBottom: "env(safe-area-inset-bottom)" } }, TABS.map(({ id, label, Icon }) => {
     const active = view === id;
@@ -748,7 +976,7 @@ function NumField({ value, onCommit, placeholder, className, style }) {
       value: draft,
       placeholder,
       className,
-      style,
+      style: focused && draft !== "" && isNaN(parseNum(draft)) ? Object.assign({}, style, { border: "1px solid " + C.ember }) : style,
       onFocus: (e) => {
         setFocused(true);
         e.target.select();
@@ -784,7 +1012,7 @@ function CountCard({ r, rail, setStock, setCap, setReorder, setOrderQty, setPack
       })),
       React.createElement("div", { className: "absolute -top-1 bottom-[-3px] w-[2px]", style: { left: (tickAt / segMax * 100) + "%", background: C.saffron } })),
     React.createElement("div", { className: "flex items-center gap-2" },
-      React.createElement("button", { onClick: () => setStock(r.id, (r.cur ?? 0) - 1), "aria-label": "minus", className: "w-11 h-11 rounded-lg flex items-center justify-center active:scale-95 shrink-0", style: { background: C.cardUp, color: C.naan } }, React.createElement(Minus, { size: 18 })),
+      React.createElement("button", { onClick: () => { if (r.cur !== void 0) setStock(r.id, r.cur - 1); }, "aria-label": "minus", className: "w-11 h-11 rounded-lg flex items-center justify-center active:scale-95 shrink-0", style: { background: C.cardUp, color: C.naan } }, React.createElement(Minus, { size: 18 })),
       React.createElement(NumField, { value: r.cur, placeholder: "—", onCommit: (s) => setStock(r.id, s), className: "flex-1 min-w-0 h-12 rounded-lg text-center text-2xl font-black bg-transparent outline-none", style: { background: C.ink, color: r.cur === void 0 ? C.steel : C.naan, border: "1px solid " + C.line } }),
       React.createElement("button", { onClick: () => setStock(r.id, (r.cur ?? 0) + 1), "aria-label": "plus", className: "w-11 h-11 rounded-lg flex items-center justify-center active:scale-95 shrink-0", style: { background: C.cardUp, color: C.naan } }, React.createElement(Plus, { size: 18 })),
       React.createElement("div", { className: "flex flex-col items-center shrink-0 pl-1" },
@@ -858,7 +1086,7 @@ function UsageView({ counts, receipts }) {
   if (!data.items.length) return React.createElement(Frame, null, React.createElement("div", { className: "rounded-xl p-5", style: { background: C.card } }, React.createElement("div", { className: "font-bold mb-1" }, "No usage yet"), React.createElement("div", { className: "text-sm", style: { color: C.steel } }, "Once your counts show items going down between counts, their daily usage appears here.")));
   return React.createElement(Frame, null, React.createElement("div", { className: "rounded-xl px-4 py-3 mb-3", style: { background: C.card } }, React.createElement("div", { className: "text-[11px]", style: { color: C.steel } }, "From " + data.periods + " count period" + (data.periods === 1 ? "" : "s") + " · " + data.weekdayDays + " weekday / " + data.weekendDays + " weekend days"), React.createElement("div", { className: "text-[10px] mt-1", style: { color: C.steel } }, "Weekday vs weekend sharpens the more regularly you count.")), React.createElement("div", { className: "space-y-2 pb-2" }, data.items.map((r) => React.createElement("div", { key: r.id, className: "rounded-xl p-3", style: { background: C.card } }, React.createElement("div", { className: "flex items-center justify-between gap-2" }, React.createElement("div", { className: "min-w-0" }, React.createElement("div", { className: "font-bold leading-tight truncate" }, r.name), React.createElement("div", { className: "text-[11px] font-mono", style: { color: C.steel } }, r.code)), React.createElement("div", { className: "text-right shrink-0" }, React.createElement("div", { className: "text-lg font-black leading-none", style: { color: C.saffron } }, round1(r.daily)), React.createElement("div", { className: "text-[9px] uppercase tracking-wide", style: { color: C.steel } }, "per day"))), React.createElement("div", { className: "flex gap-4 mt-2 text-[11px]", style: { color: C.steel } }, React.createElement("span", null, "weekday ", React.createElement("span", { style: { color: C.naan, fontWeight: 700 } }, r.weekday === null ? "—" : round1(r.weekday))), React.createElement("span", null, "weekend ", React.createElement("span", { style: { color: C.mint, fontWeight: 700 } }, r.weekend === null ? "—" : round1(r.weekend))), React.createElement("span", null, "over " + r.days + "d"))))));
 }
-function ReceiveView({ recv, setRecvQty, recvNote, setRecvNote, logDelivery, receipts, lastOrder }) {
+function ReceiveView({ recv, setRecvQty, recvNote, setRecvNote, logDelivery, receipts, lastOrder, undoReceipt }) {
   const total = Object.keys(recv).length;
   return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "px-4 pt-5 pb-3 sticky top-0 z-20", style: { background: C.bg, borderBottom: `1px solid ${C.line}` } }, /* @__PURE__ */ React.createElement("div", { className: "text-[10px] uppercase tracking-[0.25em]", style: { color: C.saffron } }, "Receiving"), /* @__PURE__ */ React.createElement("div", { className: "text-2xl font-black tracking-tight" }, "Check in a delivery"), /* @__PURE__ */ React.createElement("div", { className: "text-[11px] mt-1", style: { color: C.steel } }, "Enter what actually arrived (cases). It adds to your on-hand count and feeds the variance math."), /* @__PURE__ */ React.createElement(
     "input",
@@ -902,7 +1130,7 @@ function ReceiveView({ recv, setRecvQty, recvNote, setRecvNote, logDelivery, rec
         /* @__PURE__ */ React.createElement(Plus, { size: 16 })
       ))));
     })));
-  }), receipts.length > 0 && /* @__PURE__ */ React.createElement("div", { className: "mt-5" }, /* @__PURE__ */ React.createElement("div", { className: "text-[10px] font-black uppercase tracking-[0.2em] px-1 pb-2", style: { color: C.steel } }, "Recent deliveries"), /* @__PURE__ */ React.createElement("div", { className: "space-y-1.5" }, [...receipts].reverse().slice(0, 5).map((r, idx) => /* @__PURE__ */ React.createElement("div", { key: idx, className: "rounded-lg px-3 py-2 text-xs", style: { background: C.card, color: C.steel } }, /* @__PURE__ */ React.createElement("span", { style: { color: C.naan, fontWeight: 700 } }, shortDate(r.date)), " \xB7 ", Object.keys(r.items).length, " items", r.note ? ` \xB7 ${r.note}` : ""))))), /* @__PURE__ */ React.createElement("div", { className: "fixed left-0 right-0 px-3 z-30", style: { bottom: "calc(64px + env(safe-area-inset-bottom))" } }, /* @__PURE__ */ React.createElement(
+  }), receipts.length > 0 && /* @__PURE__ */ React.createElement("div", { className: "mt-5" }, /* @__PURE__ */ React.createElement("div", { className: "text-[10px] font-black uppercase tracking-[0.2em] px-1 pb-2", style: { color: C.steel } }, "Recent deliveries"), /* @__PURE__ */ React.createElement("div", { className: "space-y-1.5" }, [...receipts].reverse().slice(0, 5).map((r, idx) => /* @__PURE__ */ React.createElement("div", { key: idx, className: "rounded-lg px-3 py-2 text-xs flex items-center", style: { background: C.card, color: C.steel } }, /* @__PURE__ */ React.createElement("span", null, /* @__PURE__ */ React.createElement("span", { style: { color: C.naan, fontWeight: 700 } }, shortDate(r.date)), " \xB7 ", Object.keys(r.items).length, " items", r.note ? ` \xB7 ${r.note}` : ""), idx === 0 && React.createElement("button", { onClick: undoReceipt, className: "ml-auto font-bold px-2 py-0.5 rounded active:scale-95", style: { color: C.ember, border: "1px solid " + C.ember } }, "✕ undo")))))), /* @__PURE__ */ React.createElement("div", { className: "fixed left-0 right-0 px-3 z-30", style: { bottom: "calc(64px + env(safe-area-inset-bottom))" } }, /* @__PURE__ */ React.createElement(
     "button",
     {
       onClick: logDelivery,
@@ -927,7 +1155,7 @@ function VarianceView({ variance, counts, lastCount }) {
   })), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] px-1 pb-2", style: { color: C.steel } }, "Actual usage = baseline count + deliveries received \u2212 latest count. Most accurate right after a fresh full count at both ends."));
 }
 function OrderView({ orderRows, orderText, cycle, copyOrder, copied, shareOrder, sentPrompt, setSentPrompt, markOrdered, orders, dwin }) {
-  const sms = orderText ? "sms:&body=" + encodeURIComponent(orderText) : "";
+  const sms = orderText ? (/android/i.test(navigator.userAgent) ? "sms:?body=" : "sms:&body=") + encodeURIComponent(orderText) : "";
   const ordersEl = orders && orders.length ? React.createElement("div", { className: "px-4 pb-6 pt-2" }, React.createElement("div", { className: "text-[10px] font-black uppercase tracking-[0.2em] pb-2", style: { color: C.steel } }, "Recent orders"), React.createElement("div", { className: "space-y-1.5" }, [...orders].reverse().slice(0, 3).map((o, i) => React.createElement("div", { key: i, className: "rounded-lg px-3 py-2 text-xs", style: { background: C.card, color: C.steel } }, React.createElement("span", { style: { color: C.naan, fontWeight: 700 } }, shortDate(o.date)), " · ", Object.keys(o.items || {}).length, " items")))) : null;
   return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "px-4 pt-5 pb-3 sticky top-0 z-20", style: { background: C.bg, borderBottom: `1px solid ${C.line}` } }, /* @__PURE__ */ React.createElement("div", { className: "text-[10px] uppercase tracking-[0.25em]", style: { color: C.saffron } }, "Sysco order"), /* @__PURE__ */ React.createElement("div", { className: "text-2xl font-black tracking-tight" }, orderRows.length, " item", orderRows.length !== 1 ? "s" : "", " at reorder point"), /* @__PURE__ */ React.createElement("div", { className: "text-[11px] mt-1", style: { color: C.steel } }, "Deliveries " + DAYW[DELIVERY_DAYS[0]] + " & " + DAYW[DELIVERY_DAYS[1]] + " \u2014 quantities cover through " + dwin.followingName + " (+1 day buffer), capped at Max.")), orderRows.length === 0 ? React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "px-6 py-16 text-center", style: { color: C.steel } }, "Nothing at reorder point. Count the shelves, then check back."), ordersEl) : /* @__PURE__ */ React.createElement("div", { className: "px-4 py-4 space-y-2" }, orderRows.map((r) => /* @__PURE__ */ React.createElement("div", { key: r.id, className: "flex items-center justify-between rounded-xl px-4 py-3", style: { background: C.card } }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "font-bold" }, r.name), /* @__PURE__ */ React.createElement("div", { className: "text-xs font-mono", style: { color: C.steel } }, r.code, r.alt ? ` \xB7 ${r.alt}` : ""), r.projShort && r.status !== "order" ? React.createElement("div", { className: "text-[10px] mt-0.5", style: { color: C.ember } }, "short before " + r.shortBefore) : null), /* @__PURE__ */ React.createElement("div", { className: "text-right" }, /* @__PURE__ */ React.createElement("div", { className: "text-2xl font-black", style: { color: C.saffron } }, r.cpc > 1 ? r.orderCs : r.need), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] uppercase tracking-wide", style: { color: C.steel } }, r.pack.includes("bn") ? "bundles" : r.pack.includes("bx") ? "boxes" : r.pack.includes("bg") ? "bags" : "cases"), r.orderLastsDays != null && React.createElement("div", { className: "text-[10px] mt-0.5", style: { color: C.steel } }, "lasts " + String.fromCharCode(8776) + r.orderLastsDays + "d")))), /* @__PURE__ */ React.createElement("div", { className: "rounded-xl p-4 mt-4", style: { background: C.ink, border: `1px solid ${C.line}` } }, /* @__PURE__ */ React.createElement("pre", { className: "text-xs whitespace-pre-wrap font-mono leading-relaxed", style: { color: C.naan } }, orderText)), /* @__PURE__ */ React.createElement(
     "a",
