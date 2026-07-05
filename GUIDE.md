@@ -47,7 +47,8 @@ time; both values are editable per item under **Levels → Count in / per case**
 Small chips: `over Max N` (stocked above Max — either fine or the Max is stale),
 `ordered Nd ago` (an order was logged and not yet received), `≈Nd left`
 (projected run-out; hidden when > 90 days because that's extrapolation, not
-information), `short before Tue/Fri` (won't last to the next delivery).
+information), `short before Tue/Fri` (won't last to the next delivery),
+`est · counted N ‹date›` (the shown stock is an aged estimate — see §5).
 
 ## 3. Usage rates: baseline → measured
 
@@ -115,8 +116,8 @@ estimate is never mistaken for a fresh count.
 
 - State lives in `localStorage` under `sysco-inventory-v1` /
   `nk-champion-tracker-v1` as `{ __v: 2, stamp, data, dirty, base, baseIso }` —
-  the app state is in `.data` (`stocks`, `caps`, `reord`, `orderOv`, `packcfg`,
-  `counts`, `receipts`, `orders`, `cycle`).
+  the app state is in `.data` (`stocks`, `stockAt`, `caps`, `reord`, `orderOv`,
+  `packcfg`, `counts`, `receipts`, `orders`, `cycle`).
 - A Supabase row per app mirrors the same blob for cross-device sync
   (last-write-wins with per-field merge). Offline works; sync resumes when back
   online. Manual export/import codes exist in the sync sheet.
