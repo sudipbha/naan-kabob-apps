@@ -86,7 +86,7 @@ const sanitizeData = (d) => {
     stocks: numMap(d.stocks),
     caps: numMap(d.caps, (v) => v > 0),
     reord: numMap(d.reord),
-    orderOv: numMap(d.orderOv),
+    orderOv: numMap(d.orderOv, (v) => v > 0),
     packcfg: objMap(d.packcfg),
     stockAt: (() => { const o = {}; const m = d.stockAt; if (m && typeof m === "object" && !Array.isArray(m)) for (const k of Object.keys(m)) { const v = m[k]; if (typeof v === "string" && !isNaN(new Date(v).getTime())) o[k] = v; } return o; })(),
     counts: recArr(d.counts, "stocks", 12),
@@ -581,7 +581,7 @@ function ChampionTracker() {
     if (v !== "" && v !== null && isNaN(num)) return;
     setOrderOv((o) => {
       const n = { ...o };
-      if (v === "" || v === null || num < 0) delete n[id];
+      if (v === "" || v === null || num <= 0) delete n[id];
       else n[id] = Math.max(0, round1(num));
       return n;
     });
