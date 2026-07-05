@@ -1,0 +1,7 @@
+# Netlify deploys are FROZEN (account out of credits) — GitHub Pages is the live host.
+# Root copy of the freeze: the per-app netlify.toml files in sysco/ and champion/
+# only apply when the Netlify site's base directory points there; this covers
+# sites reading config from the repo root (the source of stray PR preview builds).
+# To re-enable: restore  ignore = "git diff --quiet ${CACHED_COMMIT_REF:-HEAD^} ${COMMIT_REF:-HEAD} ."
+[build]
+  ignore = "exit 0"
