@@ -88,6 +88,7 @@ const sanitizeData = (d) => {
     reord: numMap(d.reord),
     orderOv: numMap(d.orderOv),
     packcfg: objMap(d.packcfg),
+    stockAt: (() => { const o = {}; const m = d.stockAt; if (m && typeof m === "object" && !Array.isArray(m)) for (const k of Object.keys(m)) { const v = m[k]; if (typeof v === "string" && !isNaN(new Date(v).getTime())) o[k] = v; } return o; })(),
     counts: recArr(d.counts, "stocks", 12),
     receipts: recArr(d.receipts, "items", 50),
     orders: recArr(d.orders, "items", 20),
@@ -97,7 +98,7 @@ const sanitizeData = (d) => {
 const mergeData = (base, local, remote) => {
   base = base || {};
   const out = {};
-  ["stocks", "caps", "reord", "orderOv", "packcfg"].forEach((f) => {
+  ["stocks", "caps", "reord", "orderOv", "packcfg", "stockAt"].forEach((f) => {
     const b = base[f] || {}, l = local[f] || {}, r = remote[f] || {};
     const m = Object.assign({}, r);
     const ids = Object.keys(Object.assign({}, b, l));
@@ -302,6 +303,7 @@ function ChampionTracker() {
   const [reord, setReord] = useState({});
   const [orderOv, setOrderOv] = useState({});
   const [packcfg, setPackcfg] = useState({});
+  const [stockAt, setStockAt] = useState({});
   const [showSync, setShowSync] = useState(false);
   const [importText, setImportText] = useState("");
   const [view, setView] = useState("count");
@@ -331,7 +333,7 @@ function ChampionTracker() {
   const failsRef = useRef(0);
   const applyingRef = useRef(false);
   const loadOkRef = useRef(false);
-  dataRef.current = { stocks, cycle, counts, receipts, caps, reord, orderOv, packcfg, orders };
+  dataRef.current = { stocks, cycle, counts, receipts, caps, reord, orderOv, packcfg, stockAt, orders };
   const applyData = (d, suppressSave) => {
     if (suppressSave) applyingRef.current = true;
     setStocks(d.stocks || {});
@@ -342,6 +344,7 @@ function ChampionTracker() {
     setCaps(d.caps || {});
     setReord(d.reord || {});
     setPackcfg(d.packcfg || {});
+    setStockAt(d.stockAt || {});
     setOrderOv(d.orderOv || {});
   };
   const flushSave = async (keepalive) => {
@@ -495,7 +498,7 @@ function ChampionTracker() {
         saveT.current = null;
       }
     };
-  }, [stocks, cycle, counts, receipts, caps, reord, orderOv, packcfg, orders, loaded]);
+  }, [stocks, cycle, counts, receipts, caps, reord, orderOv, packcfg, stockAt, orders, loaded]);
   useEffect(() => {
     if (!loaded) return;
     const onVis = () => {
@@ -532,10 +535,16 @@ function ChampionTracker() {
         delete n[id];
         return n;
       });
+      setStockAt((m) => {
+        const n = { ...m };
+        delete n[id];
+        return n;
+      });
     } else {
       const num = parseNum(v);
       if (isNaN(num)) return;
       setStocks((s) => ({ ...s, [id]: Math.max(0, round1(num)) }));
+      setStockAt((m) => ({ ...m, [id]: (/* @__PURE__ */ new Date()).toISOString() }));
     }
     clearOrderOv(id);
   };
@@ -604,9 +613,10 @@ function ChampionTracker() {
   };
   const resetCounts = () => {
     if (!window.confirm("Reset all shelf counts?\n\nThis clears every on-hand number so you can recount from scratch. Your saved count history, deliveries, and max/reorder settings are kept.\n\nYou can still tap Undo right after.")) return;
-    setUndoSnap({ stocks: { ...stocks }, orderOv: { ...orderOv } });
+    setUndoSnap({ stocks: { ...stocks }, orderOv: { ...orderOv }, stockAt: { ...stockAt } });
     setStocks({});
     setOrderOv({});
+    setStockAt({});
     if (undoT.current) clearTimeout(undoT.current);
     undoT.current = setTimeout(() => setUndoSnap(null), 3e4);
   };
@@ -616,6 +626,7 @@ function ChampionTracker() {
     else {
       setStocks(undoSnap.stocks);
       setOrderOv(undoSnap.orderOv);
+      setStockAt(undoSnap.stockAt || {});
     }
     setUndoSnap(null);
     if (undoT.current) clearTimeout(undoT.current);
@@ -629,12 +640,20 @@ function ChampionTracker() {
     }
     const applied = Object.keys(items).filter((id) => stocks[id] !== void 0);
     const skipped = Object.keys(items).length - applied.length;
+    const estOf = {};
+    rows.forEach((r) => { if (r.cur !== void 0) estOf[r.id] = r.cur; });
     setStocks((s) => {
       const n = { ...s };
       for (const [id, q] of Object.entries(items)) {
         if (n[id] === void 0) continue;
-        n[id] = round1(n[id] + q);
+        n[id] = round1((estOf[id] != null ? estOf[id] : n[id]) + q);
       }
+      return n;
+    });
+    setStockAt((m) => {
+      const n = { ...m };
+      const iso = (/* @__PURE__ */ new Date()).toISOString();
+      for (const id of applied) n[id] = iso;
       return n;
     });
     setReceipts((r) => [...r, { date: (/* @__PURE__ */ new Date()).toISOString(), items, note: recvNote.trim(), applied }].slice(-50));
@@ -653,6 +672,14 @@ function ChampionTracker() {
       for (const [id, q] of Object.entries(last.items || {})) {
         if (appl && appl.indexOf(id) === -1) continue;
         if (n[id] !== void 0) n[id] = Math.max(0, round1(n[id] - q));
+      }
+      return n;
+    });
+    setStockAt((m) => {
+      const n = { ...m };
+      const iso = (/* @__PURE__ */ new Date()).toISOString();
+      for (const id of Object.keys(last.items || {})) {
+        if (!appl || appl.indexOf(id) !== -1) n[id] = iso;
       }
       return n;
     });
@@ -714,14 +741,8 @@ function ChampionTracker() {
   const rows = useMemo(() => ITEMS.map((it) => {
     const cap = caps[it.id] != null ? caps[it.id] : capOf(it);
     const rp = Math.min(cap, reord[it.id] != null ? reord[it.id] : REORD[it.id] != null ? REORD[it.id] : cap / 2);
-    const cur = stocks[it.id];
     const pk = packcfg[it.id] || {};
     const bk = pk.bk != null ? !!pk.bk : !!it.bk;
-    const st = bk ? "backup" : statusOf(cur, cap, rp);
-    let autoNeed = bk || cur === void 0 ? 0 : Math.max(0, Math.ceil(round1(cap - cur)));
-    let projShort = false;
-    let covered = false;
-    const ov = orderOv[it.id] != null;
     const cu = pk.u || it.cu || classifyUnit(it);
     const cpcSet = pk.pc != null ? pk.pc : it.cpc != null ? it.cpc : null;
     const confirmed = pk.pc != null || (it.cpc != null && !it.cpcTBD);
@@ -732,11 +753,34 @@ function ChampionTracker() {
     const base = baselineOf(it, cpc);
     const daily = dailyOf[it.id] != null ? dailyOf[it.id] : base ? base.daily : void 0;
     const dailySrc = dailyOf[it.id] != null ? "measured" : base ? "baseline" : null;
+    const rWd = rateOf[it.id] ? rateOf[it.id].wd : base ? base.bwd / base.ppcu : null;
+    const rWe = rateOf[it.id] ? rateOf[it.id].we : base ? base.bwe / base.ppcu : null;
+    const rawCur = stocks[it.id];
+    const countedAt = stockAt[it.id];
+    let cur = rawCur;
+    let aged = false;
+    if (!bk && rawCur !== void 0 && countedAt && rWd != null && rWe != null) {
+      const d0 = new Date(countedAt);
+      const full = Math.floor(daysBetween(countedAt, (/* @__PURE__ */ new Date()).toISOString()));
+      let awd = 0, awe = 0;
+      for (let k = 1; k <= Math.min(full, 60); k++) {
+        const g = new Date(d0.getTime() + k * 864e5).getDay();
+        if (g === 5 || g === 6 || g === 0) awe += 1; else awd += 1;
+      }
+      const used = rWd * awd + rWe * awe;
+      if (used > 0.05) {
+        cur = Math.max(0, round1(rawCur - used));
+        aged = cur < rawCur;
+      }
+    }
+    const st = bk ? "backup" : statusOf(cur, cap, rp);
+    let autoNeed = bk || cur === void 0 ? 0 : Math.max(0, Math.ceil(round1(cap - cur)));
+    let projShort = false;
+    let covered = false;
+    const ov = orderOv[it.id] != null;
     const daysLeft = daily > 0 && cur !== void 0 ? cur / daily : null;
     const horizon = MAX_DELIVERY_GAP + 1;
     const sugg = !bk && daily > 0 ? Math.ceil(daily * horizon) : null;
-    const rWd = rateOf[it.id] ? rateOf[it.id].wd : base ? base.bwd / base.ppcu : null;
-    const rWe = rateOf[it.id] ? rateOf[it.id].we : base ? base.bwe / base.ppcu : null;
     if (!bk && rWd != null && rWe != null && cur !== void 0) {
       const target = Math.min(cap, rWd * dwin.full.wd + rWe * dwin.full.we);
       const windowNeed = Math.max(0, Math.ceil(round1(target - cur)));
@@ -746,8 +790,8 @@ function ChampionTracker() {
     }
     const need = ov ? orderOv[it.id] : autoNeed;
     const wks = it.use > 0 && cur !== void 0 ? cur / (it.use * cpc) : null;
-    return { ...it, bk, cap, cur, status: st, rp, need, autoNeed, ov, wks, cpc, cu, ou, packTBD, packVerify, orderedDaysAgo: orderAge[it.id], daily, dailySrc, base, projShort, covered, coveredTill: dwin.followingName, shortBefore: dwin.nextName, daysLeft, horizon, sugg, orderLastsDays: daily > 0 && need > 0 ? Math.round((cpc > 1 ? Math.ceil(need / cpc) * cpc : need) / daily) : null, orderCs: Math.ceil(need / cpc), caseOnHand: cur !== void 0 ? round1(cur / cpc) : null };
-  }), [stocks, caps, reord, orderOv, packcfg, orderAge, dailyOf, rateOf, dwin]);
+    return { ...it, bk, cap, cur, rawCur, aged, countedAt, status: st, rp, need, autoNeed, ov, wks, cpc, cu, ou, packTBD, packVerify, orderedDaysAgo: orderAge[it.id], daily, dailySrc, base, projShort, covered, coveredTill: dwin.followingName, shortBefore: dwin.nextName, daysLeft, horizon, sugg, orderLastsDays: daily > 0 && need > 0 ? Math.round((cpc > 1 ? Math.ceil(need / cpc) * cpc : need) / daily) : null, orderCs: Math.ceil(need / cpc), caseOnHand: cur !== void 0 ? round1(cur / cpc) : null };
+  }), [stocks, stockAt, caps, reord, orderOv, packcfg, orderAge, dailyOf, rateOf, dwin, today]);
   const counted = useMemo(() => rows.filter((r) => !r.bk && r.cur !== void 0).length, [rows]);
   const variance = useMemo(() => {
     if (counts.length < 2) return null;
@@ -838,11 +882,11 @@ ${lines.join("\n")}`;
   const lastCount = counts.length ? counts[counts.length - 1] : null;
   const exportCode = useMemo(() => {
     try {
-      return btoa(encodeURIComponent(JSON.stringify({ stocks, cycle, counts, receipts, caps, reord, orderOv, packcfg, orders })));
+      return btoa(encodeURIComponent(JSON.stringify({ stocks, cycle, counts, receipts, caps, reord, orderOv, packcfg, stockAt, orders })));
     } catch (e) {
       return "";
     }
-  }, [stocks, cycle, counts, receipts, caps, reord, orderOv, packcfg, orders]);
+  }, [stocks, cycle, counts, receipts, caps, reord, orderOv, packcfg, stockAt, orders]);
   const copyExport = async () => {
     try {
       await navigator.clipboard.writeText(exportCode);
@@ -1051,7 +1095,7 @@ function CountCard({ r, rail, setStock, setCap, setReorder, setOrderQty, setPack
       React.createElement("div", { className: "min-w-0" },
         React.createElement("div", { className: "text-[15px] font-bold leading-snug truncate" }, r.name, r.tag && React.createElement("span", { className: "ml-2 text-[8px] font-black tracking-widest px-1.5 py-0.5 rounded align-middle", style: { background: C.ink, color: C.saffron } }, r.tag)),
         React.createElement("div", { className: "text-[10px] font-mono mt-0.5 truncate", style: { color: C.steel } }, r.code, r.alt ? " · " + r.alt : "", " · ", r.pack, sub)),
-      React.createElement("div", { className: "flex flex-col items-end gap-1 shrink-0" }, React.createElement("div", { className: "text-[10px] font-black px-2.5 py-1 rounded-md", style: { background: meta.color + "22", color: meta.color } }, meta.label), r.cur !== void 0 && r.cap > 0 && r.cur > r.cap && React.createElement("div", { className: "text-[9px] font-black px-2 py-0.5 rounded", style: { background: C.steel + "22", color: C.steel } }, "over Max " + r.cap), r.orderedDaysAgo != null && React.createElement("div", { className: "text-[9px] font-black px-2 py-0.5 rounded", style: { background: C.mint + "22", color: C.mint } }, "ordered " + (r.orderedDaysAgo === 0 ? "today" : r.orderedDaysAgo + "d ago")), !r.bk && r.daysLeft != null && r.daysLeft < 5 && React.createElement("div", { className: "text-[9px] font-black px-2 py-0.5 rounded", style: { background: C.ember + "22", color: C.ember } }, "≈" + Math.max(0, Math.round(r.daysLeft)) + "d left"))),
+      React.createElement("div", { className: "flex flex-col items-end gap-1 shrink-0" }, React.createElement("div", { className: "text-[10px] font-black px-2.5 py-1 rounded-md", style: { background: meta.color + "22", color: meta.color } }, meta.label), r.aged && React.createElement("div", { className: "text-[9px] font-black px-2 py-0.5 rounded", style: { background: C.ink, color: C.steel } }, "est \xB7 counted " + r.rawCur + " " + shortDate(r.countedAt)), r.cur !== void 0 && r.cap > 0 && r.cur > r.cap && React.createElement("div", { className: "text-[9px] font-black px-2 py-0.5 rounded", style: { background: C.steel + "22", color: C.steel } }, "over Max " + r.cap), r.orderedDaysAgo != null && React.createElement("div", { className: "text-[9px] font-black px-2 py-0.5 rounded", style: { background: C.mint + "22", color: C.mint } }, "ordered " + (r.orderedDaysAgo === 0 ? "today" : r.orderedDaysAgo + "d ago")), !r.bk && r.daysLeft != null && r.daysLeft < 5 && React.createElement("div", { className: "text-[9px] font-black px-2 py-0.5 rounded", style: { background: C.ember + "22", color: C.ember } }, "≈" + Math.max(0, Math.round(r.daysLeft)) + "d left"))),
     React.createElement("div", { className: "relative mt-3 mb-3" },
       React.createElement("div", { className: "flex gap-[3px]" }, Array.from({ length: segMax }).map(function (_, i) {
         const on = i < Math.round(filled);
