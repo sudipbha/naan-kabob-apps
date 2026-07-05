@@ -72,13 +72,23 @@ weekday/weekend-aware rates, capped at the item's Max (rack space):
 - Suggested Reorder-at in Levels = usage × (longest delivery gap + 1 day).
 - Slow items naturally skip order cycles; nothing should run out between trucks.
 
-## 5. What the app does NOT do (yet)
+## 5. Stock aging (auto-deduction)
 
-- **Stock numbers are as-of the last count.** The app does *not* automatically
-  deduct daily usage from the on-hand number as days pass. Projections
-  (days-left, order quantities) apply the rates *forward from the count*, but a
-  card still shows the number that was typed until someone counts again or logs
-  a delivery. When judging "current" stock, check when the last count was saved.
+Every on-hand number remembers **when it was set** (typing a count, tapping ±,
+or receiving a delivery all stamp it). From then on, the card and all order
+math use the **estimated current stock**: the anchored number minus
+weekday/weekend usage over the full days elapsed since (max 60 days of aging,
+floored at 0). Aged cards show a grey **"est · counted N ‹date›"** chip so an
+estimate is never mistaken for a fresh count.
+
+- A fresh count or ± tap replaces the estimate with reality and re-anchors.
+- Deliveries add onto the *estimate* (not the stale anchored number) and
+  re-anchor the timestamp.
+- Backup items and numbers that were set before this feature existed (no
+  timestamp yet) do not age.
+- For reviewers: `stocks` in storage holds the anchored raw values;
+  `stockAt[id]` holds the anchor timestamps; the displayed/effective value is
+  derived at render time.
 
 ## 6. The five tabs
 
