@@ -48,7 +48,9 @@ Small chips: `over Max N` (stocked above Max — either fine or the Max is stale
 `ordered Nd ago` (an order was logged and not yet received), `≈Nd left`
 (projected run-out; hidden when > 90 days because that's extrapolation, not
 information), `short before Tue/Fri` (won't last to the next delivery),
-`est · counted N ‹date›` (the shown stock is an aged estimate — see §5).
+`counted today / counted ‹date›` (when this item's number was last set),
+which becomes `est · counted N ‹date›` once the shown stock is an aged
+estimate — see §5. No chip means the number predates count-date tracking.
 
 ## 3. Usage rates: baseline → measured
 
