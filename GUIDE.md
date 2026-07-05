@@ -96,6 +96,12 @@ estimate is never mistaken for a fresh count.
    what's on the shelf, in counting units. "Levels" on each card edits Max,
    Reorder-at, pack config, and the Backup toggle. **Save count** stores a
    dated snapshot (this is what powers measured usage — save after every walk).
+   The smaller box on the card's right is the **order box**: the app fills it
+   with what to order (in counting units; the label under it names the unit)
+   and it feeds the Order tab. Typing a number there is a manual override that
+   beats the suggestion; typing **0 clears the override back to automatic**
+   (there is no way to silently mute an item). Re-counting the item also
+   clears any override.
 2. **Receive** — when a truck arrives, enter what actually came, per item, in
    counting units ("receive in sleeves"). An "expected N · date" chip prefills
    from the last logged order. Adds to on-hand and records a receipt.
