@@ -287,8 +287,10 @@ const STATUS_META = {
   order: { label: "ORDER", color: C.ember },
   low: { label: "LOW", color: C.saffron },
   ok: { label: "OK", color: C.mint },
-  none: { label: "COUNT", color: C.steel }
+  none: { label: "COUNT", color: C.steel },
+  backup: { label: "BACKUP", color: C.steel }
 };
+const BACKUP_NOTE = "backup \u00b7 order from Sysco";
 function ChampionTracker() {
   const [stocks, setStocks] = useState({});
   const [cycle, setCycle] = useState(2);
@@ -705,12 +707,13 @@ function ChampionTracker() {
     const cap = caps[it.id] != null ? caps[it.id] : capOf(it);
     const rp = Math.min(cap, reord[it.id] != null ? reord[it.id] : REORD[it.id] != null ? REORD[it.id] : cap / 2);
     const cur = stocks[it.id];
-    const st = statusOf(cur, cap, rp);
-    let autoNeed = cur === void 0 ? 0 : Math.max(0, Math.ceil(round1(cap - cur)));
+    const pk = packcfg[it.id] || {};
+    const bk = pk.bk != null ? !!pk.bk : !!it.bk;
+    const st = bk ? "backup" : statusOf(cur, cap, rp);
+    let autoNeed = bk || cur === void 0 ? 0 : Math.max(0, Math.ceil(round1(cap - cur)));
     let projShort = false;
     let covered = false;
     const ov = orderOv[it.id] != null;
-    const pk = packcfg[it.id] || {};
     const cu = pk.u || it.cu || classifyUnit(it);
     const cpcSet = pk.pc != null ? pk.pc : it.cpc != null ? it.cpc : null;
     const confirmed = pk.pc != null || (it.cpc != null && !it.cpcTBD);
@@ -723,10 +726,10 @@ function ChampionTracker() {
     const dailySrc = dailyOf[it.id] != null ? "measured" : base ? "baseline" : null;
     const daysLeft = daily > 0 && cur !== void 0 ? cur / daily : null;
     const horizon = MAX_DELIVERY_GAP + 1;
-    const sugg = daily > 0 ? Math.ceil(daily * horizon) : null;
+    const sugg = !bk && daily > 0 ? Math.ceil(daily * horizon) : null;
     const rWd = rateOf[it.id] ? rateOf[it.id].wd : base ? base.bwd / base.ppcu : null;
     const rWe = rateOf[it.id] ? rateOf[it.id].we : base ? base.bwe / base.ppcu : null;
-    if (rWd != null && rWe != null && cur !== void 0) {
+    if (!bk && rWd != null && rWe != null && cur !== void 0) {
       const target = Math.min(cap, rWd * dwin.full.wd + rWe * dwin.full.we);
       const windowNeed = Math.max(0, Math.ceil(round1(target - cur)));
       projShort = cur < rWd * dwin.toNext.wd + rWe * dwin.toNext.we;
@@ -735,9 +738,9 @@ function ChampionTracker() {
     }
     const need = ov ? orderOv[it.id] : autoNeed;
     const wks = it.use > 0 && cur !== void 0 ? cur / (it.use * cpc) : null;
-    return { ...it, cap, cur, status: st, rp, need, autoNeed, ov, wks, cpc, cu, ou, packTBD, packVerify, orderedDaysAgo: orderAge[it.id], daily, dailySrc, base, projShort, covered, coveredTill: dwin.followingName, shortBefore: dwin.nextName, daysLeft, horizon, sugg, orderLastsDays: daily > 0 && need > 0 ? Math.round((cpc > 1 ? Math.ceil(need / cpc) * cpc : need) / daily) : null, orderCs: Math.ceil(need / cpc), caseOnHand: cur !== void 0 ? round1(cur / cpc) : null };
+    return { ...it, bk, cap, cur, status: st, rp, need, autoNeed, ov, wks, cpc, cu, ou, packTBD, packVerify, orderedDaysAgo: orderAge[it.id], daily, dailySrc, base, projShort, covered, coveredTill: dwin.followingName, shortBefore: dwin.nextName, daysLeft, horizon, sugg, orderLastsDays: daily > 0 && need > 0 ? Math.round((cpc > 1 ? Math.ceil(need / cpc) * cpc : need) / daily) : null, orderCs: Math.ceil(need / cpc), caseOnHand: cur !== void 0 ? round1(cur / cpc) : null };
   }), [stocks, caps, reord, orderOv, packcfg, orderAge, dailyOf, rateOf, dwin]);
-  const counted = useMemo(() => rows.filter((r) => r.cur !== void 0).length, [rows]);
+  const counted = useMemo(() => rows.filter((r) => !r.bk && r.cur !== void 0).length, [rows]);
   const variance = useMemo(() => {
     if (counts.length < 2) return null;
     const prev = counts[counts.length - 2];
@@ -939,12 +942,12 @@ ${lines.join("\n")}`;
 }
 function CountView({ rows, counted, countMode, setCountMode, setStock, setCap, setReorder, setOrderQty, setPackVal, cycle, setCycle, saveCount, resetCounts, lastCount, setShowSync }) {
   const [query, setQuery] = useState("");
-  const counts = { order: 0, low: 0, ok: 0, none: 0 };
+  const counts = { order: 0, low: 0, ok: 0, none: 0, backup: 0 };
   rows.forEach((r) => counts[r.status]++);
   const q = query.trim().toLowerCase();
   const filtered = q ? rows.filter((r) => [r.name, r.code, r.alt, r.tag, r.desc].some((f) => f && String(f).toLowerCase().includes(q))) : rows;
   const sorted = countMode === "status" ? [...filtered].sort((a, b) => {
-    const rank = { order: 0, low: 1, none: 2, ok: 3 };
+    const rank = { order: 0, low: 1, none: 2, ok: 3, backup: 4 };
     return rank[a.status] - rank[b.status] || b.use - a.use;
   }) : filtered;
   return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "px-4 pt-5 pb-3 sticky top-0 z-20", style: { background: C.bg, borderBottom: `1px solid ${C.line}` } }, /* @__PURE__ */ React.createElement("div", { className: "text-[10px] uppercase tracking-[0.25em]", style: { color: C.saffron } }, "Naan Kabob"), /* @__PURE__ */ React.createElement("div", { className: "text-2xl font-black tracking-tight" }, "Champion shelf count"), /* @__PURE__ */ React.createElement("div", { className: "relative mt-3" }, /* @__PURE__ */ React.createElement(Search, { size: 16, style: { color: C.steel, position: "absolute", left: 11, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" } }), /* @__PURE__ */ React.createElement("input", { value: query, onChange: (e) => setQuery(e.target.value), placeholder: "Search name, code, or alt #…", inputMode: "search", autoCapitalize: "none", autoCorrect: "off", spellCheck: false, className: "w-full h-11 rounded-lg outline-none", style: { background: C.ink, color: C.naan, border: `1px solid ${q ? C.saffron : C.line}`, paddingLeft: 36, paddingRight: query ? 60 : 12, fontSize: 16 } }), query && /* @__PURE__ */ React.createElement("button", { onClick: () => setQuery(""), "aria-label": "clear search", className: "absolute flex items-center justify-center rounded-md active:scale-95", style: { right: 8, top: "50%", transform: "translateY(-50%)", width: 28, height: 28, background: C.cardUp, color: C.steel } }, /* @__PURE__ */ React.createElement(X, { size: 15 }))), q && /* @__PURE__ */ React.createElement("div", { className: "text-[11px] mt-1.5 px-0.5", style: { color: C.steel } }, filtered.length, " match", filtered.length === 1 ? "" : "es", " for “", query.trim(), "”"), /* @__PURE__ */ React.createElement("div", { className: "flex gap-2 mt-3" }, [["order", counts.order], ["low", counts.low], ["ok", counts.ok], ["none", counts.none]].map(([k, n]) => /* @__PURE__ */ React.createElement("div", { key: k, className: "flex-1 rounded-lg py-2 text-center", style: { background: C.card } }, /* @__PURE__ */ React.createElement("div", { className: "text-lg font-black", style: { color: STATUS_META[k].color } }, n), /* @__PURE__ */ React.createElement("div", { className: "text-[9px] uppercase tracking-wider", style: { color: C.steel } }, STATUS_META[k].label)))), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2 mt-3" }, /* @__PURE__ */ React.createElement("div", { className: "flex rounded-lg overflow-hidden text-xs font-bold", style: { border: `1px solid ${C.line}` } }, [["walk", "Shelf walk"], ["status", "By status"]].map(([v, lbl]) => /* @__PURE__ */ React.createElement(
@@ -967,7 +970,7 @@ function CountView({ rows, counted, countMode, setCountMode, setStock, setCap, s
     " Save count (",
     counted,
     "/",
-    rows.length,
+    rows.filter((r) => !r.bk).length,
     ")"
   ), /* @__PURE__ */ React.createElement("div", { className: "text-[10px]", style: { color: C.steel } }, lastCount ? `last saved ${shortDate(lastCount.date)}` : "no count saved yet"), /* @__PURE__ */ React.createElement(
     "button",
@@ -1032,7 +1035,7 @@ function CountCard({ r, rail, setStock, setCap, setReorder, setOrderQty, setPack
   const filled = r.cur === void 0 ? 0 : Math.min(segMax, r.cur);
   const tickAt = Math.min(segMax, r.rp);
   const sub = r.cpc > 1 ? " · in " + unitLabel(r.cu) : "";
-  const foot = r.cpc > 1 && r.caseOnHand != null ? "≈ " + r.caseOnHand + " " + r.ou + (r.orderCs > 0 ? " · order " + r.orderCs + " " + r.ou : "") + (r.daysLeft != null ? " · ≈" + round1(r.daysLeft) + "d left" : "") : (r.cur === void 0 ? "not counted yet" : r.daysLeft != null ? "≈ " + round1(r.daysLeft) + "d left" : r.wks === null ? "" : "≈ " + round1(r.wks) + " wk left");
+  const foot = r.bk ? BACKUP_NOTE : r.cpc > 1 && r.caseOnHand != null ? "≈ " + r.caseOnHand + " " + r.ou + (r.orderCs > 0 ? " · order " + r.orderCs + " " + r.ou : "") + (r.daysLeft != null ? " · ≈" + round1(r.daysLeft) + "d left" : "") : (r.cur === void 0 ? "not counted yet" : r.daysLeft != null ? "≈ " + round1(r.daysLeft) + "d left" : r.wks === null ? "" : "≈ " + round1(r.wks) + " wk left");
   const footAll = foot + (r.covered ? " · covered past " + r.coveredTill : "");
   const fld = (extra) => Object.assign({ background: C.ink, color: C.naan, border: "1px solid " + C.line, fontSize: 16, height: 32 }, extra || {});
   return React.createElement("div", { className: "rounded-xl p-3.5", style: { background: C.card, borderLeft: "3px solid " + rail } },
@@ -1040,7 +1043,7 @@ function CountCard({ r, rail, setStock, setCap, setReorder, setOrderQty, setPack
       React.createElement("div", { className: "min-w-0" },
         React.createElement("div", { className: "text-[15px] font-bold leading-snug truncate" }, r.name, r.tag && React.createElement("span", { className: "ml-2 text-[8px] font-black tracking-widest px-1.5 py-0.5 rounded align-middle", style: { background: C.ink, color: C.saffron } }, r.tag)),
         React.createElement("div", { className: "text-[10px] font-mono mt-0.5 truncate", style: { color: C.steel } }, r.code, r.alt ? " · " + r.alt : "", " · ", r.pack, sub)),
-      React.createElement("div", { className: "flex flex-col items-end gap-1 shrink-0" }, React.createElement("div", { className: "text-[10px] font-black px-2.5 py-1 rounded-md", style: { background: meta.color + "22", color: meta.color } }, meta.label), r.orderedDaysAgo != null && React.createElement("div", { className: "text-[9px] font-black px-2 py-0.5 rounded", style: { background: C.mint + "22", color: C.mint } }, "ordered " + (r.orderedDaysAgo === 0 ? "today" : r.orderedDaysAgo + "d ago")), r.daysLeft != null && r.daysLeft < 5 && React.createElement("div", { className: "text-[9px] font-black px-2 py-0.5 rounded", style: { background: C.ember + "22", color: C.ember } }, "≈" + Math.max(0, Math.round(r.daysLeft)) + "d left"))),
+      React.createElement("div", { className: "flex flex-col items-end gap-1 shrink-0" }, React.createElement("div", { className: "text-[10px] font-black px-2.5 py-1 rounded-md", style: { background: meta.color + "22", color: meta.color } }, meta.label), r.orderedDaysAgo != null && React.createElement("div", { className: "text-[9px] font-black px-2 py-0.5 rounded", style: { background: C.mint + "22", color: C.mint } }, "ordered " + (r.orderedDaysAgo === 0 ? "today" : r.orderedDaysAgo + "d ago")), !r.bk && r.daysLeft != null && r.daysLeft < 5 && React.createElement("div", { className: "text-[9px] font-black px-2 py-0.5 rounded", style: { background: C.ember + "22", color: C.ember } }, "≈" + Math.max(0, Math.round(r.daysLeft)) + "d left"))),
     React.createElement("div", { className: "relative mt-3 mb-3" },
       React.createElement("div", { className: "flex gap-[3px]" }, Array.from({ length: segMax }).map(function (_, i) {
         const on = i < Math.round(filled);
@@ -1062,10 +1065,11 @@ function CountCard({ r, rail, setStock, setCap, setReorder, setOrderQty, setPack
     showLevels && React.createElement("div", { className: "mt-2 pt-2.5 space-y-2.5", style: { borderTop: "1px solid " + C.line } },
       React.createElement("div", { className: "flex items-center gap-5" },
         React.createElement("label", { className: "flex items-center gap-1.5 text-[11px]", style: { color: C.steel } }, "Max", React.createElement(NumField, { value: r.cap, onCommit: (s) => setCap(r.id, s), className: "w-12 text-center font-black rounded outline-none", style: fld({ color: C.naan }) })),
-        React.createElement("label", { className: "flex items-center gap-1.5 text-[11px]", style: { color: C.steel } }, "Reorder at", React.createElement(NumField, { value: r.rp, onCommit: (s) => setReorder(r.id, s), className: "w-12 text-center font-black rounded outline-none", style: fld({ color: C.saffron }) }))), r.sugg != null ? React.createElement("div", { className: "flex items-center flex-wrap gap-2 text-[11px]", style: { color: C.steel } }, "suggested reorder:", React.createElement("span", { style: { color: C.naan, fontWeight: 800 } }, r.sugg), React.createElement("span", null, "(≈" + r.horizon + "d — longest delivery gap + 1 · " + (r.dailySrc === "measured" ? "measured usage" : "baseline") + ")"), r.sugg === r.rp ? React.createElement("span", { style: { color: C.mint, fontWeight: 800 } }, "✓ applied") : React.createElement("button", { onClick: () => setReorder(r.id, r.sugg), className: "px-2.5 py-1 rounded-lg font-black active:scale-95", style: { background: C.saffron, color: C.ink } }, "Apply")) : React.createElement("div", { className: "text-[10px]", style: { color: C.steel } }, "No usage data yet — save two counts a few days apart and a suggested reorder appears here."), r.base && React.createElement("div", { className: "text-[10px]", style: { color: C.steel } }, "baseline: " + r.base.bwd + "/day wk · " + r.base.bwe + "/day wknd (pieces)"),
+        React.createElement("label", { className: "flex items-center gap-1.5 text-[11px]", style: { color: C.steel } }, "Reorder at", React.createElement(NumField, { value: r.rp, onCommit: (s) => setReorder(r.id, s), className: "w-12 text-center font-black rounded outline-none", style: fld({ color: C.saffron }) }))), r.bk ? React.createElement("div", { className: "text-[10px]", style: { color: C.steel } }, "Backup item \u2014 no auto-reorder or warnings. Type an order quantity by hand if the main supplier can\u2019t deliver.") : r.sugg != null ? React.createElement("div", { className: "flex items-center flex-wrap gap-2 text-[11px]", style: { color: C.steel } }, "suggested reorder:", React.createElement("span", { style: { color: C.naan, fontWeight: 800 } }, r.sugg), React.createElement("span", null, "(≈" + r.horizon + "d — longest delivery gap + 1 · " + (r.dailySrc === "measured" ? "measured usage" : "baseline") + ")"), r.sugg === r.rp ? React.createElement("span", { style: { color: C.mint, fontWeight: 800 } }, "✓ applied") : React.createElement("button", { onClick: () => setReorder(r.id, r.sugg), className: "px-2.5 py-1 rounded-lg font-black active:scale-95", style: { background: C.saffron, color: C.ink } }, "Apply")) : React.createElement("div", { className: "text-[10px]", style: { color: C.steel } }, "No usage data yet — save two counts a few days apart and a suggested reorder appears here."), r.base && React.createElement("div", { className: "text-[10px]", style: { color: C.steel } }, "baseline: " + r.base.bwd + "/day wk · " + r.base.bwe + "/day wknd (pieces)"),
       React.createElement("div", { className: "flex items-center gap-4" },
         React.createElement("label", { className: "flex items-center gap-1.5 text-[11px]", style: { color: C.steel } }, "Count in", React.createElement("input", { value: r.cu && r.cu !== "cs" ? r.cu : "", placeholder: "cs", autoCapitalize: "none", autoCorrect: "off", spellCheck: false, onChange: (e) => setPackVal(r.id, { u: e.target.value.trim() || null }), className: "w-16 text-center font-bold rounded outline-none", style: fld() })),
         React.createElement("label", { className: "flex items-center gap-1.5 text-[11px]", style: { color: C.steel } }, "per case", React.createElement(NumField, { value: r.cpc > 1 ? r.cpc : null, placeholder: "1", onCommit: (s) => setPackVal(r.id, { pc: s === "" || Number(s) <= 1 ? null : Math.round(Number(s)) }), className: "w-12 text-center font-black rounded outline-none", style: fld({ color: C.naan }) }))),
+      React.createElement("label", { className: "flex items-center gap-2 text-[11px]", style: { color: C.steel } }, React.createElement("input", { type: "checkbox", checked: !!r.bk, onChange: (e) => setPackVal(r.id, { bk: e.target.checked }), style: { width: 18, height: 18, accentColor: C.saffron } }), "Backup item \u2014 no auto-reorder"),
       r.cpc > 1 && React.createElement("div", { className: "text-[10px]", style: { color: C.steel } }, "1 " + r.ou + " = " + r.cpc + " " + unitLabel(r.cu) + " · order in " + r.ou)));
 }
 const BarChart3 = ({ size = 24, ...p }) => React.createElement("svg", { width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", ...p }, React.createElement("path", { d: "M3 3v18h18" }), React.createElement("rect", { x: "7", y: "12", width: "3", height: "5", rx: "1" }), React.createElement("rect", { x: "12", y: "8", width: "3", height: "9", rx: "1" }), React.createElement("rect", { x: "17", y: "5", width: "3", height: "12", rx: "1" }));
