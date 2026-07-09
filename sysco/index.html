@@ -262,6 +262,7 @@ const railOf = (st) => (STATIONS.find((s) => s.id === st) || {}).rail || C.steel
 const round1 = (n) => Math.round(n * 10) / 10;
 const daysBetween = (a, b) => Math.max(0, (new Date(b) - new Date(a)) / 864e5);
 const shortDate = (iso) => new Date(iso).toLocaleDateString(void 0, { month: "short", day: "numeric" });
+const syncAgo = (iso) => { const m = Math.round((Date.now() - new Date(iso).getTime()) / 6e4); return m < 1 ? "just now" : m < 60 ? m + " min ago" : shortDate(iso) + " " + new Date(iso).toLocaleTimeString(void 0, { hour: "numeric", minute: "2-digit" }); };
 function statusOf(cur, cap, rp) {
   if (cur === void 0 || cur === null) return "none";
   if (cur <= rp) return "order";
@@ -299,6 +300,7 @@ function ChampionTracker() {
   const [toast, setToast] = useState("");
   const [undoSnap, setUndoSnap] = useState(null);
   const [syncErr, setSyncErr] = useState(false);
+  const [lastSync, setLastSync] = useState(null);
   const saveT = useRef(null);
   const toastT = useRef(null);
   const undoT = useRef(null);
@@ -352,6 +354,7 @@ function ChampionTracker() {
           persistLocal(dataRef.current, localStampRef.current, dirtyRef.current, baseRef.current, remoteIsoRef.current);
           failsRef.current = 0;
           setSyncErr(false);
+          setLastSync((/* @__PURE__ */ new Date()).toISOString());
           return;
         }
         const row = await cloudGet();
@@ -381,6 +384,7 @@ function ChampionTracker() {
       const row = await cloudGet();
       loadOkRef.current = true;
       failsRef.current = 0;
+      setLastSync((/* @__PURE__ */ new Date()).toISOString());
       if (row && row.data) {
         const stamp = new Date(row.updated_at).getTime();
         if (stamp > remoteStampRef.current) {
@@ -428,6 +432,7 @@ function ChampionTracker() {
       try {
         const row = await cloudGet();
         loadOkRef.current = true;
+        setLastSync((/* @__PURE__ */ new Date()).toISOString());
         const remoteStamp = row && row.data ? new Date(row.updated_at).getTime() : 0;
         const clean = row && row.data ? sanitizeData(row.data) : null;
         remoteStampRef.current = remoteStamp;
@@ -914,7 +919,7 @@ ${lines.join("\n")}`;
     { id: "usage", label: "Usage", Icon: BarChart3 },
     { id: "order", label: "Order", Icon: Send }
   ];
-  return /* @__PURE__ */ React.createElement("div", { style: { background: C.bg, minHeight: "100vh", color: C.naan, fontFamily: "ui-sans-serif, system-ui", paddingBottom: "calc(92px + env(safe-area-inset-bottom))" } }, /* @__PURE__ */ React.createElement("style", null, `* { -webkit-tap-highlight-color: transparent; } button, a { -webkit-user-select: none; user-select: none; touch-action: manipulation; }`), view === "count" && /* @__PURE__ */ React.createElement(CountView, { ...{ rows, counted, countMode, setCountMode, setStock, setCap, setReorder, setOrderQty, setPackVal, cycle, setCycle, saveCount, resetCounts, lastCount, setShowSync } }), view === "receive" && /* @__PURE__ */ React.createElement(ReceiveView, { ...{ rows, recv, setRecvQty, recvNote, setRecvNote, logDelivery, receipts, lastOrder, undoReceipt } }), view === "variance" && /* @__PURE__ */ React.createElement(VarianceView, { variance, counts, lastCount }), view === "usage" && React.createElement(UsageView, { counts, receipts }), view === "order" && /* @__PURE__ */ React.createElement(OrderView, { ...{ orderRows, orderText, cycle, copyOrder, copied, shareOrder, sentPrompt, setSentPrompt, markOrdered, orders, dwin } }), showSync && /* @__PURE__ */ React.createElement("div", { className: "fixed inset-0 z-50 flex items-end justify-center", style: { background: "rgba(0,0,0,0.6)" }, onClick: () => setShowSync(false) }, /* @__PURE__ */ React.createElement("div", { className: "w-full rounded-t-2xl p-4", style: { background: C.card, maxWidth: 520, paddingBottom: "calc(28px + env(safe-area-inset-bottom))" }, onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between mb-1" }, /* @__PURE__ */ React.createElement("div", { className: "text-lg font-black" }, "Move data between devices"), /* @__PURE__ */ React.createElement("button", { onClick: () => setShowSync(false), className: "text-sm font-bold", style: { color: C.steel } }, "Close")), /* @__PURE__ */ React.createElement("div", { className: "mt-3" }, /* @__PURE__ */ React.createElement("div", { className: "text-[11px] font-black uppercase tracking-wider mb-1", style: { color: C.saffron } }, "1 \xB7 On the device that HAS your data"), /* @__PURE__ */ React.createElement("div", { className: "text-xs mb-2", style: { color: C.steel } }, "Tap Copy, then send the code to your other device (text it to yourself, email, or Notes)."), /* @__PURE__ */ React.createElement(
+  return /* @__PURE__ */ React.createElement("div", { style: { background: C.bg, minHeight: "100vh", color: C.naan, fontFamily: "ui-sans-serif, system-ui", paddingBottom: "calc(92px + env(safe-area-inset-bottom))" } }, /* @__PURE__ */ React.createElement("style", null, `* { -webkit-tap-highlight-color: transparent; } button, a { -webkit-user-select: none; user-select: none; touch-action: manipulation; }`), view === "count" && /* @__PURE__ */ React.createElement(CountView, { ...{ rows, counted, countMode, setCountMode, setStock, setCap, setReorder, setOrderQty, setPackVal, cycle, setCycle, saveCount, resetCounts, lastCount, setShowSync } }), view === "receive" && /* @__PURE__ */ React.createElement(ReceiveView, { ...{ rows, recv, setRecvQty, recvNote, setRecvNote, logDelivery, receipts, lastOrder, undoReceipt } }), view === "variance" && /* @__PURE__ */ React.createElement(VarianceView, { variance, counts, lastCount }), view === "usage" && React.createElement(UsageView, { counts, receipts }), view === "order" && /* @__PURE__ */ React.createElement(OrderView, { ...{ orderRows, orderText, cycle, copyOrder, copied, shareOrder, sentPrompt, setSentPrompt, markOrdered, orders, dwin } }), showSync && /* @__PURE__ */ React.createElement("div", { className: "fixed inset-0 z-50 flex items-end justify-center", style: { background: "rgba(0,0,0,0.6)" }, onClick: () => setShowSync(false) }, /* @__PURE__ */ React.createElement("div", { className: "w-full rounded-t-2xl p-4", style: { background: C.card, maxWidth: 520, paddingBottom: "calc(28px + env(safe-area-inset-bottom))" }, onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between mb-1" }, /* @__PURE__ */ React.createElement("div", { className: "text-lg font-black" }, "Move data between devices"), /* @__PURE__ */ React.createElement("button", { onClick: () => setShowSync(false), className: "text-sm font-bold", style: { color: C.steel } }, "Close")), React.createElement("div", { className: "text-[11px] mb-1", style: { color: C.steel } }, lastSync ? "Cloud sync \xB7 last synced " + syncAgo(lastSync) : syncErr ? "Cloud sync \xB7 offline \u2014 changes are saved on this phone" : "Cloud sync \xB7 connecting\u2026"), /* @__PURE__ */ React.createElement("div", { className: "mt-3" }, /* @__PURE__ */ React.createElement("div", { className: "text-[11px] font-black uppercase tracking-wider mb-1", style: { color: C.saffron } }, "1 \xB7 On the device that HAS your data"), /* @__PURE__ */ React.createElement("div", { className: "text-xs mb-2", style: { color: C.steel } }, "Tap Copy, then send the code to your other device (text it to yourself, email, or Notes)."), /* @__PURE__ */ React.createElement(
     "textarea",
     {
       readOnly: true,
@@ -941,7 +946,7 @@ ${lines.join("\n")}`;
       style: importText.trim() ? { background: C.mint, color: C.ink } : { background: C.cardUp, color: C.steel }
     },
     "Load onto this device"
-  )))), syncErr && React.createElement(
+  )), React.createElement("a", { href: "../GUIDE.md", target: "_blank", rel: "noopener", className: "block text-center text-xs mt-5 underline", style: { color: C.steel } }, "How this app works \u2014 user & reviewer guide"))), syncErr && React.createElement(
     "div",
     {
       className: "fixed left-1/2 -translate-x-1/2 z-50 px-3 py-1.5 rounded-lg text-[11px] font-black shadow-lg",
@@ -978,10 +983,13 @@ ${lines.join("\n")}`;
 }
 function CountView({ rows, counted, countMode, setCountMode, setStock, setCap, setReorder, setOrderQty, setPackVal, cycle, setCycle, saveCount, resetCounts, lastCount, setShowSync }) {
   const [query, setQuery] = useState("");
+  const [verifyOnly, setVerifyOnly] = useState(false);
   const counts = { order: 0, low: 0, ok: 0, none: 0, backup: 0 };
   rows.forEach((r) => counts[r.status]++);
+  const tbd = rows.filter((r) => r.packTBD).length;
   const q = query.trim().toLowerCase();
-  const filtered = q ? rows.filter((r) => [r.name, r.code, r.alt, r.tag, r.desc].some((f) => f && String(f).toLowerCase().includes(q))) : rows;
+  const filtered0 = q ? rows.filter((r) => [r.name, r.code, r.alt, r.tag, r.desc].some((f) => f && String(f).toLowerCase().includes(q))) : rows;
+  const filtered = verifyOnly && tbd > 0 ? filtered0.filter((r) => r.packTBD) : filtered0;
   const sorted = countMode === "status" ? [...filtered].sort((a, b) => {
     const rank = { order: 0, low: 1, none: 2, ok: 3, backup: 4 };
     return rank[a.status] - rank[b.status] || b.use - a.use;
@@ -995,7 +1003,7 @@ function CountView({ rows, counted, countMode, setCountMode, setStock, setCap, s
       style: countMode === v ? { background: C.naan, color: C.ink } : { color: C.steel }
     },
     lbl
-  )))), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2 mt-2" }, /* @__PURE__ */ React.createElement(
+  ))), tbd > 0 && React.createElement("button", { onClick: () => setVerifyOnly(!verifyOnly), className: "text-xs font-bold px-3 py-1.5 rounded-lg active:scale-95", style: verifyOnly ? { background: C.saffron, color: C.ink } : { border: "1px solid " + C.line, color: C.saffron } }, "\u26a0 " + tbd + " to verify")), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2 mt-2" }, /* @__PURE__ */ React.createElement(
     "button",
     {
       onClick: saveCount,
@@ -1233,8 +1241,14 @@ function VarianceView({ variance, counts, lastCount }) {
 }
 function OrderView({ orderRows, orderText, cycle, copyOrder, copied, shareOrder, sentPrompt, setSentPrompt, markOrdered, orders, dwin }) {
   const sms = orderText ? (/android/i.test(navigator.userAgent) ? "sms:?body=" : "sms:&body=") + encodeURIComponent(orderText) : "";
+  const totals = {};
+  orderRows.forEach((r) => {
+    const u = r.pack.includes("bn") ? "bundle" : r.pack.includes("bx") ? "box" : r.pack.includes("bg") ? "bag" : "case";
+    totals[u] = (totals[u] || 0) + (r.cpc > 1 ? r.orderCs : r.need);
+  });
+  const totalStr = Object.keys(totals).map((u) => totals[u] + "\xA0" + (totals[u] === 1 ? u : u === "box" ? "boxes" : u + "s")).join(" + ");
   const ordersEl = orders && orders.length ? React.createElement("div", { className: "px-4 pb-6 pt-2" }, React.createElement("div", { className: "text-[10px] font-black uppercase tracking-[0.2em] pb-2", style: { color: C.steel } }, "Recent orders"), React.createElement("div", { className: "space-y-1.5" }, [...orders].reverse().slice(0, 3).map((o, i) => React.createElement("div", { key: i, className: "rounded-lg px-3 py-2 text-xs", style: { background: C.card, color: C.steel } }, React.createElement("span", { style: { color: C.naan, fontWeight: 700 } }, shortDate(o.date)), " · ", Object.keys(o.items || {}).length, " items")))) : null;
-  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "px-4 pt-5 pb-3 sticky top-0 z-20", style: { background: C.bg, borderBottom: `1px solid ${C.line}` } }, /* @__PURE__ */ React.createElement("div", { className: "text-[10px] uppercase tracking-[0.25em]", style: { color: C.saffron } }, "Sysco order"), /* @__PURE__ */ React.createElement("div", { className: "text-2xl font-black tracking-tight" }, orderRows.length, " item", orderRows.length !== 1 ? "s" : "", " at reorder point"), /* @__PURE__ */ React.createElement("div", { className: "text-[11px] mt-1", style: { color: C.steel } }, "Deliveries " + DAYW[DELIVERY_DAYS[0]] + " & " + DAYW[DELIVERY_DAYS[1]] + " \u2014 at-reorder items refill to Max; early warnings cover through " + dwin.followingName + " (+1 day).")), orderRows.length === 0 ? React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "px-6 py-16 text-center", style: { color: C.steel } }, "Nothing at reorder point. Count the shelves, then check back."), ordersEl) : /* @__PURE__ */ React.createElement("div", { className: "px-4 py-4 space-y-2" }, orderRows.map((r) => /* @__PURE__ */ React.createElement("div", { key: r.id, className: "flex items-center justify-between rounded-xl px-4 py-3", style: { background: C.card } }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "font-bold" }, r.name), /* @__PURE__ */ React.createElement("div", { className: "text-xs font-mono", style: { color: C.steel } }, r.code, r.alt ? ` \xB7 ${r.alt}` : ""), r.projShort && r.status !== "order" ? React.createElement("div", { className: "text-[10px] mt-0.5", style: { color: C.ember } }, "short before " + r.shortBefore) : null, r.packTBD ? React.createElement("div", { className: "text-[10px] mt-0.5", style: { color: C.saffron } }, "\u26a0 pack size unconfirmed \u2014 case qty estimated") : null), /* @__PURE__ */ React.createElement("div", { className: "text-right" }, /* @__PURE__ */ React.createElement("div", { className: "text-2xl font-black", style: { color: C.saffron } }, r.cpc > 1 ? r.orderCs : r.need), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] uppercase tracking-wide", style: { color: C.steel } }, r.pack.includes("bn") ? "bundles" : r.pack.includes("bx") ? "boxes" : r.pack.includes("bg") ? "bags" : "cases"), r.orderLastsDays != null && r.orderLastsDays <= 90 && React.createElement("div", { className: "text-[10px] mt-0.5", style: { color: C.steel } }, "lasts " + String.fromCharCode(8776) + r.orderLastsDays + "d")))), /* @__PURE__ */ React.createElement("div", { className: "rounded-xl p-4 mt-4", style: { background: C.ink, border: `1px solid ${C.line}` } }, /* @__PURE__ */ React.createElement("pre", { className: "text-xs whitespace-pre-wrap font-mono leading-relaxed", style: { color: C.naan } }, orderText)), typeof navigator !== "undefined" && navigator.share ? React.createElement(
+  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "px-4 pt-5 pb-3 sticky top-0 z-20", style: { background: C.bg, borderBottom: `1px solid ${C.line}` } }, /* @__PURE__ */ React.createElement("div", { className: "text-[10px] uppercase tracking-[0.25em]", style: { color: C.saffron } }, "Sysco order"), /* @__PURE__ */ React.createElement("div", { className: "text-2xl font-black tracking-tight" }, orderRows.length, " item", orderRows.length !== 1 ? "s" : "", " at reorder point"), /* @__PURE__ */ React.createElement("div", { className: "text-[11px] mt-1", style: { color: C.steel } }, "Deliveries " + DAYW[DELIVERY_DAYS[0]] + " & " + DAYW[DELIVERY_DAYS[1]] + " \u2014 at-reorder items refill to Max; early warnings cover through " + dwin.followingName + " (+1 day)."), orderRows.length > 0 ? React.createElement("div", { className: "text-xs font-black mt-1.5", style: { color: C.naan } }, "Order total: " + totalStr) : null), orderRows.length === 0 ? React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "px-6 py-16 text-center", style: { color: C.steel } }, "Nothing at reorder point. Count the shelves, then check back."), ordersEl) : /* @__PURE__ */ React.createElement("div", { className: "px-4 py-4 space-y-2" }, orderRows.map((r) => /* @__PURE__ */ React.createElement("div", { key: r.id, className: "flex items-center justify-between rounded-xl px-4 py-3", style: { background: C.card } }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "font-bold" }, r.name), /* @__PURE__ */ React.createElement("div", { className: "text-xs font-mono", style: { color: C.steel } }, r.code, r.alt ? ` \xB7 ${r.alt}` : ""), r.projShort && r.status !== "order" ? React.createElement("div", { className: "text-[10px] mt-0.5", style: { color: C.ember } }, "short before " + r.shortBefore) : null, r.packTBD ? React.createElement("div", { className: "text-[10px] mt-0.5", style: { color: C.saffron } }, "\u26a0 pack size unconfirmed \u2014 case qty estimated") : null), /* @__PURE__ */ React.createElement("div", { className: "text-right" }, /* @__PURE__ */ React.createElement("div", { className: "text-2xl font-black", style: { color: C.saffron } }, r.cpc > 1 ? r.orderCs : r.need), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] uppercase tracking-wide", style: { color: C.steel } }, r.pack.includes("bn") ? "bundles" : r.pack.includes("bx") ? "boxes" : r.pack.includes("bg") ? "bags" : "cases"), r.orderLastsDays != null && r.orderLastsDays <= 90 && React.createElement("div", { className: "text-[10px] mt-0.5", style: { color: C.steel } }, "lasts " + String.fromCharCode(8776) + r.orderLastsDays + "d")))), /* @__PURE__ */ React.createElement("div", { className: "rounded-xl p-4 mt-4", style: { background: C.ink, border: `1px solid ${C.line}` } }, /* @__PURE__ */ React.createElement("pre", { className: "text-xs whitespace-pre-wrap font-mono leading-relaxed", style: { color: C.naan } }, orderText)), typeof navigator !== "undefined" && navigator.share ? React.createElement(
     "button",
     {
       onClick: shareOrder,
