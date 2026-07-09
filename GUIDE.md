@@ -35,6 +35,9 @@ the shelf. It is *not* always a case:
 a "⚠ verify /case" chip on the Count card and "⚠ pack size unconfirmed — case
 qty estimated" on Order rows. Users confirm real pack sizes from box labels over
 time; both values are editable per item under **Levels → Count in / per case**.
+A **⚠ N to verify** button next to the Shelf walk / By status switch on the
+Count tab filters the list to just these unconfirmed items (it disappears once
+everything is confirmed).
 
 ## 2. Statuses and chips
 
@@ -111,8 +114,10 @@ estimate is never mistaken for a fresh count.
 3. **Variance** — expected vs. actual usage between the last two counts.
 4. **Usage** — measured daily usage per item.
 5. **Order** — everything at reorder or projected short, with case quantities.
-   **Send order** (share sheet) or **Open in Messages** → then **Mark as
-   ordered** logs it (feeds "ordered Nd ago" chips and Receive prefill).
+   An **Order total** line in the header sums the whole order in purchase
+   units (e.g. "Order total: 3 cases + 2 boxes"). **Send order** (share
+   sheet) or **Open in Messages** → then **Mark as ordered** logs it (feeds
+   "ordered Nd ago" chips and Receive prefill).
 
 ## 7. Data, sync, storage (for technical readers)
 
@@ -122,7 +127,9 @@ estimate is never mistaken for a fresh count.
   `packcfg`, `counts`, `receipts`, `orders`, `cycle`).
 - A Supabase row per app mirrors the same blob for cross-device sync
   (last-write-wins with per-field merge). Offline works; sync resumes when back
-  online. Manual export/import codes exist in the sync sheet.
+  online. Manual export/import codes exist in the sync sheet (⇄ Sync on the
+  Count tab), which also shows a **Cloud sync · last synced …** line — when
+  this device last successfully talked to the cloud — and links to this guide.
 - `packcfg[id] = { u, pc, bk }` holds per-item overrides: counting unit,
   per-case count, backup flag. These beat the item defaults baked in code.
 - `stocks` etc. are keyed by item `id` and denominated in **counting units**.
