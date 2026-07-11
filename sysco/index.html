@@ -158,17 +158,17 @@ const STATIONS = [
 ];
 const ITEMS = [
   { id: "paneer", st: "food", name: "Paneer", code: "Cheese Paneer Malai · 24/350 GR", alt: "", pack: "cs", use: 0, lt: 1, ss: 1 },
-  { id: "flour", st: "food", name: "Flour", code: "brand & bag size to confirm", alt: "", pack: "cs", use: 0, lt: 1, ss: 1, tag: "TBC" },
-  { id: "salt", st: "food", name: "Salt", code: "Windsor Hi-Grade granulated salt · 20 kg", alt: "", pack: "cs", use: 0, lt: 1, ss: 1 },
-  { id: "oil", st: "food", name: "Oil", code: "Canola JIB (or veg soya) · 16 L", alt: "#5507154", pack: "cs", use: 0, lt: 1, ss: 1, cu: "cs" },
+  { id: "flour", st: "food", name: "Flour", code: "Bakersource all-purpose · 20 kg bag", alt: "#9665589", pack: "cs", use: 0, lt: 1, ss: 1 },
+  { id: "salt", st: "food", name: "Salt", code: "Windsor fine hi-grade · 20 kg bag", alt: "#2924710", pack: "cs", use: 0, lt: 1, ss: 1 },
+  { id: "oil", st: "food", name: "Oil", code: "Canola JIB · 16 L", alt: "#7296319", pack: "cs", use: 0, lt: 1, ss: 1, cu: "cs" },
   { id: "fries", st: "food", name: "Fries", code: "McCain KK 3/8 coat · 6×5 lb", alt: "", pack: "cs", use: 0, lt: 1, ss: 1, cu: "cs" },
   { id: "doogh", st: "food", name: "Doogh", code: "Ayran Naan mint · 24/473 mL", alt: "#7911929", pack: "cs", use: 0, lt: 1, ss: 1, cu: "bottle", cpc: 24 },
   { id: "water", st: "food", name: "Water bottles", code: "Spring water · 24/500 mL", alt: "#8333271", pack: "cs", use: 0, lt: 1, ss: 1, cu: "cs" },
   { id: "apple", st: "food", name: "Apple slices", code: "Apple red wedge · 24×2 oz", alt: "#1668765", pack: "cs", use: 0, lt: 1, ss: 1 },
   { id: "ketchupbtl", st: "food", name: "Ketchup bottles", code: "House Recipe tomato ketchup · 4/4.5 kg?", alt: "", pack: "cs", use: 0, lt: 1, ss: 1, tag: "TBC", cu: "bottle", cpc: 4 },
-  { id: "ketchuppkt", st: "food", name: "Ketchup packets", code: "Heinz Canada · 504/8 mL", alt: "#2484TEDC", pack: "cs", use: 0, lt: 1, ss: 1 },
+  { id: "ketchuppkt", st: "food", name: "Ketchup packets", code: "Heinz Canada · 504/8 mL", alt: "#9698556", pack: "cs", use: 0, lt: 1, ss: 1 },
   { id: "sugarpkt", st: "food", name: "Sugar packets", code: "Redpath 3.5 g · 2000/cs", alt: "#1915518", pack: "cs", use: 0, lt: 1, ss: 1 },
-  { id: "chickpeas", st: "food", name: "Chickpeas", code: "Biena Sea Salt · 5/1 lb", alt: "#7096388", pack: "cs", use: 0, lt: 1, ss: 1, cu: "bag", cpc: 5 },
+  { id: "chickpeas", st: "food", name: "Chickpeas", code: "Biena Sea Salt · 5 lb bulk?", alt: "#7096388", pack: "cs", use: 0, lt: 1, ss: 1, cu: "bag", cpc: 5, cpcTBD: true },
   { id: "kabobfoil", st: "pkg", name: "Kabob wrap foil", code: "Foil insul-wrap 12×12 (30.5 cm)", alt: "#S61513474", pack: "cs", use: 0, lt: 1, ss: 1 },
   { id: "alufoil", bk: true, st: "pkg", name: "Aluminum foil", code: "Foil roll 45 cm", alt: "", pack: "cs", use: 0, lt: 1, ss: 1 },
   { id: "bigfilm", st: "pkg", name: "Big film wrap", code: "Cling w/ cutterbox · 24 in × 2000 ft", alt: "#0257790 · C-BX1472", pack: "cs", use: 0, lt: 1, ss: 1 },
@@ -180,6 +180,8 @@ const ITEMS = [
 
   { id: "burgerbags", st: "pkg", name: "Burger bags", code: "McNairn large foil bags · 1000/cs", alt: "#321701", pack: "cs", use: 0, lt: 1, ss: 1, cu: "pack", cpc: 4, cpcTBD: true },
   { id: "pattypaper", st: "pkg", name: "Patty paper", code: "Sysco Classic 5.5×5.5 · 1000 sht", alt: "#004807", pack: "cs", use: 0, lt: 1, ss: 1, cu: "cs" },
+  { id: "plates9", st: "pkg", name: "Paper plates 9 in (compostable)", code: "EarthPlus PSP09SYS · 2 pk × 225", alt: "#7183992", pack: "cs", use: 0, lt: 1, ss: 1, cu: "pack", cpc: 2, cpcTBD: true },
+  { id: "servspoon", st: "pkg", name: "Serving spoons 10 in (white)", code: "Sabert UWT72SPP · 72/cs", alt: "#7243109", pack: "cs", use: 0, lt: 1, ss: 1, cu: "cs" },
   { id: "vinyl", bk: true, st: "gloves", name: "Vinyl gloves", code: "Foodservice · Large · powder-free · 100/bx", alt: "#4226605", pack: "cs", use: 0, lt: 1, ss: 1, cu: "box", cpc: 10 },
   { id: "poly", bk: true, st: "gloves", name: "Poly gloves", code: "Embossed · Large · 500 ct", alt: "", pack: "cs", use: 0, lt: 1, ss: 1, cu: "cs" },
   { id: "grillcleaner", st: "clean", name: "Grill & fryer cleaner", code: "Keystone fryer & grill cleaner · 2/3.78 L", alt: "#6100409", pack: "cs", use: 0, lt: 1, ss: 1, cu: "jug", cpc: 2 },
@@ -201,7 +203,7 @@ const ITEMS = [
 ];
 const CAP = {
   paneer: 2, flour: 2, salt: 2, oil: 2, fries: 2, doogh: 48, water: 2, apple: 2, ketchupbtl: 8, ketchuppkt: 2, sugarpkt: 1, chickpeas: 10,
-  kabobfoil: 2, alufoil: 2, bigfilm: 2, smallfilm: 2, friesbox: 8, fohbox: 4, bolanibox: 2, straws: 8, burgerbags: 8, pattypaper: 2,
+  kabobfoil: 2, alufoil: 2, bigfilm: 2, smallfilm: 2, friesbox: 8, fohbox: 4, bolanibox: 2, straws: 8, burgerbags: 8, pattypaper: 2, plates9: 4, servspoon: 2,
   vinyl: 20, poly: 2,
   grillcleaner: 4, glasscleaner: 4, quat: 4, floorfinish: 4, liquidsoap: 12, mophead: 2, dishstone: 8, greenpads: 8, steelscrub: 2, rinseaid: 4, bleach: 12,
   gb2422: 2, gb2636: 2, gb3038: 2, gb3550: 2, printer: 50
