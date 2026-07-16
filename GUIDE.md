@@ -138,7 +138,8 @@ estimate is never mistaken for a fresh count.
   online. Manual export/import codes exist in the sync sheet (⇄ Sync on the
   Count tab), which also shows a **Cloud sync · last synced …** line — when
   this device last successfully talked to the cloud — and links to the
-  illustrated user guide (`/guide/`, also linked under the Count-tab title).
+  illustrated user guide (`/guide/`, also reachable from the 📖 Guide button
+  in the Count-tab header).
 - `packcfg[id] = { u, pc, bk }` holds per-item overrides: counting unit,
   per-case count, backup flag. These beat the item defaults baked in code.
 - `stocks` etc. are keyed by item `id` and denominated in **counting units**.
