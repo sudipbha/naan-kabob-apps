@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>How to use the Naan Kabob inventory apps</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: #14181D; color: #EDE3D0;
+    font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+    line-height: 1.6; font-size: 16px;
+    padding-bottom: 60px;
+  }
+  .wrap { max-width: 560px; margin: 0 auto; padding: 28px 18px; }
+  .kicker { font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; color: #F2A33C; }
+  h1 { font-size: 27px; font-weight: 900; margin: 6px 0 10px; letter-spacing: -0.02em; }
+  h2 { font-size: 20px; font-weight: 900; margin: 40px 0 8px; color: #F2A33C; }
+  h3 { font-size: 16px; font-weight: 800; margin: 22px 0 6px; }
+  p { margin: 10px 0; color: #D8CEBB; }
+  strong { color: #EDE3D0; }
+  img { max-width: 100%; height: auto; display: block; border-radius: 14px; border: 1px solid #2A323B; margin: 14px 0; }
+  .tip, .warn {
+    border-radius: 12px; padding: 12px 14px; margin: 14px 0; font-size: 15px;
+  }
+  .tip { background: #1E2A26; border: 1px solid #2E4A3E; }
+  .tip b { color: #7FD1AE; }
+  .warn { background: #2A241C; border: 1px solid #4A3E2E; }
+  .warn b { color: #F2A33C; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 15px; }
+  th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid #2A323B; vertical-align: top; }
+  th { color: #8A94A0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; }
+  .badge { display: inline-block; font-size: 11px; font-weight: 900; padding: 2px 9px; border-radius: 6px; }
+  .b-order { background: #3A2226; color: #F07C7C; }
+  .b-low { background: #3A2F1C; color: #F2A33C; }
+  .b-ok { background: #1E3A2C; color: #7FD1AE; }
+  .b-count { background: #262C33; color: #8A94A0; }
+  .b-backup { background: #262C33; color: #8A94A0; }
+  .toc { background: #1E242B; border: 1px solid #2A323B; border-radius: 14px; padding: 14px 18px; margin: 18px 0; }
+  .toc a { color: #EDE3D0; display: block; padding: 4px 0; text-decoration: none; font-weight: 700; font-size: 15px; }
+  .toc a:before { content: "→ "; color: #F2A33C; }
+  .foot { margin-top: 48px; font-size: 13px; color: #8A94A0; border-top: 1px solid #2A323B; padding-top: 16px; }
+  .foot a { color: #8A94A0; }
+  code { background: #1E242B; border-radius: 6px; padding: 1px 7px; font-size: 14px; color: #F2A33C; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="kicker">Naan Kabob</div>
+<h1>How to use the inventory apps</h1>
+<p>This guide covers both trackers — <strong>Sysco</strong> (dry goods &amp; chemicals)
+and <strong>Champion</strong> (packaging). They work exactly the same; the pictures
+below are from Champion.</p>
+
+<div class="toc">
+  <a href="#idea">The one idea that makes everything work</a>
+  <a href="#count">Counting the shelves</a>
+  <a href="#card">Reading an item card</a>
+  <a href="#orderbox">The little order box (and cases vs packs)</a>
+  <a href="#est">What "est" means</a>
+  <a href="#levels">Levels — Max, Reorder, pack sizes</a>
+  <a href="#verify">The ⚠ "to verify" button</a>
+  <a href="#receive">When a delivery arrives</a>
+  <a href="#order">Sending an order</a>
+  <a href="#usage">Usage &amp; Variance</a>
+  <a href="#sync">Using it on more than one phone</a>
+  <a href="#faq">Quick answers</a>
+</div>
+
+<h2 id="idea">The one idea that makes everything work</h2>
+<p><strong>You always count the thing you physically pick up.</strong> A sleeve of
+clamshells, a pack of napkins, a roll of foil, a box of gloves. Never do math in
+your head — never convert to cases while counting.</p>
+<p>The app knows how many sleeves or packs are in a case, and it does the cases
+math only at the very end, when it writes the order for the supplier.</p>
+<div class="tip"><b>Example:</b> Napkins come 20 packs to a case. You count
+<strong>packs</strong> on the shelf. If the app decides you need 40 packs, the
+order text says <strong>2 cs</strong> — it converts for you.</div>
+
+<h2 id="count">Counting the shelves</h2>
+<img src="img/count-top.png" alt="Top of the Count tab" width="780" height="636"/>
+<p>The <strong>Count</strong> tab is home. From the top:</p>
+<p><strong>Search</strong> finds any item by name or code.
+The four boxes show how many items are at each status.
+<strong>Shelf walk</strong> lists items in the order they sit in the restaurant;
+<strong>By status</strong> puts the urgent ones first.</p>
+<p>Walk the shelves and enter what you see: tap the big number and type, or use
+<strong>−</strong> and <strong>+</strong>. That's the whole job.</p>
+<p>When you finish a walk, tap <strong>Save count</strong>. This stores a dated
+snapshot — it's how the app learns how fast you use things, so ordering
+suggestions keep getting smarter. Save after every full walk.</p>
+<p><strong>Reset</strong> clears all numbers for a fresh recount (you get an Undo
+button for a few seconds). <strong>Sync</strong> opens the data sheet
+(see <a href="#sync" style="color:#F2A33C">syncing</a>). <strong>Refresh</strong>
+reloads the app to pick up updates.</p>
+
+<h2 id="card">Reading an item card</h2>
+<img src="img/card-order.png" alt="An item card in ORDER state" width="732" height="463"/>
+<p>Every card tells the same story:</p>
+<table>
+  <tr><th>What you see</th><th>What it means</th></tr>
+  <tr><td><span class="badge b-order">ORDER</span></td><td>At or below the reorder point — it's going on the order.</td></tr>
+  <tr><td><span class="badge b-low">LOW</span></td><td>Getting close. Not ordered yet.</td></tr>
+  <tr><td><span class="badge b-ok">OK</span></td><td>Plenty on hand.</td></tr>
+  <tr><td><span class="badge b-count">COUNT</span></td><td>No number yet — count it.</td></tr>
+  <tr><td><span class="badge b-backup">BACKUP</span></td><td>Normally bought from the other supplier — this entry is just a spare tire. No warnings, no auto-order.</td></tr>
+  <tr><td>counted today / counted Jul 15</td><td>When this number was last set.</td></tr>
+  <tr><td>≈3d left</td><td>Projected days until it runs out, at your usage speed.</td></tr>
+  <tr><td>The dashed bar</td><td>Stock level vs Max. The orange tick is the reorder point — when the fill drops past the tick, it goes on the order.</td></tr>
+  <tr><td>Big number box</td><td>What's on the shelf, in the item's counting unit.</td></tr>
+  <tr><td>Small number box</td><td>What to order (see next section).</td></tr>
+</table>
+<p>The small grey line under the name shows the product code and the pack —
+"200/cs · in packs" means a case holds 200 pieces and you count it in packs.</p>
+
+<h2 id="orderbox">The little order box (and cases vs packs)</h2>
+<p>The small box on the right is <strong>what will be ordered</strong>. The app
+fills it in automatically. The word under it (<code>PACK</code>,
+<code>SLEEVE</code>, <code>ROLL</code>…) tells you which unit it speaks.</p>
+<p><strong>To order a different amount, just type over it</strong> — your number
+wins. Typing <strong>0</strong> puts it back on automatic. Re-counting the item
+also puts it back on automatic.</p>
+<div class="warn"><b>Cases vs packs — the classic mix-up:</b> the box speaks in
+counting units, but the order goes out in whole cases. In the picture above,
+<strong>6</strong> packs were typed, and the bottom line shows what the supplier
+will actually be asked for: <strong>order 3 cs</strong> (2 packs = 1 case).
+So if you're thinking in cases: <em>cases you want × packs per case</em> is the
+number to type.</div>
+
+<h2 id="est">What "est" means</h2>
+<img src="img/card-est.png" alt="A card showing an estimated stock number" width="732" height="426"/>
+<p>If you don't count an item for a few days, the app doesn't pretend nothing
+happened — it <strong>subtracts your normal daily usage</strong> and shows its
+best estimate. The grey chip says <strong>est · counted 24 Jul 14</strong>:
+"you counted 24 on July 14; my estimate for right now is what's in the big box."</p>
+<p>An estimate is a guess, not a count. The moment you type a real number, the
+card snaps back to reality. Weekly full counts keep everything honest.</p>
+
+<h2 id="levels">Levels — Max, Reorder, pack sizes</h2>
+<img src="img/card-levels.png" alt="The Levels panel expanded on a card" width="732" height="924"/>
+<p>Tap <strong>▾ Levels</strong> on any card to open its settings:</p>
+<p><strong>Max</strong> — the most that fits on your rack. Orders never exceed
+it. <strong>Reorder at</strong> — the level that triggers ordering.</p>
+<p><strong>Suggested reorder</strong> — the app's recommendation, based on your
+real usage and the delivery schedule (enough to survive the longest gap between
+trucks, plus a day). Tap <strong>Apply</strong> to accept it.</p>
+<p><strong>Count in / per case</strong> — the counting unit and how many go in a
+case. Only change these after checking a real box.</p>
+<p><strong>Backup item</strong> — tick this for items you normally buy from the
+other supplier. The app stops nagging about them.</p>
+
+<h2 id="verify">The ⚠ "to verify" button</h2>
+<img src="img/verify-filter.png" alt="The needs-verification filter in the header" width="780" height="636"/>
+<p>Some pack sizes were set up as best guesses and wear a small
+<strong>⚠ verify</strong> chip. The <strong>⚠ N to verify</strong> button next
+to the Shelf walk switch shows only those items. Next time a case of one of them
+comes in, look at the box, fix <strong>per case</strong> under Levels if needed,
+and the ⚠ disappears. The button goes away when everything is confirmed.</p>
+
+<h2 id="receive">When a delivery arrives</h2>
+<img src="img/receive.png" alt="The Receive tab" width="780" height="1688"/>
+<p>Go to <strong>Receive</strong> and enter what actually came off the truck,
+item by item, in the same counting units as always. If you logged the order in
+the app, a small <strong>expected</strong> chip reminds you what should arrive.</p>
+<p>Type a short note ("Champion Jul 10 · stone shorted") and tap
+<strong>Log delivery</strong>. The app adds everything to your shelf numbers and
+keeps a receipt. If you make a mistake, there's an <strong>Undo</strong> right
+after.</p>
+<div class="tip"><b>Enter what came, not what you ordered.</b> If they shorted
+you a case, enter the smaller number — the app's history will show the
+difference.</div>
+
+<h2 id="order">Sending an order</h2>
+<img src="img/order-list.png" alt="The Order tab list" width="780" height="1688"/>
+<p>The <strong>Order</strong> tab collects everything that needs ordering —
+items at their reorder point, plus early warnings for anything that won't last
+until the next truck. The header shows the whole order summed up
+("Order total: 30 cases + 1 bundle…"), and each row shows how long that
+order should last.</p>
+<img src="img/order-text.png" alt="The order text and send button" width="780" height="1688"/>
+<p>Below the list is the ready-to-send text — always in supplier units (cases,
+bundles, bags), starting with the order date (tomorrow, since you text tonight
+and the rep enters it in the morning).</p>
+<p>Tap <strong>Send order</strong> (or <strong>Open in Messages</strong>), send
+it to your rep, then tap <strong>Mark as ordered</strong>. That last tap matters:
+it starts the "ordered 2d ago" reminders and pre-fills the Receive tab for when
+the truck shows up.</p>
+
+<h2 id="usage">Usage &amp; Variance</h2>
+<img src="img/usage.png" alt="The Usage tab" width="780" height="1688"/>
+<p><strong>Usage</strong> shows how much of each item you go through per day —
+weekdays vs weekends — measured from your saved counts. Units are spelled out
+("packs / day", "rolls / day"). This is the engine behind every suggestion in
+the app, and it sharpens every time you save a count.</p>
+<img src="img/variance.png" alt="The Variance tab" width="780" height="1688"/>
+<p><strong>Variance</strong> compares your last two counts: how much <em>should</em>
+have been used vs how much actually disappeared. Big red differences are worth a
+look — miscounts, waste, or an unlogged delivery.</p>
+
+<h2 id="sync">Using it on more than one phone</h2>
+<img src="img/sync-sheet.png" alt="The sync sheet" width="780" height="1002"/>
+<p>Your numbers save on the phone instantly and sync to the cloud automatically —
+the sheet under <strong>⇄ Sync</strong> shows when the cloud was last reached.
+If you're offline, everything keeps working and syncs when you're back.</p>
+<p>The copy/paste codes are a manual backup: copy on one device, paste on
+another. <strong>Never paste a Sysco code into Champion</strong> (or the other
+way around).</p>
+
+<h2 id="faq">Quick answers</h2>
+<h3>"I typed 3 but the order says 2 cs"</h3>
+<p>The order box speaks packs/sleeves, the order speaks cases. Type
+<em>cases you want × packs per case</em>. See
+<a href="#orderbox" style="color:#F2A33C">the order box</a>.</p>
+<h3>"Why isn't this item on the order? It's low!"</h3>
+<p>Check its badge — if it says BACKUP, it belongs to the other supplier's app.
+You can still order it by typing a number in its order box by hand.</p>
+<h3>"The number looks wrong"</h3>
+<p>Just type what's really on the shelf. A fresh count always wins — no harm done.</p>
+<h3>"What's the red bar at the top?"</h3>
+<p>"Not synced" means the phone can't reach the cloud right now. Your numbers
+are safe on the phone and will sync when internet returns.</p>
+<h3>"Do I have to save the count every time?"</h3>
+<p>Save after every full shelf walk. Skipping saves doesn't lose numbers, but
+saved counts are what teach the app your usage speed.</p>
+
+<div class="foot">
+  Naan Kabob inventory apps ·
+  <a href="../sysco/">Sysco tracker</a> · <a href="../champion/">Champion tracker</a><br/>
+  Technical readers &amp; AI reviewers: see the
+  <a href="../GUIDE.md">reviewer guide (GUIDE.md)</a>.
+</div>
+
+</div>
+</body>
+</html>

@@ -3,6 +3,10 @@
 A guide for humans and AI assistants reviewing or using these apps.
 Live: [Sysco](https://sudipbha.github.io/naan-kabob-apps/sysco/) · [Champion](https://sudipbha.github.io/naan-kabob-apps/champion/)
 
+> Non-technical readers: there is an **illustrated user guide with real
+> screenshots** at [/guide/](https://sudipbha.github.io/naan-kabob-apps/guide/),
+> linked from inside both apps. This document is the technical contract.
+
 Two single-file React apps, one per supplier. Same engine, different item lists.
 **Sysco** delivers dry goods & chemicals; **Champion** delivers packaging.
 Deliveries arrive **Tuesday and Friday**; orders are texted to the supplier rep.
@@ -133,7 +137,8 @@ estimate is never mistaken for a fresh count.
   (last-write-wins with per-field merge). Offline works; sync resumes when back
   online. Manual export/import codes exist in the sync sheet (⇄ Sync on the
   Count tab), which also shows a **Cloud sync · last synced …** line — when
-  this device last successfully talked to the cloud — and links to this guide.
+  this device last successfully talked to the cloud — and links to the
+  illustrated user guide (`/guide/`, also linked under the Count-tab title).
 - `packcfg[id] = { u, pc, bk }` holds per-item overrides: counting unit,
   per-case count, backup flag. These beat the item defaults baked in code.
 - `stocks` etc. are keyed by item `id` and denominated in **counting units**.
