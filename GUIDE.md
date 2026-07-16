@@ -111,8 +111,10 @@ estimate is never mistaken for a fresh count.
 2. **Receive** — when a truck arrives, enter what actually came, per item, in
    counting units ("receive in sleeves"). An "expected N · date" chip prefills
    from the last logged order. Adds to on-hand and records a receipt.
-3. **Variance** — expected vs. actual usage between the last two counts.
-4. **Usage** — measured daily usage per item.
+3. **Variance** — expected vs. actual usage between the last two counts, in
+   each item's counting unit (labeled on every row).
+4. **Usage** — measured daily usage per item, shown in the item's counting
+   unit (e.g. "packs / day", "rolls / day").
 5. **Order** — everything at reorder or projected short, with case quantities.
    An **Order total** line in the header sums the whole order in purchase
    units (e.g. "Order total: 3 cases + 2 boxes"). The order text starts with
