@@ -849,7 +849,10 @@ function ChampionTracker() {
       return p.includes("bn") ? "bn" : p.includes("bx") ? "bx" : p.includes("bg") ? "bg" : "cs";
     };
     const lines = orderRows.map((r) => `${r.name} (${r.code}) \u2014 ${r.cpc > 1 ? r.orderCs : r.need}\xA0${unitOf(r)}${r.logo ? "\xA0+logo" : ""}`);
+    const od = new Date(Date.now() + 864e5);
+    const odStr = od.toLocaleDateString(void 0, { month: "long", day: "numeric" }) + ", " + DAYW[od.getDay()];
     return `CHAMPION ORDER \u2014 Naan Kabob
+Order date : ${odStr}
 
 ${lines.join("\n")}`;
   }, [orderRows]);

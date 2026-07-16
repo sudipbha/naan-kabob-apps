@@ -115,9 +115,11 @@ estimate is never mistaken for a fresh count.
 4. **Usage** — measured daily usage per item.
 5. **Order** — everything at reorder or projected short, with case quantities.
    An **Order total** line in the header sums the whole order in purchase
-   units (e.g. "Order total: 3 cases + 2 boxes"). **Send order** (share
-   sheet) or **Open in Messages** → then **Mark as ordered** logs it (feeds
-   "ordered Nd ago" chips and Receive prefill).
+   units (e.g. "Order total: 3 cases + 2 boxes"). The order text starts with
+   an **"Order date"** line showing *tomorrow's* date — the owner texts the
+   order the day before, and that's the day the rep enters it. **Send order**
+   (share sheet) or **Open in Messages** → then **Mark as ordered** logs it
+   (feeds "ordered Nd ago" chips and Receive prefill).
 
 ## 7. Data, sync, storage (for technical readers)
 
