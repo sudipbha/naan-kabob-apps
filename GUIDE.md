@@ -52,7 +52,8 @@ everything is confirmed).
 | `BACKUP` | tracked & ordered from the *other* supplier; this entry is a manual fallback only — no counting, no auto-reorder, no warnings |
 
 Small chips: `over Max N` (stocked above Max — either fine or the Max is stale),
-`ordered Nd ago` (an order was logged and not yet received), `≈Nd left`
+`ordered Nd ago` (an order was logged in the last 14 days and not yet
+received; shown on Count cards and Order rows), `≈Nd left`
 (projected run-out; hidden when > 90 days because that's extrapolation, not
 information), `short before Tue/Fri` (won't last to the next delivery),
 `counted today / counted ‹date›` (when this item's number was last set),
@@ -105,7 +106,9 @@ estimate is never mistaken for a fresh count.
 1. **Count** — shelf walk (grouped by station) or by-status list. Type or ±
    what's on the shelf, in counting units. "Levels" on each card edits Max,
    Reorder-at, pack config, and the Backup toggle. **Save count** stores a
-   dated snapshot (this is what powers measured usage — save after every walk).
+   dated snapshot of only the items recounted since the previous save (items
+   not touched are left out and the save message says how many — this keeps
+   measured usage honest; save after every walk).
    The smaller box on the card's right is the **order box**: the app fills it
    with what to order (in counting units; the label under it names the unit)
    and it feeds the Order tab. Typing a number there is a manual override that
@@ -116,7 +119,13 @@ estimate is never mistaken for a fresh count.
    counting units ("receive in sleeves"). An "expected N · date" chip prefills
    from the last logged order. Adds to on-hand and records a receipt.
 3. **Variance** — expected vs. actual usage between the last two counts, in
-   each item's counting unit (labeled on every row).
+   each item's counting unit (labeled on every row). Expected usage comes
+   from count periods *before* the one being judged (or from baselines), so
+   it is not self-referential. Items with no trusted usage data show a
+   neutral grey "no usage data yet" state instead of a fake zero, and a
+   count that *went up* prompts a check for an unlogged delivery. Flags need
+   at least 1 unit and 25% off expected (small-expected items need an
+   overage of 2+).
 4. **Usage** — measured daily usage per item, shown in the item's counting
    unit (e.g. "packs / day", "rolls / day").
 5. **Order** — everything at reorder or projected short, with case quantities.
@@ -130,12 +139,15 @@ estimate is never mistaken for a fresh count.
 ## 7. Data, sync, storage (for technical readers)
 
 - State lives in `localStorage` under `sysco-inventory-v1` /
-  `nk-champion-tracker-v1` as `{ __v: 2, stamp, data, dirty, base, baseIso }` —
+  `nk-champion-tracker-v1` as `{ __v: 2, stamp, data, dirty, base, baseIso }`
+  (a failed local save — e.g. storage full — warns once per session) —
   the app state is in `.data` (`stocks`, `stockAt`, `caps`, `reord`, `orderOv`,
   `packcfg`, `counts`, `receipts`, `orders`, `cycle`).
 - A Supabase row per app mirrors the same blob for cross-device sync
   (last-write-wins with per-field merge). Offline works; sync resumes when back
-  online. Manual export/import codes exist in the sync sheet (⇄ Sync on the
+  online. Manual export/import codes carry the app name and the importer
+  refuses codes from the other tracker (older codes without a name still
+  load); they live in the sync sheet (⇄ Sync on the
   Count tab), which also shows a **Cloud sync · last synced …** line — when
   this device last successfully talked to the cloud — and links to the
   illustrated user guide (`/guide/`, also reachable from the 📖 Guide button
