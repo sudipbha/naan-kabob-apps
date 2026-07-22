@@ -87,9 +87,13 @@ The four boxes show how many items are at each status.
 <strong>By status</strong> puts the urgent ones first.</p>
 <p>Walk the shelves and enter what you see: tap the big number and type, or use
 <strong>−</strong> and <strong>+</strong>. That's the whole job.</p>
-<p>When you finish a walk, tap <strong>Save count</strong>. This stores a dated
-snapshot — it's how the app learns how fast you use things, so ordering
-suggestions keep getting smarter. Save after every full walk.</p>
+<p>While you count, a floating <strong>"Counted 12 of 43 — Save count"</strong>
+button follows you at the bottom of the screen — you always know how far along
+you are, and saving is one tap from anywhere in the list.</p>
+<p>Tapping it stores a dated snapshot — it's how the app learns how fast you
+use things, so ordering suggestions keep getting smarter. Save after every
+full walk. Only items you actually recounted go into the snapshot; the
+message tells you if any were left out.</p>
 <p><strong>Reset</strong> clears all numbers for a fresh recount (you get an Undo
 button for a few seconds). <strong>Sync</strong> opens the data sheet
 (see <a href="#sync" style="color:#F2A33C">syncing</a>). <strong>Refresh</strong>
@@ -108,8 +112,8 @@ reloads the app to pick up updates.</p>
   <tr><td>counted today / counted Jul 15</td><td>When this number was last set.</td></tr>
   <tr><td>≈3d left</td><td>Projected days until it runs out, at your usage speed.</td></tr>
   <tr><td>The dashed bar</td><td>Stock level vs Max. The orange tick is the reorder point — when the fill drops past the tick, it goes on the order.</td></tr>
-  <tr><td>Big number box</td><td>What's on the shelf, in the item's counting unit.</td></tr>
-  <tr><td>Small number box</td><td>What to order (see next section).</td></tr>
+  <tr><td>Big box — labeled <strong>"on shelf"</strong></td><td>What's on the shelf, in the item's counting unit (the label names it: "on shelf · sleeves").</td></tr>
+  <tr><td>Small box — labeled <strong>"to order"</strong></td><td>What to order (see next section). The label turns amber — <strong>"manual · 0=auto"</strong> — when you've typed your own amount.</td></tr>
 </table>
 <p>The small grey line under the name shows the product code and the pack —
 "200/cs · in packs" means a case holds 200 pieces and you count it in packs.</p>
@@ -120,8 +124,9 @@ fills it in automatically when the item actually needs ordering — for items
 that are still fine, it stays empty. The word under it (<code>PACK</code>,
 <code>SLEEVE</code>, <code>ROLL</code>…) tells you which unit it speaks.</p>
 <p><strong>To order a different amount, just type over it</strong> — your number
-wins. Typing <strong>0</strong> puts it back on automatic. Re-counting the item
-also puts it back on automatic.</p>
+wins, and the label under the box turns amber ("manual · 0=auto") so you can
+see the override is on. Typing <strong>0</strong> puts it back on automatic.
+Re-counting the item also puts it back on automatic.</p>
 <div class="warn"><b>Cases vs packs — the classic mix-up:</b> the box speaks in
 counting units, but the order goes out in whole cases. In the picture above,
 <strong>6</strong> packs were typed, and the bottom line shows what the supplier
@@ -151,19 +156,24 @@ case. Only change these after checking a real box.</p>
 <p><strong>Backup item</strong> — tick this for items you normally buy from the
 other supplier. The app stops nagging about them.</p>
 
-<h2 id="verify">The ⚠ "to verify" button</h2>
+<h2 id="verify">The ⚠ "pack sizes to check" button</h2>
 <img src="img/verify-filter.png" alt="The needs-verification filter in the header" width="780" height="636"/>
 <p>Some pack sizes were set up as best guesses and wear a small
-<strong>⚠ verify</strong> chip. The <strong>⚠ N to verify</strong> button next
-to the Shelf walk switch shows only those items. Next time a case of one of them
-comes in, look at the box, fix <strong>per case</strong> under Levels if needed,
-and the ⚠ disappears. The button goes away when everything is confirmed.</p>
+<strong>⚠ verify</strong> chip. The <strong>⚠ N pack sizes to check</strong>
+button next to the Shelf walk switch shows only those items. Next time a case
+of one of them comes in, look at the box, fix <strong>per case</strong> under
+Levels if needed, and the ⚠ disappears. The button goes away when everything
+is confirmed.</p>
 
 <h2 id="receive">When a delivery arrives</h2>
 <img src="img/receive.png" alt="The Receive tab" width="780" height="1688"/>
 <p>Go to <strong>Receive</strong> and enter what actually came off the truck,
 item by item, in the same counting units as always. If you logged the order in
-the app, a small <strong>expected</strong> chip reminds you what should arrive.</p>
+the app, a small <strong>expected</strong> chip reminds you what should arrive —
+and a big <strong>"✓ Everything arrived as ordered — fill it in"</strong> button
+fills every expected row in one tap. Fix the one thing they shorted, then log.</p>
+<p>Receiving something you'd never counted before? No problem — the app treats
+the blank as zero and sets the count for you.</p>
 <p>Type a short note ("Champion Jul 10 · stone shorted") and tap
 <strong>Log delivery</strong>. The app adds everything to your shelf numbers and
 keeps a receipt. If you make a mistake, there's an <strong>Undo</strong> right
@@ -178,7 +188,9 @@ difference.</div>
 items at their reorder point, plus early warnings for anything that won't last
 until the next truck. The header shows the whole order summed up
 ("Order total: 30 cases + 1 bundle…"), and each row shows how long that
-order should last.</p>
+order should last. If a row is based on an old estimate instead of a fresh
+count, it warns you in amber: "recount before sending" — a ten-second recount
+beats ordering off a guess.</p>
 <img src="img/order-text.png" alt="The order text and send button" width="780" height="1688"/>
 <p>Below the list is the ready-to-send text — always in supplier units (cases,
 bundles, bags), starting with the order date (tomorrow, since you text tonight
