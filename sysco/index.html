@@ -315,7 +315,7 @@ function ChampionTracker() {
   const flash = (m) => {
     setToast(m);
     if (toastT.current) clearTimeout(toastT.current);
-    toastT.current = setTimeout(() => setToast(""), 2400);
+    toastT.current = setTimeout(() => setToast(""), Math.max(2400, m.length * 55));
   };
   const dataRef = useRef({});
   const localStampRef = useRef(0);
@@ -612,7 +612,7 @@ function ChampionTracker() {
       if (!reference || stockAt[id] == null || new Date(stockAt[id]) > new Date(reference.date)) snapStocks[id] = q;
     }
     if (!Object.keys(snapStocks).length) {
-      flash("Nothing recounted since the last save \u2014 count at least one item first");
+      flash("All saved already \u2014 recount an item first if something changed");
       return;
     }
     const skipped = Object.keys(stocks).length - Object.keys(snapStocks).length;
@@ -653,15 +653,14 @@ function ChampionTracker() {
       flash("Nothing entered to receive");
       return;
     }
-    const applied = Object.keys(items).filter((id) => stocks[id] !== void 0);
-    const skipped = Object.keys(items).length - applied.length;
+    const applied = Object.keys(items);
+    const firsts = applied.filter((id) => stocks[id] === void 0).length;
     const estOf = {};
     rows.forEach((r) => { if (r.cur !== void 0) estOf[r.id] = r.cur; });
     setStocks((s) => {
       const n = { ...s };
       for (const [id, q] of Object.entries(items)) {
-        if (n[id] === void 0) continue;
-        n[id] = round1((estOf[id] != null ? estOf[id] : n[id]) + q);
+        n[id] = round1((estOf[id] != null ? estOf[id] : n[id] != null ? n[id] : 0) + q);
       }
       return n;
     });
@@ -675,7 +674,7 @@ function ChampionTracker() {
     const count = Object.keys(items).length;
     setRecv({});
     setRecvNote("");
-    flash(`Logged ${count} item${count > 1 ? "s" : ""} into stock` + (skipped ? ` · ${skipped} uncounted — receipt only` : ""));
+    flash(`Logged ${count} item${count > 1 ? "s" : ""} into stock` + (firsts ? ` · ${firsts} counted for the first time` : ""));
   };
   const undoReceipt = () => {
     if (!receipts.length) return;
@@ -810,6 +809,7 @@ function ChampionTracker() {
     return { ...it, bk, cap, cur, rawCur, aged, countedAt, status: st, rp, need, autoNeed, ov, wks, cpc, cu, ou, packTBD, packVerify, orderedDaysAgo: orderAge[it.id], daily, dailySrc, base, projShort, covered, coveredTill: dwin.followingName, shortBefore: dwin.nextName, daysLeft, horizon, sugg, orderLastsDays: daily > 0 && need > 0 ? Math.round((cpc > 1 ? Math.ceil(need / cpc) * cpc : need) / daily) : null, orderCs: Math.ceil(need / cpc), caseOnHand: cur !== void 0 ? round1(cur / cpc) : null };
   }), [stocks, stockAt, caps, reord, orderOv, packcfg, orderAge, dailyOf, rateOf, dwin, today]);
   const counted = useMemo(() => rows.filter((r) => !r.bk && r.cur !== void 0).length, [rows]);
+  const recounted = useMemo(() => rows.filter((r) => !r.bk && r.countedAt && (!counts.length || new Date(r.countedAt) > new Date(counts[counts.length - 1].date))).length, [rows, counts]);
   const variance = useMemo(() => {
     if (counts.length < 2) return null;
     const prev = counts[counts.length - 2];
@@ -1018,7 +1018,7 @@ ${lines.join("\n")}`;
     },
     /* @__PURE__ */ React.createElement("span", null, undoSnap.label || "Counts cleared"),
     /* @__PURE__ */ React.createElement("button", { onClick: undoReset, className: "font-black px-3 py-1 rounded-lg active:scale-95", style: { background: C.saffron, color: C.ink } }, "Undo")
-  ), /* @__PURE__ */ React.createElement("div", { className: "fixed bottom-0 left-0 right-0 z-40 flex", style: { background: C.ink, borderTop: `1px solid ${C.line}`, paddingBottom: "env(safe-area-inset-bottom)" } }, TABS.map(({ id, label, Icon }) => {
+  ), view === "count" && recounted > 0 && React.createElement("button", { onClick: saveCount, className: "fixed left-1/2 -translate-x-1/2 z-40 px-5 py-2.5 rounded-xl text-sm font-black shadow-lg active:scale-95", style: { bottom: "calc(132px + env(safe-area-inset-bottom))", background: C.saffron, color: C.ink } }, "Counted " + recounted + " of " + rows.filter((r) => !r.bk).length + " \u2014 Save count"), /* @__PURE__ */ React.createElement("div", { className: "fixed bottom-0 left-0 right-0 z-40 flex", style: { background: C.ink, borderTop: `1px solid ${C.line}`, paddingBottom: "env(safe-area-inset-bottom)" } }, TABS.map(({ id, label, Icon }) => {
     const active = view === id;
     const badge = id === "order" ? orderRows.length : id === "variance" && variance ? variance.summary.over : 0;
     return /* @__PURE__ */ React.createElement("button", { key: id, onClick: () => setView(id), className: "flex-1 py-2.5 flex flex-col items-center gap-0.5 relative" }, /* @__PURE__ */ React.createElement(Icon, { size: 20, color: active ? C.saffron : C.steel }), /* @__PURE__ */ React.createElement("span", { className: "text-[10px] font-bold", style: { color: active ? C.saffron : C.steel } }, label), badge > 0 && /* @__PURE__ */ React.createElement(
@@ -1053,7 +1053,7 @@ function CountView({ rows, counted, countMode, setCountMode, setStock, setCap, s
       style: countMode === v ? { background: C.naan, color: C.ink } : { color: C.steel }
     },
     lbl
-  ))), tbd > 0 && React.createElement("button", { onClick: () => setVerifyOnly(!verifyOnly), className: "text-xs font-bold px-3 py-1.5 rounded-lg active:scale-95", style: verifyOnly ? { background: C.saffron, color: C.ink } : { border: "1px solid " + C.line, color: C.saffron } }, "\u26a0 " + tbd + " to verify")), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2 mt-2" }, /* @__PURE__ */ React.createElement(
+  ))), tbd > 0 && React.createElement("button", { onClick: () => setVerifyOnly(!verifyOnly), className: "text-xs font-bold px-3 py-1.5 rounded-lg active:scale-95", style: verifyOnly ? { background: C.saffron, color: C.ink } : { border: "1px solid " + C.line, color: C.saffron } }, "\u26a0 " + tbd + " pack sizes to check")), /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2 mt-2" }, /* @__PURE__ */ React.createElement(
     "button",
     {
       onClick: saveCount,
@@ -1146,11 +1146,13 @@ function CountCard({ r, rail, setStock, setCap, setReorder, setOrderQty, setPack
       React.createElement("div", { className: "absolute -top-1 bottom-[-3px] w-[2px]", style: { left: (tickAt / segMax * 100) + "%", background: C.saffron } })),
     React.createElement("div", { className: "flex items-center gap-2" },
       React.createElement("button", { onClick: () => { if (r.cur !== void 0) setStock(r.id, r.cur - 1); }, "aria-label": "minus", className: "w-11 h-11 rounded-lg flex items-center justify-center active:scale-95 shrink-0", style: { background: C.cardUp, color: C.naan } }, React.createElement(Minus, { size: 18 })),
-      React.createElement(NumField, { value: r.cur, placeholder: "—", onCommit: (s) => setStock(r.id, s), className: "flex-1 min-w-0 h-12 rounded-lg text-center text-2xl font-black bg-transparent outline-none", style: { background: C.ink, color: r.cur === void 0 ? C.steel : C.naan, border: "1px solid " + C.line } }),
+      React.createElement("div", { className: "flex-1 min-w-0 flex flex-col items-center" },
+        React.createElement(NumField, { value: r.cur, placeholder: "—", onCommit: (s) => setStock(r.id, s), className: "w-full h-12 rounded-lg text-center text-2xl font-black bg-transparent outline-none", style: { background: C.ink, color: r.cur === void 0 ? C.steel : C.naan, border: "1px solid " + C.line } }),
+        React.createElement("div", { className: "text-[9px] uppercase mt-0.5", style: { color: C.steel } }, "on shelf" + (r.cpc > 1 ? " · " + unitLabel(r.cu) : ""))),
       React.createElement("button", { onClick: () => setStock(r.id, (r.cur ?? 0) + 1), "aria-label": "plus", className: "w-11 h-11 rounded-lg flex items-center justify-center active:scale-95 shrink-0", style: { background: C.cardUp, color: C.naan } }, React.createElement(Plus, { size: 18 })),
       React.createElement("div", { className: "flex flex-col items-center shrink-0 pl-1" },
         React.createElement(NumField, { value: (r.ov || r.status === "order" || r.projShort) && r.need > 0 ? r.need : null, placeholder: "0", onCommit: (s) => setOrderQty(r.id, s), className: "w-12 h-12 rounded-lg text-center text-lg font-black outline-none", style: { background: C.ink, color: r.need > 0 ? r.status === "order" ? C.ember : C.saffron : C.steel, border: "1px solid " + (r.need > 0 && r.status === "order" ? C.ember : C.line) } }),
-        React.createElement("div", { className: "text-[9px] uppercase mt-0.5", style: { color: C.steel } }, r.cpc > 1 ? r.cu : "order"))),
+        React.createElement("div", { className: "text-[9px] uppercase mt-0.5", style: { color: r.ov ? C.saffron : C.steel } }, r.ov ? "manual · 0=auto" : "to order"))),
     React.createElement("div", { className: "flex items-center justify-between mt-2.5" },
       React.createElement("button", { onClick: () => setShowLevels((v) => !v), className: "text-[10px] font-bold flex items-center gap-1 px-1 py-0.5 -ml-1 rounded active:scale-95", style: { color: C.steel } }, showLevels ? "▴ Hide levels" : "▾ Levels"),
       r.packTBD ? React.createElement("button", { onClick: () => setShowLevels(true), className: "text-[10px] font-black px-2 py-0.5 rounded active:scale-95", style: { background: C.saffron + "22", color: C.saffron } }, (r.packVerify ? "⚠ verify " : "⚠ set ") + r.cu + "/case") : React.createElement("span", { className: "text-[10px]", style: { color: C.steel } }, footAll)),
@@ -1232,7 +1234,7 @@ function ReceiveView({ rows, recv, setRecvQty, recvNote, setRecvNote, logDeliver
       className: "w-full mt-3 h-11 px-3 rounded-lg text-base outline-none",
       style: { background: C.ink, color: C.naan, border: `1px solid ${C.line}` }
     }
-  )), /* @__PURE__ */ React.createElement("div", { className: "px-3 pt-3" }, STATIONS.map((stn) => {
+  )), lastOrder && lastOrder.items && Object.keys(lastOrder.items).length > 0 && Object.keys(recv).length === 0 && daysBetween(lastOrder.date, (/* @__PURE__ */ new Date()).toISOString()) <= 14 ? React.createElement("div", { className: "px-3 pt-3" }, React.createElement("button", { onClick: () => { for (const [oid, oq] of Object.entries(lastOrder.items)) setRecvQty(oid, oq); }, className: "w-full rounded-xl py-3 font-black text-sm active:scale-95", style: { background: C.mint + "22", color: C.mint, border: "1px solid " + C.mint } }, "\u2713 Everything arrived as ordered \u2014 fill it in")) : null, /* @__PURE__ */ React.createElement("div", { className: "px-3 pt-3" }, STATIONS.map((stn) => {
     const its = rows.filter((i) => i.st === stn.id);
     return /* @__PURE__ */ React.createElement("div", { key: stn.id }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center gap-2 px-1 pt-3 pb-1.5" }, /* @__PURE__ */ React.createElement("div", { className: "w-2 h-2 rounded-full", style: { background: stn.rail } }), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] font-black uppercase tracking-[0.2em]", style: { color: C.steel } }, stn.label)), /* @__PURE__ */ React.createElement("div", { className: "space-y-1.5" }, its.map((it) => {
       const q = recv[it.id];
@@ -1299,7 +1301,7 @@ function OrderView({ orderRows, orderText, cycle, copyOrder, copied, shareOrder,
   });
   const totalStr = Object.keys(totals).map((u) => totals[u] + "\xA0" + (totals[u] === 1 ? u : u === "box" ? "boxes" : u + "s")).join(" + ");
   const ordersEl = orders && orders.length ? React.createElement("div", { className: "px-4 pb-6 pt-2" }, React.createElement("div", { className: "text-[10px] font-black uppercase tracking-[0.2em] pb-2", style: { color: C.steel } }, "Recent orders"), React.createElement("div", { className: "space-y-1.5" }, [...orders].reverse().slice(0, 3).map((o, i) => React.createElement("div", { key: i, className: "rounded-lg px-3 py-2 text-xs", style: { background: C.card, color: C.steel } }, React.createElement("span", { style: { color: C.naan, fontWeight: 700 } }, shortDate(o.date)), " · ", Object.keys(o.items || {}).length, " items")))) : null;
-  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "px-4 pt-5 pb-3 sticky top-0 z-20", style: { background: C.bg, borderBottom: `1px solid ${C.line}` } }, /* @__PURE__ */ React.createElement("div", { className: "text-[10px] uppercase tracking-[0.25em]", style: { color: C.saffron } }, "Sysco order"), /* @__PURE__ */ React.createElement("div", { className: "text-2xl font-black tracking-tight" }, orderRows.length, " item", orderRows.length !== 1 ? "s" : "", " to order"), /* @__PURE__ */ React.createElement("div", { className: "text-[11px] mt-1", style: { color: C.steel } }, "Deliveries " + DAYW[DELIVERY_DAYS[0]] + " & " + DAYW[DELIVERY_DAYS[1]] + " \u2014 at-reorder items refill to Max; early warnings cover through " + dwin.followingName + " (+1 day)."), orderRows.length > 0 ? React.createElement("div", { className: "text-xs font-black mt-1.5", style: { color: C.naan } }, "Order total: " + totalStr) : null), orderRows.length === 0 ? React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "px-6 py-16 text-center", style: { color: C.steel } }, "Nothing at reorder point. Count the shelves, then check back."), ordersEl) : /* @__PURE__ */ React.createElement("div", { className: "px-4 py-4 space-y-2" }, orderRows.map((r) => /* @__PURE__ */ React.createElement("div", { key: r.id, className: "flex items-center justify-between rounded-xl px-4 py-3", style: { background: C.card } }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "font-bold" }, r.name), /* @__PURE__ */ React.createElement("div", { className: "text-xs font-mono", style: { color: C.steel } }, r.code, r.alt ? ` \xB7 ${r.alt}` : ""), r.projShort && r.status !== "order" ? React.createElement("div", { className: "text-[10px] mt-0.5", style: { color: C.ember } }, "short before " + r.shortBefore) : null, r.orderedDaysAgo != null ? React.createElement("div", { className: "inline-block text-[10px] mt-0.5 font-black px-1.5 py-0.5 rounded", style: { background: C.mint + "22", color: C.mint } }, "ordered " + (r.orderedDaysAgo === 0 ? "today" : r.orderedDaysAgo + "d ago") + " \u2014 don\u2019t send twice") : null, r.packTBD ? React.createElement("div", { className: "text-[10px] mt-0.5", style: { color: C.saffron } }, "\u26a0 pack size unconfirmed \u2014 case qty estimated") : null), /* @__PURE__ */ React.createElement("div", { className: "text-right" }, /* @__PURE__ */ React.createElement("div", { className: "text-2xl font-black", style: { color: C.saffron } }, r.cpc > 1 ? r.orderCs : r.need), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] uppercase tracking-wide", style: { color: C.steel } }, r.pack.includes("bn") ? "bundles" : r.pack.includes("bx") ? "boxes" : r.pack.includes("bg") ? "bags" : "cases"), r.orderLastsDays != null && r.orderLastsDays <= 90 && React.createElement("div", { className: "text-[10px] mt-0.5", style: { color: C.steel } }, "lasts " + String.fromCharCode(8776) + r.orderLastsDays + "d")))), /* @__PURE__ */ React.createElement("div", { className: "rounded-xl p-4 mt-4", style: { background: C.ink, border: `1px solid ${C.line}` } }, /* @__PURE__ */ React.createElement("pre", { className: "text-xs whitespace-pre-wrap font-mono leading-relaxed", style: { color: C.naan } }, orderText)), typeof navigator !== "undefined" && navigator.share ? React.createElement(
+  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "px-4 pt-5 pb-3 sticky top-0 z-20", style: { background: C.bg, borderBottom: `1px solid ${C.line}` } }, /* @__PURE__ */ React.createElement("div", { className: "text-[10px] uppercase tracking-[0.25em]", style: { color: C.saffron } }, "Sysco order"), /* @__PURE__ */ React.createElement("div", { className: "text-2xl font-black tracking-tight" }, orderRows.length, " item", orderRows.length !== 1 ? "s" : "", " to order"), /* @__PURE__ */ React.createElement("div", { className: "text-[11px] mt-1", style: { color: C.steel } }, "Deliveries " + DAYW[DELIVERY_DAYS[0]] + " & " + DAYW[DELIVERY_DAYS[1]] + " \u2014 at-reorder items refill to Max; early warnings cover through " + dwin.followingName + " (+1 day)."), orderRows.length > 0 ? React.createElement("div", { className: "text-xs font-black mt-1.5", style: { color: C.naan } }, "Order total: " + totalStr) : null), orderRows.length === 0 ? React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "px-6 py-16 text-center", style: { color: C.steel } }, "Nothing at reorder point. Count the shelves, then check back."), ordersEl) : /* @__PURE__ */ React.createElement("div", { className: "px-4 py-4 space-y-2" }, orderRows.map((r) => /* @__PURE__ */ React.createElement("div", { key: r.id, className: "flex items-center justify-between rounded-xl px-4 py-3", style: { background: C.card } }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "font-bold" }, r.name), /* @__PURE__ */ React.createElement("div", { className: "text-xs font-mono", style: { color: C.steel } }, r.code, r.alt ? ` \xB7 ${r.alt}` : ""), r.projShort && r.status !== "order" ? React.createElement("div", { className: "text-[10px] mt-0.5", style: { color: C.ember } }, "short before " + r.shortBefore) : null, r.orderedDaysAgo != null ? React.createElement("div", { className: "inline-block text-[10px] mt-0.5 font-black px-1.5 py-0.5 rounded", style: { background: C.mint + "22", color: C.mint } }, "ordered " + (r.orderedDaysAgo === 0 ? "today" : r.orderedDaysAgo + "d ago") + " \u2014 don\u2019t send twice") : null, r.aged ? React.createElement("div", { className: "text-[10px] mt-0.5", style: { color: C.saffron } }, "estimate \u2014 counted " + r.rawCur + " on " + shortDate(r.countedAt) + " \xB7 recount before sending") : null, r.packTBD ? React.createElement("div", { className: "text-[10px] mt-0.5", style: { color: C.saffron } }, "\u26a0 pack size unconfirmed \u2014 case qty estimated") : null), /* @__PURE__ */ React.createElement("div", { className: "text-right" }, /* @__PURE__ */ React.createElement("div", { className: "text-2xl font-black", style: { color: C.saffron } }, r.cpc > 1 ? r.orderCs : r.need), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] uppercase tracking-wide", style: { color: C.steel } }, r.pack.includes("bn") ? "bundles" : r.pack.includes("bx") ? "boxes" : r.pack.includes("bg") ? "bags" : "cases"), r.orderLastsDays != null && r.orderLastsDays <= 90 && React.createElement("div", { className: "text-[10px] mt-0.5", style: { color: C.steel } }, "lasts " + String.fromCharCode(8776) + r.orderLastsDays + "d")))), /* @__PURE__ */ React.createElement("div", { className: "rounded-xl p-4 mt-4", style: { background: C.ink, border: `1px solid ${C.line}` } }, /* @__PURE__ */ React.createElement("pre", { className: "text-xs whitespace-pre-wrap font-mono leading-relaxed", style: { color: C.naan } }, orderText)), typeof navigator !== "undefined" && navigator.share ? React.createElement(
     "button",
     {
       onClick: shareOrder,

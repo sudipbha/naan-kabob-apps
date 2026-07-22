@@ -39,9 +39,9 @@ the shelf. It is *not* always a case:
 a "⚠ verify /case" chip on the Count card and "⚠ pack size unconfirmed — case
 qty estimated" on Order rows. Users confirm real pack sizes from box labels over
 time; both values are editable per item under **Levels → Count in / per case**.
-A **⚠ N to verify** button next to the Shelf walk / By status switch on the
-Count tab filters the list to just these unconfirmed items (it disappears once
-everything is confirmed).
+A **⚠ N pack sizes to check** button next to the Shelf walk / By status switch
+on the Count tab filters the list to just these unconfirmed items (it
+disappears once everything is confirmed).
 
 ## 2. Statuses and chips
 
@@ -108,16 +108,25 @@ estimate is never mistaken for a fresh count.
    Reorder-at, pack config, and the Backup toggle. **Save count** stores a
    dated snapshot of only the items recounted since the previous save (items
    not touched are left out and the save message says how many — this keeps
-   measured usage honest; save after every walk).
-   The smaller box on the card's right is the **order box**: the app fills it
-   with what to order (in counting units; the label under it names the unit)
+   measured usage honest; save after every walk). While a walk is in
+   progress, a floating **"Counted N of M — Save count"** button hovers above
+   the tab bar so progress and saving are always one tap away.
+   The two number boxes on each card are labeled: the big one says **"on
+   shelf"** (plus the counting unit, e.g. "on shelf · sleeves"), the small one
+   — the **order box** — says **"to order"** and switches to **"manual ·
+   0=auto"** (amber) while a typed override is active. The app fills the order
+   box only when the item is actually going on the order, in counting units,
    and it feeds the Order tab. Typing a number there is a manual override that
    beats the suggestion; typing **0 clears the override back to automatic**
    (there is no way to silently mute an item). Re-counting the item also
    clears any override.
 2. **Receive** — when a truck arrives, enter what actually came, per item, in
    counting units ("receive in sleeves"). An "expected N · date" chip prefills
-   from the last logged order. Adds to on-hand and records a receipt.
+   from the last logged order, and an **"Everything arrived as ordered"**
+   button fills every expected row in one tap (edit the exceptions, then log).
+   Receiving an item that has never been counted **sets** its on-hand number
+   (blank counts as 0) — the toast says how many were counted for the first
+   time. Adds to on-hand and records a receipt.
 3. **Variance** — expected vs. actual usage between the last two counts, in
    each item's counting unit (labeled on every row). Expected usage comes
    from count periods *before* the one being judged (or from baselines), so
@@ -129,6 +138,8 @@ estimate is never mistaken for a fresh count.
 4. **Usage** — measured daily usage per item, shown in the item's counting
    unit (e.g. "packs / day", "rolls / day").
 5. **Order** — everything at reorder or projected short, with case quantities.
+   Rows whose quantity rests on an **aged estimate** (not a fresh count) carry
+   an amber "estimate — counted N on ‹date› · recount before sending" warning.
    An **Order total** line in the header sums the whole order in purchase
    units (e.g. "Order total: 3 cases + 2 boxes"). The order text starts with
    an **"Order date"** line showing *tomorrow's* date — the owner texts the
