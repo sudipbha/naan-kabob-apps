@@ -116,7 +116,9 @@ estimate is never mistaken for a fresh count.
    — the **order box** — says **"to order"** and switches to **"manual ·
    0=auto"** (amber) while a typed override is active. The app fills the order
    box only when the item is actually going on the order, in counting units,
-   and it feeds the Order tab. Typing a number there is a manual override that
+   and it feeds the Order tab. For sub-case items a live **"= N cs"** line
+   under the box shows what the supplier will actually be asked for (orders
+   round up to whole cases). Typing a number there is a manual override that
    beats the suggestion; typing **0 clears the override back to automatic**
    (there is no way to silently mute an item). Re-counting the item also
    clears any override.
