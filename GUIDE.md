@@ -167,7 +167,8 @@ estimate is never mistaken for a fresh count.
   `packcfg`, `counts`, `receipts`, `orders`, `cycle`).
 - A Supabase row per app mirrors the same blob for cross-device sync
   (last-write-wins with per-field merge). Offline works; sync resumes when back
-  online. Manual export/import codes carry the app name and the importer
+  online. If the cloud doesn't answer within ~5 s at startup, the app loads
+  the phone's local data immediately instead of waiting. Manual export/import codes carry the app name and the importer
   refuses codes from the other tracker (older codes without a name still
   load); they live in the sync sheet (⇄ Sync on the
   Count tab), which also shows a **Cloud sync · last synced …** line — when

@@ -20,8 +20,10 @@ anchors asserted `count == 1` per file.
 
 ## Verification gates — before every PR, no exceptions
 
-PRs on `claude/*` branches auto-merge instantly with zero CI, so local gates
-are the only safety net:
+The auto-merge workflow now runs `tests/render-check.js` (syntax + full
+browser render of every tab, both apps) BEFORE merging — a failing gate
+leaves the PR open. Local gates remain the first line of defense (CI adds
+~2 min; don't lean on it to catch what you could catch locally):
 
 1. `node --check` on the extracted `<script>` (the block containing
    `ChampionTracker`).
