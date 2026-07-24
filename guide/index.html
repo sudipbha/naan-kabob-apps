@@ -111,7 +111,7 @@ reloads the app to pick up updates.</p>
   <tr><td><span class="badge b-backup">BACKUP</span></td><td>Normally bought from the other supplier — this entry is just a spare tire. No warnings, no auto-order.</td></tr>
   <tr><td>counted today / counted Jul 15</td><td>When this number was last set.</td></tr>
   <tr><td>≈3d left</td><td>Projected days until it runs out, at your usage speed.</td></tr>
-  <tr><td>The dashed bar</td><td>Stock level vs Max. The orange tick is the reorder point — when the fill drops past the tick, it goes on the order.</td></tr>
+  <tr><td>The bar</td><td>Stock level vs Max (dashes for small Maxes, a smooth fill for large ones). The orange tick is the reorder point — when the fill drops past the tick, it goes on the order.</td></tr>
   <tr><td>Big box — labeled <strong>"on shelf"</strong></td><td>What's on the shelf, in the item's counting unit (the label names it: "on shelf · sleeves").</td></tr>
   <tr><td>Small box — labeled <strong>"to order"</strong></td><td>What to order (see next section). The label turns amber — <strong>"manual · 0=auto"</strong> — when you've typed your own amount.</td></tr>
 </table>
@@ -166,7 +166,8 @@ other supplier. The app stops nagging about them.</p>
 button next to the Shelf walk switch shows only those items. Next time a case
 of one of them comes in, look at the box, fix <strong>per case</strong> under
 Levels if needed, and the ⚠ disappears. The button goes away when everything
-is confirmed.</p>
+is confirmed. Its neighbor, <strong>"N to count"</strong>, works the same way
+for items you haven't counted yet — handy mid-walk.</p>
 
 <h2 id="receive">When a delivery arrives</h2>
 <img src="img/receive.png" alt="The Receive tab" width="780" height="1688"/>
@@ -174,7 +175,9 @@ is confirmed.</p>
 item by item, in the same counting units as always. If you logged the order in
 the app, a small <strong>expected</strong> chip reminds you what should arrive —
 and a big <strong>"✓ Everything arrived as ordered — fill it in"</strong> button
-fills every expected row in one tap. Fix the one thing they shorted, then log.</p>
+fills every expected row in one tap. Fix the one thing they shorted, then log.
+A <strong>"Truck check: 3 of 6 expected items entered"</strong> line at the top
+tells you when the whole truck is accounted for.</p>
 <p>Receiving something you'd never counted before? No problem — the app treats
 the blank as zero and sets the count for you.</p>
 <p>Type a short note ("Champion Jul 10 · stone shorted") and tap
@@ -207,7 +210,8 @@ the truck shows up.</p>
 <img src="img/usage.png" alt="The Usage tab" width="780" height="1688"/>
 <p><strong>Usage</strong> shows how much of each item you go through per day —
 weekdays vs weekends — measured from your saved counts. Units are spelled out
-("packs / day", "rolls / day"). This is the engine behind every suggestion in
+("packs / day", "rolls / day"), and each row carries a pace bar so the big
+movers jump out (bars compare speed; the units differ between items). This is the engine behind every suggestion in
 the app, and it sharpens every time you save a count.</p>
 <img src="img/variance.png" alt="The Variance tab" width="780" height="1688"/>
 <p><strong>Variance</strong> compares your last two counts: how much <em>should</em>
