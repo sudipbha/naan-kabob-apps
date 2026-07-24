@@ -41,7 +41,10 @@ qty estimated" on Order rows. Users confirm real pack sizes from box labels over
 time; both values are editable per item under **Levels → Count in / per case**.
 A **⚠ N pack sizes to check** button next to the Shelf walk / By status switch
 on the Count tab filters the list to just these unconfirmed items (it
-disappears once everything is confirmed).
+disappears once everything is confirmed). A sibling **N to count** button does
+the same for items with no on-hand number yet. The card's stock bar renders as
+segments for Max ≤ 16 and as a continuous fill bar above that (the orange tick
+is the reorder point either way).
 
 ## 2. Statuses and chips
 
@@ -125,7 +128,9 @@ estimate is never mistaken for a fresh count.
 2. **Receive** — when a truck arrives, enter what actually came, per item, in
    counting units ("receive in sleeves"). An "expected N · date" chip prefills
    from the last logged order, and an **"Everything arrived as ordered"**
-   button fills every expected row in one tap (edit the exceptions, then log).
+   button fills every expected row in one tap (edit the exceptions, then log),
+   while a **"Truck check: N of M expected items entered"** line in the header
+   tracks progress against the logged order.
    Receiving an item that has never been counted **sets** its on-hand number
    (blank counts as 0) — the toast says how many were counted for the first
    time. Adds to on-hand and records a receipt.
@@ -138,7 +143,8 @@ estimate is never mistaken for a fresh count.
    at least 1 unit and 25% off expected (small-expected items need an
    overage of 2+).
 4. **Usage** — measured daily usage per item, shown in the item's counting
-   unit (e.g. "packs / day", "rolls / day").
+   unit (e.g. "packs / day", "rolls / day"), with a relative pace bar per row
+   (bars compare speed at a glance; note the units differ between items).
 5. **Order** — everything at reorder or projected short, with case quantities.
    Rows whose quantity rests on an **aged estimate** (not a fresh count) carry
    an amber "estimate — counted N on ‹date› · recount before sending" warning.
