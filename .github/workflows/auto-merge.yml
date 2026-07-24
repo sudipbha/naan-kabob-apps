@@ -12,6 +12,21 @@ jobs:
       startsWith(github.event.pull_request.head.ref, 'claude/')
     runs-on: ubuntu-latest
     steps:
+      # Safety gate: syntax + full browser render of every tab on both apps.
+      # A failure leaves the PR open instead of auto-merging broken code.
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.merge_commit_sha || github.event.pull_request.head.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install Playwright
+        run: |
+          npm init -y > /dev/null
+          npm install --no-save playwright > /dev/null
+          npx playwright install --with-deps chromium
+      - name: Render check (all tabs, both apps)
+        run: node tests/render-check.js
       - name: Squash-merge claude PR
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

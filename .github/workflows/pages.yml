@@ -63,3 +63,16 @@ jobs:
       - name: Deploy (retry 2)
         if: steps.deployment.outcome == 'failure' && steps.deployment2.outcome == 'failure'
         uses: actions/deploy-pages@v4
+      # Post-deploy smoke test: the live apps must actually serve the app code.
+      - name: Smoke-test live site
+        run: |
+          for app in sysco champion; do
+            for i in 1 2 3; do
+              body=$(curl -fsSL "https://sudipbha.github.io/naan-kabob-apps/$app/" || true)
+              if echo "$body" | grep -q "ChampionTracker"; then
+                echo "$app OK"; continue 2
+              fi
+              echo "$app not ready yet (attempt $i)"; sleep 20
+            done
+            echo "SMOKE FAIL: $app did not serve the app"; exit 1
+          done

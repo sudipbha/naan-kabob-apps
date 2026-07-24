@@ -451,7 +451,7 @@ function ChampionTracker() {
     (async () => {
       const localSnap = readLocal();
       try {
-        const row = await cloudGet();
+        const row = await Promise.race([cloudGet(), new Promise((_, rej) => setTimeout(() => rej(new Error("slow-cloud")), 5e3))]);
         loadOkRef.current = true;
         setLastSync((/* @__PURE__ */ new Date()).toISOString());
         const remoteStamp = row && row.data ? new Date(row.updated_at).getTime() : 0;
