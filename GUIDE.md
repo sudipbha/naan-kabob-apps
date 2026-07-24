@@ -39,8 +39,8 @@ the shelf. It is *not* always a case:
 a "⚠ verify /case" chip on the Count card and "⚠ pack size unconfirmed — case
 qty estimated" on Order rows. Users confirm real pack sizes from box labels over
 time; both values are editable per item under **Levels → Count in / per case**.
-A **⚠ N pack sizes to check** button next to the Shelf walk / By status switch
-on the Count tab filters the list to just these unconfirmed items (it
+A **⚠ N pack sizes to check** button next to the Walk / Status / Frequent
+switch on the Count tab filters the list to just these unconfirmed items (it
 disappears once everything is confirmed). A sibling **N to count** button does
 the same for items with no on-hand number yet. The card's stock bar renders as
 segments for Max ≤ 16 and as a continuous fill bar above that (the orange tick
@@ -106,7 +106,10 @@ estimate is never mistaken for a fresh count.
 
 ## 6. The five tabs
 
-1. **Count** — shelf walk (grouped by station) or by-status list. Type or ±
+1. **Count** — three sort modes: **Walk** (grouped by station, matches the
+   shelves), **Status** (urgent first), and **Frequent** (items appearing in
+   the most logged orders first; until order history builds up it falls back
+   to each item's usage rate). Type or ±
    what's on the shelf, in counting units. "Levels" on each card edits Max,
    Reorder-at, pack config, and the Backup toggle. **Save count** stores a
    dated snapshot of only the items recounted since the previous save (items
