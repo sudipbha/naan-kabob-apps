@@ -114,9 +114,16 @@ estimate is never mistaken for a fresh count.
    Reorder-at, pack config, and the Backup toggle. **Save count** stores a
    dated snapshot of only the items recounted since the previous save (items
    not touched are left out and the save message says how many — this keeps
-   measured usage honest; save after every walk). While a walk is in
-   progress, a floating **"Counted N of M — Save count"** button hovers above
-   the tab bar so progress and saving are always one tap away.
+   measured usage honest; save after every walk). The Count header is
+   `sticky top-0`, so its **Save count** button is always on screen and carries
+   the walk-progress signal: amber with **"N new · saved ‹date›"** on the line
+   beside it while N items have been recounted since the last save, quiet grey
+   outline with just **"last saved ‹date›"** when there is nothing new (tapping
+   it then only flashes "All saved already"). The button's own label never
+   changes, so it cannot re-wrap the header. There is deliberately **no
+   floating save overlay**: an earlier version hovered a duplicate
+   "Counted N of M — Save count" button above the tab bar, which covered card
+   content mid-list and duplicated a button that never leaves the screen.
    The two number boxes on each card are labeled: the big one says **"on
    shelf"** (plus the counting unit, e.g. "on shelf · sleeves"), the small one
    — the **order box** — says **"to order"** and switches to **"manual ·
