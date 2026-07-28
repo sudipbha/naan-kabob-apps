@@ -122,6 +122,9 @@
   select{width:100%;font:inherit;font-size:14.5px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;
          background:var(--bg);color:var(--ink);outline:none;appearance:auto}
   input[type=range]{width:100%;accent-color:var(--acc)}
+  #aiKey{width:100%;font:inherit;font-size:14.5px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;
+         background:var(--bg);color:var(--ink);outline:none}
+  .aiHint{font-size:12px;color:var(--mut);line-height:1.5;margin:8px 2px 0}
   .chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
   .spd{border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600;color:var(--mut)}
   .spd.on{background:var(--acc);border-color:var(--acc);color:#fff}
@@ -203,8 +206,18 @@
   <div id="sheet">
     <h3>Listening settings</h3>
     <div class="fRow">
-      <div class="fLab">Voice</div>
+      <div class="fLab">Device voice — free</div>
       <select id="voiceSel"></select>
+    </div>
+    <div class="fRow">
+      <div class="fLab">AI voice — natural, keeps playing in the background</div>
+      <div class="swRow" style="margin-bottom:10px">
+        <span>Use AI voice (OpenAI)</span>
+        <button class="sw" id="aiSw" role="switch" aria-checked="false" aria-label="Use AI voice"></button>
+      </div>
+      <input type="password" id="aiKey" placeholder="Paste your OpenAI key (starts with sk-)" autocomplete="off" spellcheck="false">
+      <select id="aiVoiceSel" style="margin-top:8px"></select>
+      <p class="aiHint">Get a key at platform.openai.com under “API keys”. The key is saved only on this device, and each article costs a few cents. With the AI voice on, listening continues when you minimize the app or lock the screen.</p>
     </div>
     <div class="fRow">
       <div class="fLab">Speed — <span id="spdLab">1.0×</span></div>
@@ -248,7 +261,10 @@ var state = {
   gen: 0,
   view: 'home',
   userScrollTs: 0,
-  fetching: false
+  fetching: false,
+  aiOn: false,
+  aiKey: null,
+  aiVoice: 'nova'
 };
 var uid = 1;
 var synthOK = ('speechSynthesis' in window) && ('SpeechSynthesisUtterance' in window);
@@ -283,7 +299,8 @@ function persist(){
       return { id:a.id, title:a.title, source:a.source, sentences:a.sentences, paras:a.paras,
                words:a.words, progress:a.progress, played:a.played };
     });
-    var blob = { v:1, rate:state.rate, voiceURI:state.voiceURI, autoplay:state.autoplay, articles:arts };
+    var blob = { v:1, rate:state.rate, voiceURI:state.voiceURI, autoplay:state.autoplay,
+                 aiOn:state.aiOn, aiKey:state.aiKey, aiVoice:state.aiVoice, articles:arts };
     if (!store.set('earmark.v1', blob)) {
       blob.articles = arts.filter(function(a){ return !a.played; });
       store.set('earmark.v1', blob);
@@ -296,6 +313,9 @@ function restore(){
   if (typeof saved.rate === 'number') state.rate = Math.max(0.5, Math.min(3, saved.rate));
   if (saved.voiceURI) state.voiceURI = saved.voiceURI;
   state.autoplay = saved.autoplay !== false;
+  if (typeof saved.aiKey === 'string' && saved.aiKey) state.aiKey = saved.aiKey;
+  if (typeof saved.aiVoice === 'string' && saved.aiVoice) state.aiVoice = saved.aiVoice;
+  state.aiOn = saved.aiOn === true && !!state.aiKey;
   var arts = Array.isArray(saved.articles) ? saved.articles : [];
   var maxId = 0;
   for (var i=0;i<arts.length;i++){
@@ -669,22 +689,254 @@ function populateVoiceSel(){
 }
 
 var unlocked = false;
+// one silent sample of 16-bit PCM — used to bless the audio element inside a
+// user gesture so later programmatic play() calls are allowed on mobile
+var SILENT_WAV = 'data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAIlYAAESsAAACABAAZGF0YQIAAAAAAA==';
 function unlockAudio(){
-  if (unlocked || !synthOK) return;
+  if (unlocked) return;
   unlocked = true;
+  if (synthOK) {
+    try {
+      var u = new SpeechSynthesisUtterance(' ');
+      u.volume = 0;
+      speechSynthesis.speak(u);
+    } catch(e){}
+  }
   try {
-    var u = new SpeechSynthesisUtterance(' ');
-    u.volume = 0;
-    speechSynthesis.speak(u);
+    var el = getAudioEl();
+    el.src = SILENT_WAV;
+    var p = el.play();
+    if (p && p.then) p.then(function(){ el.pause(); }, function(){});
+  } catch(e){}
+}
+
+function stopEngines(){
+  try { speechSynthesis.cancel(); } catch(e){}
+  if (aiAudio) { try { aiAudio.pause(); } catch(e){} }
+}
+
+/* ---- AI voice engine (OpenAI) — real audio, so it keeps playing in the background ---- */
+var AI_VOICES = [
+  ['nova','Nova — bright (default)'], ['coral','Coral — warm'], ['alloy','Alloy — balanced'],
+  ['sage','Sage — gentle'], ['shimmer','Shimmer — soft'], ['fable','Fable — storyteller'],
+  ['echo','Echo — calm male'], ['ash','Ash — crisp male'], ['onyx','Onyx — deep male']
+];
+var aiAudio = null;
+var aiSess = null;   // {artId, voice, chunks:[{s0,s1}], urls:[], pending:{}}
+var aiNow = null;    // {g, ci, startIdx}
+function aiActive(){ return state.aiOn && !!state.aiKey; }
+
+function getAudioEl(){
+  if (aiAudio) return aiAudio;
+  aiAudio = new Audio();
+  aiAudio.preload = 'auto';
+  aiAudio.addEventListener('loadedmetadata', onAiMeta);
+  aiAudio.addEventListener('timeupdate', onAiTime);
+  aiAudio.addEventListener('ended', onAiEnded);
+  return aiAudio;
+}
+
+function aiReset(){
+  if (aiSess) {
+    for (var i=0;i<aiSess.urls.length;i++) if (aiSess.urls[i]) { try { URL.revokeObjectURL(aiSess.urls[i]); } catch(e){} }
+  }
+  aiSess = null; aiNow = null;
+}
+
+// group consecutive sentences into TTS requests of ~1400 chars — short enough
+// that the first audio arrives fast, long enough that chunk seams are rare
+function aiChunksFor(art){
+  var chunks = [], s0 = 0, chars = 0;
+  for (var i=0;i<art.sentences.length;i++){
+    var L = art.sentences[i].t.length + 1;
+    if (chars > 0 && chars + L > 1400) { chunks.push({s0:s0, s1:i}); s0 = i; chars = 0; }
+    chars += L;
+  }
+  if (chars > 0) chunks.push({s0:s0, s1:art.sentences.length});
+  return chunks;
+}
+function aiChunkOf(idx){
+  for (var i=0;i<aiSess.chunks.length;i++) if (idx < aiSess.chunks[i].s1) return i;
+  return aiSess.chunks.length - 1;
+}
+function aiText(art, ch){
+  var t = [];
+  for (var i=ch.s0;i<ch.s1;i++) t.push(art.sentences[i].t);
+  return t.join(' ');
+}
+
+function aiFetch(text){
+  return fetch('https://api.openai.com/v1/audio/speech', {
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + state.aiKey, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'gpt-4o-mini-tts',
+      voice: state.aiVoice || 'nova',
+      input: text,
+      response_format: 'mp3',
+      instructions: 'Read this newsletter article aloud as a natural, engaged narrator. Read numbers, dates and abbreviations the way a person would.'
+    })
+  }).then(function(res){
+    if (!res.ok) throw new Error('ai-http-' + res.status);
+    return res.blob();
+  }).then(function(b){ return URL.createObjectURL(b); });
+}
+function aiEnsure(art, ci){
+  if (aiSess.urls[ci]) return Promise.resolve(aiSess.urls[ci]);
+  if (aiSess.pending[ci]) return aiSess.pending[ci];
+  var p = aiFetch(aiText(art, aiSess.chunks[ci])).then(function(url){
+    if (aiSess) { aiSess.urls[ci] = url; delete aiSess.pending[ci]; }
+    return url;
+  }, function(err){
+    if (aiSess) delete aiSess.pending[ci];
+    throw err;
+  });
+  aiSess.pending[ci] = p;
+  return p;
+}
+function aiFailMsg(err){
+  var m = (err && err.message) || '';
+  if (m === 'ai-http-401') return 'OpenAI didn’t accept your key — check it under the gear icon';
+  if (m === 'ai-http-429') return 'OpenAI is busy or out of credit — check your account, or try again in a minute';
+  return 'Couldn’t reach the AI voice — check your connection';
+}
+
+function aiSpeakFrom(i){
+  var art = cur(); if (!art) return;
+  state.idx = Math.max(0, Math.min(i, art.sentences.length - 1));
+  var g = ++state.gen;
+  stopEngines();
+  state.playing = true;
+  art.played = false;
+  updatePlayerUI(); highlight(true);
+  if (!aiSess || aiSess.artId !== art.id || aiSess.voice !== state.aiVoice) {
+    aiReset();
+    aiSess = { artId: art.id, voice: state.aiVoice, chunks: aiChunksFor(art), urls: [], pending: {} };
+  }
+  var ci = aiChunkOf(state.idx);
+  if (!aiSess.urls[ci]) toast('Preparing the AI voice…', 1800);
+  aiPlayChunk(art, g, ci, state.idx);
+}
+
+function aiPlayChunk(art, g, ci, startIdx){
+  if (g !== state.gen) return;
+  if (!aiSess || ci >= aiSess.chunks.length) { onArticleEnd(art); return; }
+  var ch = aiSess.chunks[ci];
+  aiEnsure(art, ci).then(function(url){
+    if (g !== state.gen || !aiSess) return;
+    aiNow = { g: g, ci: ci, startIdx: Math.max(startIdx, ch.s0) };
+    var el = getAudioEl();
+    el.src = url;
+    el.playbackRate = state.rate;
+    var p = el.play();
+    if (p && p.then) p.then(null, function(){
+      if (g !== state.gen) return;
+      state.playing = false; updatePlayerUI();
+      toast('Tap play to start listening', 3000);
+    });
+    setMediaSession(art);
+    if (ci + 1 < aiSess.chunks.length) aiEnsure(art, ci + 1).then(null, function(){});
+  }, function(err){
+    if (g !== state.gen) return;
+    if (synthOK) {
+      toast(aiFailMsg(err) + ' — using the device voice for now', 5000);
+      deviceSpeakFrom(state.idx);
+    } else {
+      state.playing = false; updatePlayerUI();
+      toast(aiFailMsg(err), 5000);
+    }
+  });
+}
+
+function onAiMeta(){
+  if (!aiNow || !aiSess || aiNow.g !== state.gen) return;
+  var art = cur(); if (!art) return;
+  var ch = aiSess.chunks[aiNow.ci];
+  if (aiNow.startIdx > ch.s0 && aiAudio.duration) {
+    // resume mid-chunk: estimate the seek point by character position
+    var pre = 0, tot = 0;
+    for (var i=ch.s0;i<ch.s1;i++){
+      var L = art.sentences[i].t.length + 1;
+      tot += L;
+      if (i < aiNow.startIdx) pre += L;
+    }
+    if (tot > 0 && pre > 0) { try { aiAudio.currentTime = aiAudio.duration * pre / tot; } catch(e){} }
+  }
+  aiAudio.playbackRate = state.rate;
+  if ('mediaSession' in navigator) {
+    try {
+      navigator.mediaSession.setPositionState({
+        duration: aiAudio.duration, playbackRate: aiAudio.playbackRate, position: aiAudio.currentTime
+      });
+    } catch(e){}
+  }
+}
+
+function onAiTime(){
+  if (!aiNow || !aiSess || aiNow.g !== state.gen || !state.playing) return;
+  var art = cur(); if (!art || !aiAudio.duration) return;
+  var ch = aiSess.chunks[aiNow.ci];
+  var frac = aiAudio.currentTime / aiAudio.duration;
+  var tot = 0, i;
+  for (i=ch.s0;i<ch.s1;i++) tot += art.sentences[i].t.length + 1;
+  var si = ch.s1 - 1, acc = 0;
+  for (i=ch.s0;i<ch.s1;i++){
+    acc += art.sentences[i].t.length + 1;
+    if (frac < acc / tot) { si = i; break; }
+  }
+  if (si !== state.idx) {
+    state.idx = si; art.progress = si;
+    highlight(true); persist();
+  }
+}
+
+function onAiEnded(){
+  if (!aiNow || !aiSess || aiNow.g !== state.gen) return;
+  var art = cur();
+  if (!art) { state.playing = false; updatePlayerUI(); return; }
+  var ch = aiSess.chunks[aiNow.ci];
+  state.idx = ch.s1; art.progress = ch.s1;
+  persist();
+  aiPlayChunk(art, aiNow.g, aiNow.ci + 1, ch.s1);
+}
+
+function nextArticle(){
+  var art = cur(); if (!art) return;
+  var pos = -1;
+  for (var i=0;i<state.articles.length;i++) if (state.articles[i].id === art.id) { pos = i; break; }
+  for (var j=pos+1;j<state.articles.length;j++){
+    if (!state.articles[j].played) { playArticle(state.articles[j].id, false); return; }
+  }
+}
+function setMediaSession(art){
+  if (!('mediaSession' in navigator)) return;
+  try {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: art.title, artist: art.source, album: 'Earmark',
+      artwork: [
+        { src: 'icon-192.png', sizes: '192x192', type: 'image/png' },
+        { src: 'icon-512.png', sizes: '512x512', type: 'image/png' }
+      ]
+    });
+    navigator.mediaSession.setActionHandler('play', function(){ if (!state.playing) togglePlay(); });
+    navigator.mediaSession.setActionHandler('pause', function(){ if (state.playing) pausePlayback(); });
+    try { navigator.mediaSession.setActionHandler('seekbackward', function(){ jump(state.idx - 1); }); } catch(e){}
+    try { navigator.mediaSession.setActionHandler('seekforward', function(){ jump(state.idx + 1); }); } catch(e){}
+    try { navigator.mediaSession.setActionHandler('nexttrack', function(){ nextArticle(); }); } catch(e){}
   } catch(e){}
 }
 
 function speakFrom(i){
+  if (aiActive()) aiSpeakFrom(i);
+  else deviceSpeakFrom(i);
+}
+
+function deviceSpeakFrom(i){
   var art = cur();
   if (!art || !synthOK) { if (!synthOK) toast('Read-aloud isn’t supported in this browser'); return; }
   state.idx = Math.max(0, Math.min(i, art.sentences.length - 1));
   var g = ++state.gen;
-  try { speechSynthesis.cancel(); } catch(e){}
+  stopEngines();
   state.playing = true;
   art.played = false;
   updatePlayerUI(); highlight(true);
@@ -731,7 +983,7 @@ function speakFrom(i){
 function pausePlayback(){
   var art = cur();
   state.gen++;
-  try { speechSynthesis.cancel(); } catch(e){}
+  stopEngines();
   state.playing = false;
   if (art) art.progress = state.idx;
   updatePlayerUI(); persist();
@@ -929,6 +1181,15 @@ function updatePlayerUI(){
 var SPEEDS = [0.75, 1, 1.25, 1.5, 1.75, 2, 2.5, 3];
 function openSheet(){
   populateVoiceSel();
+  var vh = '';
+  for (var i=0;i<AI_VOICES.length;i++){
+    vh += '<option value="' + AI_VOICES[i][0] + '"' + (AI_VOICES[i][0] === (state.aiVoice || 'nova') ? ' selected' : '') + '>'
+       + AI_VOICES[i][1] + '</option>';
+  }
+  $('aiVoiceSel').innerHTML = vh;
+  $('aiKey').value = state.aiKey || '';
+  $('aiSw').classList.toggle('on', state.aiOn);
+  $('aiSw').setAttribute('aria-checked', String(state.aiOn));
   $('spdRange').value = state.rate;
   $('spdLab').textContent = fmtRate(state.rate);
   renderSpeedChips();
@@ -954,7 +1215,11 @@ function setRate(r, respeak){
   renderQueue();
   var art = cur();
   if (art) updateProgressUI(art);
-  if (respeak !== false && state.playing) speakFrom(state.idx);
+  if (respeak !== false && state.playing) {
+    // the AI voice is real audio, so speed changes apply instantly in place
+    if (aiActive() && aiAudio && !aiAudio.paused) aiAudio.playbackRate = state.rate;
+    else speakFrom(state.idx);
+  }
   persist();
 }
 
@@ -1005,7 +1270,7 @@ function init(){
       }
       if (state.currentId === id) {
         state.gen++;
-        try { speechSynthesis.cancel(); } catch(err){}
+        stopEngines(); aiReset();
         state.playing = false; state.currentId = null; state.idx = 0;
         if (state.view === 'reader') showView('home');
       }
@@ -1041,8 +1306,39 @@ function init(){
 
   $('voiceSel').addEventListener('change', function(){
     state.voiceURI = this.value || null;
-    if (state.playing) speakFrom(state.idx);
+    if (state.playing && !aiActive()) speakFrom(state.idx);
     persist();
+  });
+  $('aiSw').addEventListener('click', function(){
+    if (!state.aiOn) {
+      var k = $('aiKey').value.trim() || state.aiKey;
+      if (!k) { toast('Paste your OpenAI key first — get one at platform.openai.com'); $('aiKey').focus(); return; }
+      state.aiKey = k;
+      state.aiOn = true;
+    } else {
+      state.aiOn = false;
+    }
+    this.classList.toggle('on', state.aiOn);
+    this.setAttribute('aria-checked', String(state.aiOn));
+    persist();
+    if (state.playing) speakFrom(state.idx);
+  });
+  $('aiKey').addEventListener('change', function(){
+    var k = this.value.trim();
+    state.aiKey = k || null;
+    if (!state.aiKey && state.aiOn) {
+      state.aiOn = false;
+      $('aiSw').classList.remove('on');
+      $('aiSw').setAttribute('aria-checked', 'false');
+    }
+    aiReset();
+    persist();
+  });
+  $('aiVoiceSel').addEventListener('change', function(){
+    state.aiVoice = this.value || 'nova';
+    aiReset();
+    persist();
+    if (state.playing && aiActive()) speakFrom(state.idx);
   });
   $('spdRange').addEventListener('input', function(){
     state.rate = Number(this.value);
@@ -1085,8 +1381,8 @@ function init(){
       if (voices.length || tries > 14) { clearInterval(poll); return; }
       loadVoices();
     }, 250);
-  } else {
-    toast('This browser doesn’t support read-aloud — try Safari or Chrome', 5200);
+  } else if (!aiActive()) {
+    toast('This browser doesn’t support read-aloud — try Safari or Chrome, or turn on the AI voice in the settings', 5200);
   }
 
   // restore saved queue and settings, or seed the welcome article on first run
@@ -1098,7 +1394,7 @@ function init(){
       'How to use it\n\n' +
       'Copy a link to any newsletter or article, paste it in the box above, and tap Add to queue. You can even paste several links at once, one per line. If a link can’t be fetched, just copy the text of the email itself and paste that instead — that always works, and the cleanup option strips out unsubscribe footers and other junk so you only hear the writing.\n\n' +
       'Articles stack up in your queue and play one after another, like episodes. While something is playing, each sentence is highlighted as it’s read, and you can tap any sentence to jump straight to it.\n\n' +
-      'Tap the speed chip in the player to cycle through speeds, and the settings icon to pick a different voice. The voices come from your device, so your choices depend on your phone or computer.\n\n' +
+      'Tap the speed chip in the player to cycle through speeds, and the settings icon to pick a different voice. The free voices come from your device — and if you add an OpenAI key in the settings, you get a natural AI voice that keeps reading even when you minimize the app or lock your phone.\n\n' +
       'Your queue, your place in each article, and your listening settings are saved on this device whenever your browser allows it — so your articles should still be here when you come back.\n\n' +
       'That’s it. Paste your first newsletter, press play, and go do something else with your eyes.',
       { clean: false, title: 'Welcome to Earmark', source: 'Earmark' }
@@ -1107,9 +1403,9 @@ function init(){
     persist();
   }
   if (store.ok) {
-    $('footNote').textContent = 'Voices come from your device, so quality varies by phone or computer. ' +
-      'Keep this tab in the foreground while listening — mobile browsers pause read-aloud in the background. ' +
-      'Your queue, progress, and settings are saved on this device.';
+    $('footNote').textContent = 'Your queue, progress, and settings are saved on this device. ' +
+      'The free device voices only play while the app is on screen — turn on the AI voice under the gear icon ' +
+      'for a natural voice that keeps reading when you minimize the app or lock the phone.';
   }
 
   render();
