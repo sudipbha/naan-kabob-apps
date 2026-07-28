@@ -7,6 +7,10 @@ Live: [Sysco](https://sudipbha.github.io/naan-kabob-apps/sysco/) · [Champion](h
 > screenshots** at [/guide/](https://sudipbha.github.io/naan-kabob-apps/guide/),
 > linked from inside both apps. This document is the technical contract.
 
+> The repo also hosts **[Earmark](https://sudipbha.github.io/naan-kabob-apps/earmark/)**
+> — a personal newsletter read-aloud app in `earmark/`. It is separate from the
+> inventory system and not covered by this guide.
+
 Two single-file React apps, one per supplier. Same engine, different item lists.
 **Sysco** delivers dry goods & chemicals; **Champion** delivers packaging.
 Deliveries arrive **Tuesday and Friday**; orders are texted to the supplier rep.
