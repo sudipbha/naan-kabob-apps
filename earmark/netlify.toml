@@ -1,0 +1,5 @@
+# Netlify deploys are FROZEN (account out of credits) — GitHub Pages is the live host.
+# `ignore` exiting 0 tells Netlify to skip every build; the last deployed version stays up.
+# To re-enable: restore  ignore = "git diff --quiet ${CACHED_COMMIT_REF:-HEAD^} ${COMMIT_REF:-HEAD} ."
+[build]
+  ignore = "exit 0"

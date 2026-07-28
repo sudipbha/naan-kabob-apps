@@ -1,0 +1,1126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F6F2EA">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Earmark">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<title>Earmark — listen to your newsletters</title>
+<style>
+  :root{
+    --bg:#F6F2EA; --card:#FFFFFF; --ink:#241E15; --mut:#8B8172; --faint:#B5AC9B;
+    --line:#E8E0CF; --acc:#C75B23; --acc-ink:#A34314; --acc-soft:#F8E7D3;
+    --hl:#F7DFAE; --ok:#4C7A46; --shadow:0 1px 2px rgba(60,45,20,.06),0 6px 20px rgba(60,45,20,.07);
+    --serif:Georgia,'Iowan Old Style','Palatino Linotype','Times New Roman',serif;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.5;
+       padding-bottom:calc(150px + env(safe-area-inset-bottom))}
+  button{font-family:inherit;border:0;background:none;cursor:pointer;color:inherit;padding:0}
+  #app{max-width:720px;margin:0 auto;padding:18px 18px 0}
+
+  /* ---------- header ---------- */
+  .brand{display:flex;align-items:baseline;gap:10px;margin:6px 2px 18px}
+  .brand .logo{font-family:var(--serif);font-weight:700;font-size:26px;letter-spacing:-.02em}
+  .brand .logo em{color:var(--acc);font-style:normal}
+  .brand .tag{color:var(--mut);font-size:13px}
+
+  /* ---------- add box ---------- */
+  .addCard{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:12px}
+  #inp{width:100%;border:0;outline:none;resize:none;font:inherit;font-size:15px;color:var(--ink);
+       background:transparent;min-height:64px;max-height:180px;line-height:1.45}
+  #inp::placeholder{color:var(--faint)}
+  .addRow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:6px;flex-wrap:wrap}
+  .chk{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--mut);cursor:pointer;user-select:none}
+  .chk input{accent-color:var(--acc);width:15px;height:15px;margin:0}
+  .btn{border-radius:999px;padding:9px 18px;font-size:14px;font-weight:600;transition:transform .06s ease}
+  .btn:active{transform:scale(.97)}
+  .btn.primary{background:var(--acc);color:#fff}
+  .btn.primary[disabled]{background:var(--faint);cursor:default}
+  .spin{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;
+        border-radius:50%;vertical-align:-2px;margin-right:7px;animation:sp .8s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
+
+  /* ---------- queue ---------- */
+  .qHead{display:flex;align-items:baseline;justify-content:space-between;margin:26px 4px 10px}
+  .qHead h2{font-size:13px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--mut);margin:0}
+  #qMeta{font-size:12.5px;color:var(--faint)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);
+        margin-bottom:10px;overflow:hidden;position:relative}
+  .card.now{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc),var(--shadow)}
+  .cardMain{display:flex;align-items:center;gap:12px;padding:13px 8px 13px 14px;width:100%;text-align:left}
+  .cPlay{flex:none;width:38px;height:38px;border-radius:50%;background:var(--acc-soft);color:var(--acc-ink);
+         display:flex;align-items:center;justify-content:center}
+  .card.now .cPlay{background:var(--acc);color:#fff}
+  .cBody{flex:1;min-width:0}
+  .cTitle{font-weight:600;font-size:15px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;
+          -webkit-box-orient:vertical;overflow:hidden}
+  .cMeta{font-size:12.5px;color:var(--mut);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cMeta .done{color:var(--ok);font-weight:600}
+  .cBtns{flex:none;display:flex;flex-direction:column;gap:2px;padding-right:4px}
+  .iconS{width:32px;height:32px;border-radius:8px;color:var(--faint);display:flex;align-items:center;justify-content:center}
+  .iconS:active{background:var(--bg);color:var(--mut)}
+  .cProg{height:3px;background:transparent}
+  .cProg i{display:block;height:100%;background:var(--acc);width:0%;transition:width .3s}
+  .tip{color:var(--mut);font-size:14px;text-align:center;margin:34px 12px;line-height:1.6}
+  .foot{color:var(--faint);font-size:12px;text-align:center;margin:26px 16px 10px;line-height:1.55}
+
+  /* ---------- reader ---------- */
+  .rTop{position:sticky;top:0;z-index:5;background:linear-gradient(var(--bg) 78%,rgba(246,242,234,0));
+        display:flex;align-items:center;gap:8px;padding:10px 0 12px;margin:0 -2px}
+  .iconB{width:38px;height:38px;border-radius:50%;background:var(--card);border:1px solid var(--line);
+         color:var(--ink);display:flex;align-items:center;justify-content:center;flex:none;box-shadow:var(--shadow)}
+  .rCrumb{font-size:13px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  article{font-family:var(--serif);font-size:18.5px;line-height:1.78;padding:4px 2px 30px;
+          overflow-wrap:break-word}
+  article h1{font-size:27px;line-height:1.25;letter-spacing:-.01em;margin:10px 0 6px}
+  article .meta{font-family:var(--sans);font-size:13px;color:var(--mut);margin-bottom:26px}
+  article p{margin:0 0 1.15em}
+  article h3{font-size:20px;line-height:1.35;margin:1.5em 0 .6em}
+  .s{border-radius:5px;padding:.5px 0;cursor:pointer;-webkit-box-decoration-break:clone;box-decoration-break:clone;
+     transition:background .18s ease}
+  .s.cur{background:var(--hl);box-shadow:0 0 0 3px var(--hl)}
+
+  /* ---------- player ---------- */
+  #player{position:fixed;left:0;right:0;bottom:0;z-index:20;pointer-events:none}
+  .pInner{pointer-events:auto;max-width:720px;margin:0 auto;background:var(--card);
+          border:1px solid var(--line);border-bottom:0;border-radius:20px 20px 0 0;
+          box-shadow:0 -8px 30px rgba(60,45,20,.12);padding:10px 16px calc(12px + env(safe-area-inset-bottom))}
+  #npRow{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:1px 2px 8px}
+  #npTitle{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left;flex:1;min-width:0}
+  #npTime{font-size:12px;color:var(--mut);flex:none;font-variant-numeric:tabular-nums}
+  #pbar{height:16px;display:flex;align-items:center;cursor:pointer;margin:0 2px}
+  #ptrack{height:4px;border-radius:99px;background:var(--line);flex:1;overflow:hidden}
+  #pfill{height:100%;width:0%;background:var(--acc);border-radius:99px;transition:width .25s}
+  .ctr{display:flex;align-items:center;justify-content:space-between;margin-top:6px}
+  .chip{border:1px solid var(--line);border-radius:999px;padding:7px 0;width:56px;text-align:center;
+        font-size:13px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
+  .chip:active{background:var(--bg)}
+  .iconP{width:46px;height:46px;border-radius:50%;color:var(--ink);display:flex;align-items:center;justify-content:center}
+  .iconP:active{background:var(--bg)}
+  .playBig{width:60px;height:60px;border-radius:50%;background:var(--acc);color:#fff;display:flex;
+           align-items:center;justify-content:center;box-shadow:0 5px 16px rgba(199,91,35,.4);transition:transform .07s}
+  .playBig:active{transform:scale(.94)}
+
+  /* ---------- sheet ---------- */
+  #sheetWrap{position:fixed;inset:0;z-index:40}
+  #backdrop{position:absolute;inset:0;background:rgba(35,25,10,.35)}
+  #sheet{position:absolute;left:0;right:0;bottom:0;max-width:720px;margin:0 auto;background:var(--card);
+         border-radius:22px 22px 0 0;padding:20px 20px calc(24px + env(safe-area-inset-bottom));
+         box-shadow:0 -10px 40px rgba(0,0,0,.2)}
+  #sheet h3{margin:0 0 14px;font-size:16px}
+  .fRow{margin-bottom:18px}
+  .fLab{font-size:12.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin-bottom:8px}
+  select{width:100%;font:inherit;font-size:14.5px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;
+         background:var(--bg);color:var(--ink);outline:none;appearance:auto}
+  input[type=range]{width:100%;accent-color:var(--acc)}
+  .chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
+  .spd{border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600;color:var(--mut)}
+  .spd.on{background:var(--acc);border-color:var(--acc);color:#fff}
+  .swRow{display:flex;align-items:center;justify-content:space-between}
+  .swRow span{font-size:14.5px}
+  .sw{position:relative;width:46px;height:27px;border-radius:99px;background:var(--line);transition:background .15s}
+  .sw::after{content:'';position:absolute;top:3px;left:3px;width:21px;height:21px;border-radius:50%;background:#fff;
+             transition:left .15s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+  .sw.on{background:var(--acc)}
+  .sw.on::after{left:22px}
+
+  /* ---------- toast ---------- */
+  #toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(160px + env(safe-area-inset-bottom));
+         z-index:50;background:var(--ink);color:#FBF7EE;font-size:13.5px;padding:10px 16px;border-radius:12px;
+         max-width:86vw;text-align:center;box-shadow:0 6px 24px rgba(0,0,0,.25);opacity:0;transition:opacity .25s;
+         pointer-events:none}
+  #toast.show{opacity:1}
+  [hidden]{display:none!important}
+  @media (min-width:760px){
+    body{font-size:16.5px}
+    .pInner{border-radius:20px;border-bottom:1px solid var(--line);margin-bottom:14px}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <section id="homeView">
+    <header class="brand">
+      <div class="logo">Ear<em>mark</em></div>
+      <div class="tag">your newsletters, read aloud</div>
+    </header>
+
+    <div class="addCard">
+      <textarea id="inp" rows="3" placeholder="Paste a newsletter link — or the full text of the email itself…"></textarea>
+      <div class="addRow">
+        <label class="chk"><input type="checkbox" id="cleanChk" checked><span>Clean up newsletter junk</span></label>
+        <button id="addBtn" class="btn primary">Add to queue</button>
+      </div>
+    </div>
+
+    <div class="qHead"><h2>Up next</h2><span id="qMeta"></span></div>
+    <div id="queue"></div>
+    <p class="tip" id="emptyTip" hidden>Your queue is empty.<br>Paste a link or an article above to get started.</p>
+    <p class="foot" id="footNote">Voices come from your device, so quality varies by phone or computer.<br>
+    Keep this tab in the foreground while listening — mobile browsers pause read-aloud in the background.
+    The queue lives in this session only.</p>
+  </section>
+
+  <section id="readerView" hidden>
+    <div class="rTop">
+      <button class="iconB" id="backBtn" aria-label="Back to queue"></button>
+      <div class="rCrumb" id="rCrumb"></div>
+    </div>
+    <article id="rBody"></article>
+  </section>
+
+</div>
+
+<div id="player" hidden>
+  <div class="pInner">
+    <div id="npRow">
+      <button id="npTitle"></button>
+      <span id="npTime"></span>
+    </div>
+    <div id="pbar"><div id="ptrack"><div id="pfill"></div></div></div>
+    <div class="ctr">
+      <button class="chip" id="rateBtn">1×</button>
+      <button class="iconP" id="prevBtn" aria-label="Previous sentence"></button>
+      <button class="playBig" id="playBtn" aria-label="Play"></button>
+      <button class="iconP" id="nextBtn" aria-label="Next sentence"></button>
+      <button class="iconP" id="gearBtn" aria-label="Voice and speed settings"></button>
+    </div>
+  </div>
+</div>
+
+<div id="sheetWrap" hidden>
+  <div id="backdrop"></div>
+  <div id="sheet">
+    <h3>Listening settings</h3>
+    <div class="fRow">
+      <div class="fLab">Voice</div>
+      <select id="voiceSel"></select>
+    </div>
+    <div class="fRow">
+      <div class="fLab">Speed — <span id="spdLab">1.0×</span></div>
+      <input type="range" id="spdRange" min="0.5" max="3" step="0.05" value="1">
+      <div class="chips" id="spdChips"></div>
+    </div>
+    <div class="fRow swRow">
+      <span>Autoplay next article</span>
+      <button class="sw on" id="autoSw" role="switch" aria-checked="true" aria-label="Autoplay next article"></button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+'use strict';
+/* ============================== icons ============================== */
+var IC = {
+  play:  '<svg width="ISZ" height="ISZ" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.9v12.2c0 .8.9 1.3 1.6.9l9.7-6.1c.6-.4.6-1.4 0-1.8L9.6 5c-.7-.4-1.6.1-1.6.9z"/></svg>',
+  pause: '<svg width="ISZ" height="ISZ" viewBox="0 0 24 24" fill="currentColor"><rect x="6.5" y="5" width="3.6" height="14" rx="1.4"/><rect x="13.9" y="5" width="3.6" height="14" rx="1.4"/></svg>',
+  prev:  '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="14 6 8 12 14 18"/><line x1="18" y1="6" x2="18" y2="18" opacity=".35"/></svg>',
+  next:  '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="10 6 16 12 10 18"/><line x1="6" y1="6" x2="6" y2="18" opacity=".35"/></svg>',
+  gear:  '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.11-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.55-1.11 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34h.09a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87v.09a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1z"/></svg>',
+  back:  '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="14 5 7 12 14 19"/></svg>',
+  x:     '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>',
+  up:    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 14 12 8 18 14"/></svg>'
+};
+function ic(name, sz){ return IC[name].split('ISZ').join(String(sz||24)); }
+
+/* ============================== state ============================== */
+var WPM = 170;
+var state = {
+  articles: [],          // {id,title,source,sentences:[{t,w}],paras:[{heading,idxs}],words,progress,played}
+  currentId: null,
+  idx: 0,
+  playing: false,
+  rate: 1,
+  voiceURI: null,
+  autoplay: true,
+  gen: 0,
+  view: 'home',
+  userScrollTs: 0,
+  fetching: false
+};
+var uid = 1;
+var synthOK = ('speechSynthesis' in window) && ('SpeechSynthesisUtterance' in window);
+
+/* ---- device persistence (no-ops gracefully where storage is unavailable) ---- */
+var store = (function(){
+  var okFlag = false;
+  try {
+    var t = '__earmark_probe__';
+    window.localStorage.setItem(t, '1');
+    window.localStorage.removeItem(t);
+    okFlag = true;
+  } catch(e){ okFlag = false; }
+  return {
+    ok: okFlag,
+    get: function(k){
+      if (!okFlag) return null;
+      try { var v = window.localStorage.getItem(k); return v ? JSON.parse(v) : null; } catch(e){ return null; }
+    },
+    set: function(k, v){
+      if (!okFlag) return false;
+      try { window.localStorage.setItem(k, JSON.stringify(v)); return true; } catch(e){ return false; }
+    }
+  };
+})();
+var saveT = null;
+function persist(){
+  if (!store.ok) return;
+  if (saveT) clearTimeout(saveT);
+  saveT = setTimeout(function(){
+    var arts = state.articles.slice(-50).map(function(a){
+      return { id:a.id, title:a.title, source:a.source, sentences:a.sentences, paras:a.paras,
+               words:a.words, progress:a.progress, played:a.played };
+    });
+    var blob = { v:1, rate:state.rate, voiceURI:state.voiceURI, autoplay:state.autoplay, articles:arts };
+    if (!store.set('earmark.v1', blob)) {
+      blob.articles = arts.filter(function(a){ return !a.played; });
+      store.set('earmark.v1', blob);
+    }
+  }, 500);
+}
+function restore(){
+  var saved = store.get('earmark.v1');
+  if (!saved || typeof saved !== 'object') return false;
+  if (typeof saved.rate === 'number') state.rate = Math.max(0.5, Math.min(3, saved.rate));
+  if (saved.voiceURI) state.voiceURI = saved.voiceURI;
+  state.autoplay = saved.autoplay !== false;
+  var arts = Array.isArray(saved.articles) ? saved.articles : [];
+  var maxId = 0;
+  for (var i=0;i<arts.length;i++){
+    var a = arts[i];
+    if (!a || !Array.isArray(a.sentences) || !a.sentences.length || !Array.isArray(a.paras)) continue;
+    state.articles.push({
+      id: a.id || (maxId + 1), title: String(a.title || 'Untitled'), source: String(a.source || ''),
+      sentences: a.sentences, paras: a.paras, words: a.words || 0,
+      progress: a.progress || 0, played: !!a.played
+    });
+    if (state.articles[state.articles.length-1].id > maxId) maxId = state.articles[state.articles.length-1].id;
+  }
+  uid = maxId + 1;
+  return true;
+}
+
+function $(id){ return document.getElementById(id); }
+function cur(){
+  for (var i=0;i<state.articles.length;i++) if (state.articles[i].id===state.currentId) return state.articles[i];
+  return null;
+}
+function escapeHtml(t){
+  return String(t).replace(/[&<>"']/g, function(m){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];
+  });
+}
+function toast(msg, ms){
+  var el = $('toast');
+  el.textContent = msg; el.hidden = false; el.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(function(){ el.classList.remove('show'); }, ms||2600);
+}
+
+/* ============================== text cleanup ============================== */
+var JUNK_STARTS = [
+  /^view (this |it |the )?(email |post |issue |message )?(online|in (your |the )?browser)/i,
+  /^view in browser/i,
+  /^read (this )?(issue |post |email )?online/i,
+  /^open in (the )?app/i,
+  /^listen (to this )?(on|in) (the )?app/i,
+  /^unsubscribe/i,
+  /^click here to unsubscribe/i,
+  /^manage (your )?(email )?(preferences|subscription|settings)/i,
+  /^update (your )?(email )?preferences/i,
+  /^forward (this )?(email |issue )?to a friend/i,
+  /^was this (email |newsletter )?forwarded/i,
+  /^share (this|on|via|with)/i,
+  /^follow (us|me) on/i,
+  /^add .{0,40}address book/i,
+  /^why (did i|am i) get(ting)? this/i,
+  /^you('|’)?re receiving this/i,
+  /^you are receiving this/i,
+  /^this email was sent to/i,
+  /^sent to [^\s@]{1,40}@/i,
+  /^(copyright\s*)?©/i,
+  /^all rights reserved/i,
+  /^privacy policy/i,
+  /^terms of (service|use)/i,
+  /^advertise (with|in)/i,
+  /^sponsored (by|content)/i,
+  /^powered by (beehiiv|mailchimp|substack|convertkit|kit|ghost|buttondown)/i,
+  /^subscribe( now| here| for free)?[.!]?$/i,
+  /^sign up( here| now)?[.!]?$/i,
+  /^upgrade to (paid|premium)/i,
+  /^support (this|our) (newsletter|work|writing)/i,
+  /^donate[.!]?$/i,
+  /^(instagram|twitter|facebook|linkedin|youtube|tiktok|threads|x)([\s|·•,]+(instagram|twitter|facebook|linkedin|youtube|tiktok|threads|x))*$/i,
+  /^our mailing address/i,
+  /^no longer (wish|want) to receive/i
+];
+var FOOTER_RE = /unsubscribe|you( a|'|’)re receiving|you are receiving|why did i get this|this email was sent|update your preferences|manage (your )?(preferences|subscription)|add us to your address book|our mailing address|(^|\s)©\s?\d{4}/i;
+
+function decodeEntities(s){
+  if (!/&(#\d+|#x[0-9a-fA-F]+|[a-zA-Z]{2,10});/.test(s)) return s;
+  try {
+    var doc = new DOMParser().parseFromString('<div>'+s.replace(/</g,'&lt;')+'</div>','text/html');
+    return doc.body.textContent || s;
+  } catch(e){ return s; }
+}
+
+function baseClean(s){
+  return String(s)
+    .replace(/\r\n?/g,'\n')
+    .replace(/[​-‏﻿­͏⁠᠎]/g,'')
+    .replace(/ /g,' ')
+    .replace(/[ \t]+\n/g,'\n');
+}
+
+function mdToText(s){
+  return s
+    .replace(/!\[[^\]]*\]\([^)]*\)/g,'')                   // images
+    .replace(/\[([^\]]*)\]\(([^)]*)\)/g,'$1')              // links -> anchor text
+    .replace(/^#{1,6}[ \t]+/gm,'')                          // headers
+    .replace(/^[ \t]*>+[ \t]?/gm,'')                        // blockquotes
+    .replace(/^[ \t]*[-*+][ \t]+/gm,'')                     // bullets
+    .replace(/^[ \t]*\d+[.)][ \t]+/gm,'')                   // numbered lists
+    .replace(/(\*\*|__)(.*?)\1/g,'$2')
+    .replace(/(\*|_)([^*_\n]+)\1/g,'$2')
+    .replace(/`{1,3}([^`]*)`{1,3}/g,'$1')
+    .replace(/^[ \t]*\|.*\|[ \t]*$/gm, function(m){ return m.replace(/\|/g,'  ').trim(); })
+    .replace(/^[ \t]*[-=_*~•·—]{3,}[ \t]*$/gm,'');
+}
+
+function newsletterClean(s){
+  s = mdToText(s);
+  s = s.replace(/\bhttps?:\/\/[^\s)\]>]+/gi,'')             // raw urls
+       .replace(/\[(image|img|photo|logo|gif|banner)[^\]]*\]/gi,'')
+       .replace(/\[\d{1,3}\]/g,'')
+       .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}️❤]/gu,'')
+       .replace(/\(\s*\)/g,'')
+       .replace(/\[\s*\]/g,'');
+  var lines = s.split('\n');
+  // cut footer: earliest junk marker in the last 30% of non-empty content
+  var nonEmpty = [];
+  for (var i=0;i<lines.length;i++) if (lines[i].trim()) nonEmpty.push(i);
+  if (nonEmpty.length > 12) {
+    var zoneStart = nonEmpty[Math.floor(nonEmpty.length*0.7)];
+    for (var j=zoneStart;j<lines.length;j++){
+      var t = lines[j].trim();
+      if (t && t.length < 200 && FOOTER_RE.test(t)) { lines = lines.slice(0,j); break; }
+    }
+  }
+  var out = [];
+  for (var k=0;k<lines.length;k++){
+    var line = lines[k].trim();
+    if (line && line.length < 120) {
+      var junk = false;
+      for (var m=0;m<JUNK_STARTS.length;m++) if (JUNK_STARTS[m].test(line)) { junk = true; break; }
+      if (junk) continue;
+    }
+    if (/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(line)) continue; // bare email address line
+    out.push(lines[k]);
+  }
+  return out.join('\n');
+}
+
+function finalTidy(s){
+  return s
+    .replace(/[ \t]{2,}/g,' ')
+    .replace(/\n{3,}/g,'\n\n')
+    .trim();
+}
+
+/* ============================== segmentation ============================== */
+function looksLikeHeading(p){
+  return p.length <= 70 && !/[.!?…:;,]$/.test(p) && p.split(/\s+/).length <= 12 && !/\n/.test(p);
+}
+function splitSentences(text){
+  var parts;
+  try {
+    if (typeof Intl !== 'undefined' && Intl.Segmenter) {
+      var seg = new Intl.Segmenter(undefined,{granularity:'sentence'});
+      parts = [];
+      var it = seg.segment(text)[Symbol.iterator](); var r;
+      while (!(r = it.next()).done) parts.push(r.value.segment);
+    }
+  } catch(e){ parts = null; }
+  if (!parts) parts = text.match(/[^.!?]+[.!?]+["')\]»…]*\s*|[^.!?]+$/g) || [text];
+  var outp = [];
+  for (var i=0;i<parts.length;i++){ var t = parts[i].trim(); if (t) outp.push(t); }
+  return outp;
+}
+function buildArticle(raw, opts){
+  opts = opts || {};
+  var s = baseClean(raw);
+  s = decodeEntities(s);
+  if (opts.clean) s = newsletterClean(s); else s = mdToText(s);
+  s = finalTidy(s);
+  if (!s) return null;
+
+  var paraTexts = s.split(/\n{2,}/);
+  // merge single-newline lines within a para into one flow
+  var title = opts.title || '';
+  var sentences = [], paras = [];
+  for (var i=0;i<paraTexts.length;i++){
+    var p = paraTexts[i].replace(/\s*\n\s*/g,' ').trim();
+    if (!p) continue;
+    if (!title && i===0 && p.length <= 110) { title = p.replace(/[.!]$/,''); }
+    var heading = looksLikeHeading(p);
+    var sents = heading ? [p] : splitSentences(p);
+    var idxs = [];
+    for (var j=0;j<sents.length;j++){
+      idxs.push(sentences.length);
+      sentences.push({ t: sents[j], w: sents[j].split(/\s+/).length });
+    }
+    paras.push({ heading: heading, idxs: idxs });
+  }
+  if (!sentences.length) return null;
+  if (!title) {
+    var w0 = sentences[0].t.split(/\s+/).slice(0,8).join(' ');
+    title = w0 + (sentences[0].t.split(/\s+/).length > 8 ? '…' : '');
+  }
+  var words = 0;
+  for (var k=0;k<sentences.length;k++) words += sentences[k].w;
+  return {
+    id: uid++, title: title.trim(), source: opts.source || 'Pasted text',
+    sentences: sentences, paras: paras, words: words, progress: 0, played: false
+  };
+}
+
+/* ============================== fetching ============================== */
+function isURL(s){ return /^https?:\/\/\S+$/i.test(s.trim()); }
+function domainOf(u){ try { return new URL(u).hostname.replace(/^www\./,''); } catch(e){ return 'link'; } }
+
+function fetchTimeout(url, ms, asText){
+  var ctrl = ('AbortController' in window) ? new AbortController() : null;
+  var t = ctrl ? setTimeout(function(){ ctrl.abort(); }, ms) : null;
+  return fetch(url, ctrl ? {signal: ctrl.signal} : {}).then(function(res){
+    if (t) clearTimeout(t);
+    if (!res.ok) throw new Error('HTTP '+res.status);
+    return res.text();
+  }, function(err){ if (t) clearTimeout(t); throw err; });
+}
+
+function parseJina(body){
+  var title = '';
+  var mt = body.match(/^Title:\s*(.+)$/m);
+  if (mt) title = mt[1].trim();
+  var idx = body.indexOf('Markdown Content:');
+  var content = idx >= 0 ? body.slice(idx + 'Markdown Content:'.length) : body;
+  content = content.replace(/^URL Source:.*$/gm,'').replace(/^Published Time:.*$/gm,'').replace(/^Warning:.*$/gm,'');
+  return { title: title, text: content };
+}
+
+function extractFromHTML(html){
+  var doc = new DOMParser().parseFromString(html, 'text/html');
+  var kill = doc.querySelectorAll('script,style,noscript,svg,iframe,form,nav,header,footer,aside,button,select,input,figure>figcaption');
+  for (var i=0;i<kill.length;i++) kill[i].remove();
+  var title = '';
+  var og = doc.querySelector('meta[property="og:title"]');
+  if (og && og.getAttribute('content')) title = og.getAttribute('content');
+  else if (doc.title) title = doc.title;
+  var root = doc.querySelector('article') || doc.querySelector('main') || doc.querySelector('[role=main]') || doc.body;
+  if (!root) return { title: title, text: '' };
+  var blocks = root.querySelectorAll('h1,h2,h3,h4,p,li,blockquote,td');
+  var outArr = [], seen = {};
+  for (var j=0;j<blocks.length;j++){
+    var tx = (blocks[j].textContent || '').replace(/\s+/g,' ').trim();
+    if (!tx || tx.length < 3) continue;
+    if (blocks[j].querySelector && blocks[j].querySelector('p,li,h1,h2,h3,h4')) continue; // avoid nested dupes
+    if (seen[tx]) continue; seen[tx] = 1;
+    outArr.push(tx);
+  }
+  return { title: title, text: outArr.join('\n\n') };
+}
+
+function fetchArticle(url){
+  // 1) Jina reader (returns clean markdown, CORS-friendly)
+  return fetchTimeout('https://r.jina.ai/' + url, 14000).then(function(body){
+    var p = parseJina(body);
+    if (!p.text || p.text.replace(/\s+/g,' ').trim().length < 180) throw new Error('thin');
+    return p;
+  }).catch(function(){
+    // 2) allorigins raw HTML + lightweight extraction
+    return fetchTimeout('https://api.allorigins.win/raw?url=' + encodeURIComponent(url), 14000).then(function(html){
+      var p = extractFromHTML(html);
+      if (!p.text || p.text.length < 180) throw new Error('thin');
+      return p;
+    });
+  });
+}
+
+/* ============================== add flow ============================== */
+function setFetching(on, label){
+  state.fetching = on;
+  var b = $('addBtn');
+  b.disabled = on;
+  b.innerHTML = on ? '<span class="spin"></span>' + (label || 'Fetching…') : 'Add to queue';
+}
+
+function addFromInput(){
+  if (state.fetching) return;
+  var val = $('inp').value.trim();
+  if (!val) { toast('Paste a link or some text first'); return; }
+  var clean = $('cleanChk').checked;
+  var lines = val.split('\n').map(function(l){ return l.trim(); }).filter(Boolean);
+  var allURLs = lines.length > 0 && lines.every(isURL);
+
+  if (allURLs) {
+    var urls = lines.slice(0, 10);
+    var added = 0, failed = 0, i = 0;
+    setFetching(true, urls.length > 1 ? 'Fetching 1/' + urls.length + '…' : 'Fetching…');
+    var step = function(){
+      if (i >= urls.length) {
+        setFetching(false);
+        if (added) { $('inp').value = ''; autoGrow(); }
+        if (failed && added) toast('Added ' + added + ', but ' + failed + ' link' + (failed>1?'s':'') + ' failed — paste those as text');
+        else if (failed) toast('Couldn’t fetch that link. Copy the article text and paste it instead — that always works.');
+        else toast(added === 1 ? 'Added to your queue' : 'Added ' + added + ' articles');
+        render(); persist();
+        return;
+      }
+      var u = urls[i];
+      if (urls.length > 1) setFetching(true, 'Fetching ' + (i+1) + '/' + urls.length + '…');
+      fetchArticle(u).then(function(p){
+        var art = buildArticle(p.text, { clean: clean, title: p.title, source: domainOf(u) });
+        if (art) { state.articles.push(art); added++; } else failed++;
+      }).catch(function(){ failed++; })
+      .then(function(){ i++; step(); });
+    };
+    step();
+  } else {
+    var art = buildArticle(val, { clean: clean, source: 'Pasted text' });
+    if (!art) { toast('Couldn’t find any readable text there'); return; }
+    state.articles.push(art);
+    $('inp').value = ''; autoGrow();
+    toast('Added: ' + art.title.slice(0, 40) + (art.title.length > 40 ? '…' : ''));
+    render(); persist();
+  }
+}
+
+/* ============================== speech engine ============================== */
+var voices = [];
+function loadVoices(){
+  if (!synthOK) return;
+  var v = speechSynthesis.getVoices() || [];
+  if (v.length) { voices = v; populateVoiceSel(); }
+}
+function voiceScore(v, langPref){
+  var s = 0;
+  var n = (v.name || '').toLowerCase();
+  if (v.lang && langPref && v.lang.toLowerCase().indexOf(langPref) === 0) s += 100;
+  if (/natural|neural|premium|enhanced|siri/.test(n)) s += 30;
+  if (v.localService) s += 5;
+  if (v.default) s += 10;
+  return s;
+}
+function pickDefaultVoice(){
+  if (!voices.length) return null;
+  var langPref = (navigator.language || 'en').slice(0,2).toLowerCase();
+  var best = voices[0], bs = -1;
+  for (var i=0;i<voices.length;i++){
+    var sc = voiceScore(voices[i], langPref);
+    if (sc > bs) { bs = sc; best = voices[i]; }
+  }
+  return best;
+}
+function getVoice(){
+  if (!voices.length) return null;
+  if (state.voiceURI) {
+    for (var i=0;i<voices.length;i++) if (voices[i].voiceURI === state.voiceURI) return voices[i];
+  }
+  var d = pickDefaultVoice();
+  if (d) state.voiceURI = d.voiceURI;
+  return d;
+}
+function populateVoiceSel(){
+  var sel = $('voiceSel');
+  if (!sel) return;
+  var chosen = getVoice();
+  var langPref = (navigator.language || 'en').slice(0,2).toLowerCase();
+  var mine = [], other = [];
+  for (var i=0;i<voices.length;i++){
+    ((voices[i].lang || '').toLowerCase().indexOf(langPref) === 0 ? mine : other).push(voices[i]);
+  }
+  var html = '';
+  function opts(list){
+    var h = '';
+    list.sort(function(a,b){ return voiceScore(b,langPref)-voiceScore(a,langPref) || a.name.localeCompare(b.name); });
+    for (var j=0;j<list.length;j++){
+      var v = list[j];
+      h += '<option value="' + escapeHtml(v.voiceURI) + '"' + (chosen && v.voiceURI === chosen.voiceURI ? ' selected' : '') + '>'
+        + escapeHtml(v.name) + ' (' + escapeHtml(v.lang || '?') + ')</option>';
+    }
+    return h;
+  }
+  if (mine.length) html += '<optgroup label="Your language">' + opts(mine) + '</optgroup>';
+  if (other.length) html += '<optgroup label="Other languages">' + opts(other) + '</optgroup>';
+  if (!html) html = '<option value="">Default device voice</option>';
+  sel.innerHTML = html;
+}
+
+var unlocked = false;
+function unlockAudio(){
+  if (unlocked || !synthOK) return;
+  unlocked = true;
+  try {
+    var u = new SpeechSynthesisUtterance(' ');
+    u.volume = 0;
+    speechSynthesis.speak(u);
+  } catch(e){}
+}
+
+function speakFrom(i){
+  var art = cur();
+  if (!art || !synthOK) { if (!synthOK) toast('Read-aloud isn’t supported in this browser'); return; }
+  state.idx = Math.max(0, Math.min(i, art.sentences.length - 1));
+  var g = ++state.gen;
+  try { speechSynthesis.cancel(); } catch(e){}
+  state.playing = true;
+  art.played = false;
+  updatePlayerUI(); highlight(true);
+
+  var consecErr = 0;
+  function step(){
+    if (g !== state.gen) return;
+    if (state.idx >= art.sentences.length) { onArticleEnd(art); return; }
+    var u = new SpeechSynthesisUtterance(art.sentences[state.idx].t);
+    u.rate = state.rate;
+    var v = getVoice();
+    if (v) { u.voice = v; u.lang = v.lang; }
+    u.onstart = function(){ consecErr = 0; };
+    u.onend = function(){
+      if (g !== state.gen) return;
+      consecErr = 0;
+      state.idx++;
+      art.progress = state.idx;
+      highlight(true); updateProgressUI(art);
+      persist();
+      step();
+    };
+    u.onerror = function(ev){
+      if (g !== state.gen) return;
+      var code = ev && ev.error;
+      if (code === 'interrupted' || code === 'canceled') return;
+      consecErr++;
+      if (consecErr >= 3) {
+        state.playing = false;
+        art.progress = state.idx;
+        updatePlayerUI();
+        toast('Playback failed — try a different voice in the settings', 4200);
+        return;
+      }
+      state.idx++;
+      art.progress = state.idx;
+      step();
+    };
+    try { speechSynthesis.speak(u); } catch(e){}
+  }
+  step();
+}
+
+function pausePlayback(){
+  var art = cur();
+  state.gen++;
+  try { speechSynthesis.cancel(); } catch(e){}
+  state.playing = false;
+  if (art) art.progress = state.idx;
+  updatePlayerUI(); persist();
+}
+
+function togglePlay(){
+  unlockAudio();
+  var art = cur();
+  if (state.playing) { pausePlayback(); return; }
+  if (!art) {
+    if (state.articles.length) { playArticle(state.articles[0].id, false); }
+    else toast('Add an article first');
+    return;
+  }
+  if (state.idx >= art.sentences.length) state.idx = 0;
+  speakFrom(state.idx);
+}
+
+function jump(i){
+  var art = cur(); if (!art) return;
+  i = Math.max(0, Math.min(i, art.sentences.length - 1));
+  if (state.playing) speakFrom(i);
+  else { state.idx = i; art.progress = i; highlight(true); updatePlayerUI(); persist(); }
+}
+
+function onArticleEnd(art){
+  art.played = true;
+  art.progress = art.sentences.length;
+  state.playing = false;
+  updatePlayerUI(); renderQueue(); persist();
+  if (state.autoplay) {
+    var pos = -1;
+    for (var i=0;i<state.articles.length;i++) if (state.articles[i].id === art.id) { pos = i; break; }
+    for (var j=pos+1;j<state.articles.length;j++){
+      if (!state.articles[j].played) { playArticle(state.articles[j].id, false); return; }
+    }
+  }
+  toast('Finished — queue is done');
+  document.title = 'Earmark — listen to your newsletters';
+}
+
+function playArticle(id, openReader){
+  var art = null;
+  for (var i=0;i<state.articles.length;i++) if (state.articles[i].id === id) art = state.articles[i];
+  if (!art) return;
+  unlockAudio();
+  state.currentId = id;
+  state.idx = (art.progress && art.progress < art.sentences.length) ? art.progress : 0;
+  renderReader(art);
+  if (openReader !== false) showView('reader');
+  renderQueue(); persist();
+  speakFrom(state.idx);
+}
+
+/* ============================== rendering ============================== */
+function fmtDur(words, rate){
+  var sec = Math.round(words / (WPM * (rate || 1)) * 60);
+  if (sec < 60) return sec + ' sec';
+  return '~' + Math.max(1, Math.round(sec / 60)) + ' min';
+}
+function showView(v){
+  state.view = v;
+  $('homeView').hidden = v !== 'home';
+  $('readerView').hidden = v !== 'reader';
+  if (v === 'reader') { highlight(false); }
+  window.scrollTo(0, 0);
+  if (v === 'reader') {
+    // land on the current sentence
+    setTimeout(function(){ scrollToCur(false); }, 60);
+  }
+}
+function render(){ renderQueue(); updatePlayerUI(); }
+
+function renderQueue(){
+  var q = $('queue');
+  var html = '';
+  var totalWords = 0;
+  for (var i=0;i<state.articles.length;i++){
+    var a = state.articles[i];
+    totalWords += a.words;
+    var now = a.id === state.currentId;
+    var pct = a.sentences.length ? Math.round(100 * Math.min(a.progress, a.sentences.length) / a.sentences.length) : 0;
+    var metaBits = [];
+    metaBits.push(escapeHtml(a.source));
+    metaBits.push(fmtDur(a.words, 1));
+    if (a.played) metaBits.push('<span class="done">Played ✓</span>');
+    else if (pct > 0 && pct < 100) metaBits.push(pct + '%');
+    html += ''
+      + '<div class="card' + (now ? ' now' : '') + '" data-id="' + a.id + '">'
+      +   '<button class="cardMain" data-act="play" data-id="' + a.id + '">'
+      +     '<span class="cPlay">' + (now && state.playing ? ic('pause',18) : ic('play',18)) + '</span>'
+      +     '<span class="cBody">'
+      +       '<span class="cTitle">' + escapeHtml(a.title) + '</span>'
+      +       '<span class="cMeta">' + metaBits.join(' · ') + '</span>'
+      +     '</span>'
+      +   '</button>'
+      +   '<div class="cBtns" style="position:absolute;top:8px;right:6px;flex-direction:row">'
+      +     (i > 0 ? '<button class="iconS" data-act="up" data-id="' + a.id + '" aria-label="Move up">' + ic('up') + '</button>' : '')
+      +     '<button class="iconS" data-act="del" data-id="' + a.id + '" aria-label="Remove">' + ic('x') + '</button>'
+      +   '</div>'
+      +   '<div class="cProg"><i id="qfill-' + a.id + '" style="width:' + pct + '%"></i></div>'
+      + '</div>';
+  }
+  q.innerHTML = html;
+  $('emptyTip').hidden = state.articles.length > 0;
+  $('qMeta').textContent = state.articles.length
+    ? state.articles.length + (state.articles.length === 1 ? ' article · ' : ' articles · ') + fmtDur(totalWords, state.rate) + ' at ' + fmtRate(state.rate)
+    : '';
+}
+
+function renderReader(art){
+  // if the first paragraph is just the title, fold it into the h1 so it isn't shown twice
+  var dupFirst = art.paras.length && art.paras[0].heading && art.paras[0].idxs.length === 1 &&
+    art.sentences[art.paras[0].idxs[0]].t.replace(/[.!]$/,'').trim() === art.title;
+  var html = dupFirst
+    ? '<h1><span class="s" data-i="' + art.paras[0].idxs[0] + '">' + escapeHtml(art.title) + '</span></h1>'
+    : '<h1>' + escapeHtml(art.title) + '</h1>';
+  html += '<div class="meta">' + escapeHtml(art.source) + ' · ' + fmtDur(art.words, state.rate) + ' at ' + fmtRate(state.rate) + ' · ' + art.words + ' words</div>';
+  for (var i = dupFirst ? 1 : 0; i<art.paras.length; i++){
+    var p = art.paras[i];
+    var inner = '';
+    for (var j=0;j<p.idxs.length;j++){
+      var si = p.idxs[j];
+      inner += '<span class="s" data-i="' + si + '">' + escapeHtml(art.sentences[si].t) + '</span> ';
+    }
+    html += (p.heading ? '<h3>' : '<p>') + inner + (p.heading ? '</h3>' : '</p>');
+  }
+  $('rBody').innerHTML = html;
+  $('rCrumb').textContent = art.source + '  ·  ' + art.title;
+}
+
+function highlight(scroll){
+  var prev = document.querySelector('.s.cur');
+  if (prev) prev.classList.remove('cur');
+  var art = cur(); if (!art) return;
+  var el = document.querySelector('.s[data-i="' + state.idx + '"]');
+  if (el) {
+    el.classList.add('cur');
+    if (scroll) scrollToCur(true);
+  }
+  updateProgressUI(art);
+}
+function scrollToCur(smooth){
+  if (state.view !== 'reader') return;
+  if (Date.now() - state.userScrollTs < 3500) return;
+  var el = document.querySelector('.s.cur');
+  if (el && el.scrollIntoView) {
+    try { el.scrollIntoView({ block: 'center', behavior: smooth ? 'smooth' : 'auto' }); } catch(e){ el.scrollIntoView(); }
+  }
+}
+
+function fmtRate(r){
+  var s = (Math.round(r * 100) / 100).toString();
+  return s + '×';
+}
+function remainingLabel(art){
+  var left = 0;
+  for (var i=state.idx;i<art.sentences.length;i++) left += art.sentences[i].w;
+  var sec = Math.round(left / (WPM * state.rate) * 60);
+  var mn = Math.floor(sec / 60), sc = sec % 60;
+  return '-' + mn + ':' + (sc < 10 ? '0' : '') + sc;
+}
+function updateProgressUI(art){
+  if (!art) return;
+  var pct = art.sentences.length ? Math.min(100, 100 * state.idx / art.sentences.length) : 0;
+  $('pfill').style.width = pct + '%';
+  $('npTime').textContent = remainingLabel(art);
+  var qf = $('qfill-' + art.id);
+  if (qf) qf.style.width = Math.round(pct) + '%';
+}
+function updatePlayerUI(){
+  var art = cur();
+  $('player').hidden = !art;
+  $('rateBtn').textContent = fmtRate(state.rate);
+  $('playBtn').innerHTML = state.playing ? ic('pause',26) : ic('play',26);
+  $('playBtn').setAttribute('aria-label', state.playing ? 'Pause' : 'Play');
+  if (art) {
+    $('npTitle').textContent = art.title;
+    updateProgressUI(art);
+    document.title = (state.playing ? '▶ ' : '') + art.title + ' — Earmark';
+  } else {
+    document.title = 'Earmark — listen to your newsletters';
+  }
+  // refresh queue play glyphs cheaply
+  var cards = document.querySelectorAll('.card');
+  for (var i=0;i<cards.length;i++){
+    var id = Number(cards[i].getAttribute('data-id'));
+    var glyph = cards[i].querySelector('.cPlay');
+    if (glyph) glyph.innerHTML = (art && id === art.id && state.playing) ? ic('pause',18) : ic('play',18);
+    cards[i].classList.toggle('now', !!art && id === art.id);
+  }
+}
+
+/* ============================== settings sheet ============================== */
+var SPEEDS = [0.75, 1, 1.25, 1.5, 1.75, 2, 2.5, 3];
+function openSheet(){
+  populateVoiceSel();
+  $('spdRange').value = state.rate;
+  $('spdLab').textContent = fmtRate(state.rate);
+  renderSpeedChips();
+  $('autoSw').classList.toggle('on', state.autoplay);
+  $('autoSw').setAttribute('aria-checked', String(state.autoplay));
+  $('sheetWrap').hidden = false;
+}
+function closeSheet(){ $('sheetWrap').hidden = true; }
+function renderSpeedChips(){
+  var h = '';
+  for (var i=0;i<SPEEDS.length;i++){
+    var on = Math.abs(SPEEDS[i] - state.rate) < 0.01;
+    h += '<button class="spd' + (on ? ' on' : '') + '" data-spd="' + SPEEDS[i] + '">' + SPEEDS[i] + '×</button>';
+  }
+  $('spdChips').innerHTML = h;
+}
+function setRate(r, respeak){
+  state.rate = Math.max(0.5, Math.min(3, r));
+  $('rateBtn').textContent = fmtRate(state.rate);
+  $('spdLab').textContent = fmtRate(state.rate);
+  $('spdRange').value = state.rate;
+  renderSpeedChips();
+  renderQueue();
+  var art = cur();
+  if (art) updateProgressUI(art);
+  if (respeak !== false && state.playing) speakFrom(state.idx);
+  persist();
+}
+
+/* ============================== events ============================== */
+function autoGrow(){
+  var el = $('inp');
+  el.style.height = 'auto';
+  el.style.height = Math.min(180, el.scrollHeight) + 'px';
+}
+
+function init(){
+  $('backBtn').innerHTML = ic('back');
+  $('prevBtn').innerHTML = ic('prev');
+  $('nextBtn').innerHTML = ic('next');
+  $('gearBtn').innerHTML = ic('gear');
+  $('playBtn').innerHTML = ic('play',26);
+
+  $('addBtn').addEventListener('click', addFromInput);
+  $('inp').addEventListener('input', autoGrow);
+  $('playBtn').addEventListener('click', togglePlay);
+  $('prevBtn').addEventListener('click', function(){ unlockAudio(); jump(state.idx - 1); });
+  $('nextBtn').addEventListener('click', function(){ unlockAudio(); jump(state.idx + 1); });
+  $('backBtn').addEventListener('click', function(){ showView('home'); });
+  $('npTitle').addEventListener('click', function(){ if (cur()) showView('reader'); });
+  $('gearBtn').addEventListener('click', openSheet);
+  $('backdrop').addEventListener('click', closeSheet);
+
+  $('rateBtn').addEventListener('click', function(){
+    unlockAudio();
+    var i = 0, best = 0, bd = 99;
+    for (i=0;i<SPEEDS.length;i++){ var d = Math.abs(SPEEDS[i]-state.rate); if (d < bd) { bd = d; best = i; } }
+    setRate(SPEEDS[(best + 1) % SPEEDS.length]);
+  });
+
+  $('queue').addEventListener('click', function(e){
+    var b = e.target.closest ? e.target.closest('[data-act]') : null;
+    if (!b) return;
+    var act = b.getAttribute('data-act');
+    var id = Number(b.getAttribute('data-id'));
+    if (act === 'play') {
+      if (id === state.currentId) {
+        if (state.playing) pausePlayback();
+        else { showView('reader'); togglePlay(); }
+      } else playArticle(id, true);
+    } else if (act === 'del') {
+      for (var i=0;i<state.articles.length;i++){
+        if (state.articles[i].id === id) { state.articles.splice(i,1); break; }
+      }
+      if (state.currentId === id) {
+        state.gen++;
+        try { speechSynthesis.cancel(); } catch(err){}
+        state.playing = false; state.currentId = null; state.idx = 0;
+        if (state.view === 'reader') showView('home');
+      }
+      render(); persist();
+    } else if (act === 'up') {
+      for (var j=1;j<state.articles.length;j++){
+        if (state.articles[j].id === id) {
+          var tmp = state.articles[j-1];
+          state.articles[j-1] = state.articles[j];
+          state.articles[j] = tmp;
+          break;
+        }
+      }
+      renderQueue(); persist();
+    }
+  });
+
+  $('rBody').addEventListener('click', function(e){
+    var sp = e.target.closest ? e.target.closest('.s') : null;
+    if (!sp) return;
+    unlockAudio();
+    var i = Number(sp.getAttribute('data-i'));
+    if (state.playing) speakFrom(i); else { jump(i); speakFrom(i); }
+  });
+
+  $('pbar').addEventListener('click', function(e){
+    var art = cur(); if (!art) return;
+    unlockAudio();
+    var r = $('pbar').getBoundingClientRect();
+    var frac = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+    jump(Math.floor(frac * art.sentences.length));
+  });
+
+  $('voiceSel').addEventListener('change', function(){
+    state.voiceURI = this.value || null;
+    if (state.playing) speakFrom(state.idx);
+    persist();
+  });
+  $('spdRange').addEventListener('input', function(){
+    state.rate = Number(this.value);
+    $('spdLab').textContent = fmtRate(state.rate);
+    $('rateBtn').textContent = fmtRate(state.rate);
+    renderSpeedChips();
+  });
+  $('spdRange').addEventListener('change', function(){ setRate(Number(this.value)); });
+  $('spdChips').addEventListener('click', function(e){
+    var b = e.target.closest ? e.target.closest('[data-spd]') : null;
+    if (b) setRate(Number(b.getAttribute('data-spd')));
+  });
+  $('autoSw').addEventListener('click', function(){
+    state.autoplay = !state.autoplay;
+    this.classList.toggle('on', state.autoplay);
+    this.setAttribute('aria-checked', String(state.autoplay));
+    persist();
+  });
+
+  window.addEventListener('wheel', function(){ state.userScrollTs = Date.now(); }, {passive:true});
+  window.addEventListener('touchmove', function(){ state.userScrollTs = Date.now(); }, {passive:true});
+  document.addEventListener('pointerdown', function(){ unlockAudio(); }, {once:true, capture:true});
+
+  document.addEventListener('keydown', function(e){
+    var tag = (e.target && e.target.tagName) || '';
+    if (tag === 'TEXTAREA' || tag === 'INPUT' || tag === 'SELECT') return;
+    if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
+    else if (e.key === 'ArrowRight') jump(state.idx + 1);
+    else if (e.key === 'ArrowLeft') jump(state.idx - 1);
+  });
+
+  if (synthOK) {
+    loadVoices();
+    if (typeof speechSynthesis.addEventListener === 'function') {
+      speechSynthesis.addEventListener('voiceschanged', loadVoices);
+    } else { speechSynthesis.onvoiceschanged = loadVoices; }
+    var tries = 0;
+    var poll = setInterval(function(){
+      tries++;
+      if (voices.length || tries > 14) { clearInterval(poll); return; }
+      loadVoices();
+    }, 250);
+  } else {
+    toast('This browser doesn’t support read-aloud — try Safari or Chrome', 5200);
+  }
+
+  // restore saved queue and settings, or seed the welcome article on first run
+  var restored = restore();
+  if (!restored) {
+    var welcome = buildArticle(
+      'Welcome to Earmark\n\n' +
+      'Earmark turns your newsletters into something you can listen to — like a private podcast, read by your device.\n\n' +
+      'How to use it\n\n' +
+      'Copy a link to any newsletter or article, paste it in the box above, and tap Add to queue. You can even paste several links at once, one per line. If a link can’t be fetched, just copy the text of the email itself and paste that instead — that always works, and the cleanup option strips out unsubscribe footers and other junk so you only hear the writing.\n\n' +
+      'Articles stack up in your queue and play one after another, like episodes. While something is playing, each sentence is highlighted as it’s read, and you can tap any sentence to jump straight to it.\n\n' +
+      'Tap the speed chip in the player to cycle through speeds, and the settings icon to pick a different voice. The voices come from your device, so your choices depend on your phone or computer.\n\n' +
+      'Your queue, your place in each article, and your listening settings are saved on this device whenever your browser allows it — so your articles should still be here when you come back.\n\n' +
+      'That’s it. Paste your first newsletter, press play, and go do something else with your eyes.',
+      { clean: false, title: 'Welcome to Earmark', source: 'Earmark' }
+    );
+    if (welcome) state.articles.push(welcome);
+    persist();
+  }
+  if (store.ok) {
+    $('footNote').textContent = 'Voices come from your device, so quality varies by phone or computer. ' +
+      'Keep this tab in the foreground while listening — mobile browsers pause read-aloud in the background. ' +
+      'Your queue, progress, and settings are saved on this device.';
+  }
+
+  render();
+  autoGrow();
+
+  // offline shell (only when served over https, e.g. GitHub Pages)
+  if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+    try { navigator.serviceWorker.register('sw.js'); } catch(e){}
+  }
+}
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
