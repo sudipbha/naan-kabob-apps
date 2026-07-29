@@ -209,7 +209,7 @@ const ITEMS = [
   { id: "printer", st: "front", name: "Printer paper rolls", code: "Thermal roll 3-1/8 in", alt: "#4471223", pack: "50/cs", use: 0, lt: 1, ss: 1, cu: "roll", cpc: 50 }
 ];
 const CAP = {
-  paneer: 2, flour: 2, salt: 2, oil: 2, fries: 2, doogh: 48, syrupblue: 4, syrupcherry: 4, pureemango: 1, water: 2, apple: 2, ketchupbtl: 8, ketchuppkt: 2, sugarpkt: 1, chickpeas: 10,
+  paneer: 2, flour: 2, salt: 2, oil: 2, fries: 2, doogh: 48, syrupblue: 4, syrupcherry: 4, pureemango: 4, water: 2, apple: 2, ketchupbtl: 8, ketchuppkt: 2, sugarpkt: 1, chickpeas: 10,
   kabobfoil: 2, alufoil: 2, bigfilm: 2, smallfilm: 2, friesbox: 8, fohbox: 4, bolanibox: 2, straws: 8, burgerbags: 8, pattypaper: 2, plates9: 4, servspoon: 2,
   vinyl: 20, poly: 2,
   grillcleaner: 4, glasscleaner: 4, quat: 4, floorfinish: 4, liquidsoap: 12, soapdisp: 2, mophead: 2, dishstone: 8, greenpads: 8, steelscrub: 2, rinseaid: 4, bleach: 12,
@@ -265,7 +265,7 @@ const baselineOf = (it, cpc) => {
   return { bwd, bwe, ppcu, daily: (bwd * 4 + bwe * 3) / 7 / ppcu };
 };
 const capOf = (it) => CAP[it.id] != null ? CAP[it.id] : Math.max(1, Math.round(it.use * 0.75));
-const REORD = {};
+const REORD = { pureemango: 2 };
 const STORE_KEY = "sysco-inventory-v1";
 const APP_ID = "sysco";
 const OTHER_LABEL = "Champion";
