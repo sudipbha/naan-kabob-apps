@@ -161,6 +161,7 @@
     <header class="brand">
       <div class="logo">Ear<em>mark</em></div>
       <div class="tag">your newsletters, read aloud</div>
+      <button class="iconB" id="homeGearBtn" aria-label="Listening settings" style="margin-left:auto;align-self:center"></button>
     </header>
 
     <div class="addCard">
@@ -228,6 +229,7 @@
       </div>
       <input type="password" id="aiKey" placeholder="Paste your OpenAI key (starts with sk-)" autocomplete="off" spellcheck="false">
       <select id="aiVoiceSel" style="margin-top:8px"></select>
+      <button id="aiPrevBtn" class="btn ghost" style="margin-top:8px">Hear a sample</button>
       <p class="aiHint">Get a key at platform.openai.com under “API keys”. The key is saved only on this device, and each article costs a few cents. With the AI voice on, listening continues when you minimize the app or lock the screen.</p>
     </div>
     <div class="fRow">
@@ -1417,6 +1419,7 @@ function init(){
   $('prevBtn').innerHTML = ic('prev');
   $('nextBtn').innerHTML = ic('next');
   $('gearBtn').innerHTML = ic('gear');
+  $('homeGearBtn').innerHTML = ic('gear');
   $('playBtn').innerHTML = ic('play',26);
 
   $('addBtn').addEventListener('click', addFromInput);
@@ -1448,7 +1451,40 @@ function init(){
   $('backBtn').addEventListener('click', function(){ showView('home'); });
   $('npTitle').addEventListener('click', function(){ if (cur()) showView('reader'); });
   $('gearBtn').addEventListener('click', openSheet);
+  $('homeGearBtn').addEventListener('click', function(){ unlockAudio(); openSheet(); });
   $('backdrop').addEventListener('click', closeSheet);
+  $('aiPrevBtn').addEventListener('click', function(){
+    var btn = this;
+    if (btn.disabled) return;
+    var k = $('aiKey').value.trim() || state.aiKey;
+    if (!k) { toast('Paste your OpenAI key first — get one at platform.openai.com'); $('aiKey').focus(); return; }
+    state.aiKey = k;
+    var voice = $('aiVoiceSel').value || state.aiVoice || 'nova';
+    state.aiVoice = voice;
+    persist();
+    // stop whatever is playing and detach the article engine before the sample
+    state.gen++;
+    aiNow = null;
+    stopEngines();
+    if (state.playing) { state.playing = false; updatePlayerUI(); }
+    btn.disabled = true;
+    btn.textContent = 'Fetching the sample…';
+    aiFetch('Hi! This is how I sound. Paste in an article, press play, and I will read it to you just like this.')
+      .then(function(url){
+        btn.disabled = false;
+        btn.textContent = 'Hear a sample';
+        var el = getAudioEl();
+        el.src = url;
+        el.playbackRate = 1;
+        var p = el.play();
+        if (p && p.then) p.then(null, function(){ toast('Tap the button again to hear it'); });
+        setTimeout(function(){ try { URL.revokeObjectURL(url); } catch(e){} }, 60000);
+      }, function(err){
+        btn.disabled = false;
+        btn.textContent = 'Hear a sample';
+        toast(aiFailMsg(err), 5000);
+      });
+  });
 
   $('rateBtn').addEventListener('click', function(){
     unlockAudio();
@@ -1615,7 +1651,7 @@ function init(){
   if (store.ok) {
     $('footNote').textContent = 'Your queue, progress, and settings are saved on this device. ' +
       'The free device voices only play while the app is on screen — turn on the AI voice under the gear icon ' +
-      'for a natural voice that keeps reading when you minimize the app or lock the phone.';
+      'at the top right for a natural voice that keeps reading when you minimize the app or lock the phone.';
   }
 
   render();
