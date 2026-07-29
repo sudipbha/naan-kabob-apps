@@ -125,6 +125,11 @@
   #aiKey{width:100%;font:inherit;font-size:14.5px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;
          background:var(--bg);color:var(--ink);outline:none}
   .aiHint{font-size:12px;color:var(--mut);line-height:1.5;margin:8px 2px 0}
+  .btn.ghost{border:1px solid var(--line);color:var(--mut);padding:8px 13px}
+  .btn.ghost:active{background:var(--card)}
+  .w{border-radius:3px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+  .s.cur .w.cur{background:#F0C170;box-shadow:0 0 0 2px #F0C170}
+  .stats{color:var(--mut);font-size:12.5px;text-align:center;margin:20px 8px 0}
   .chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
   .spd{border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600;color:var(--mut)}
   .spd.on{background:var(--acc);border-color:var(--acc);color:#fff}
@@ -162,13 +167,19 @@
       <textarea id="inp" rows="3" placeholder="Paste a newsletter link — or the full text of the email itself…"></textarea>
       <div class="addRow">
         <label class="chk"><input type="checkbox" id="cleanChk" checked><span>Clean up newsletter junk</span></label>
-        <button id="addBtn" class="btn primary">Add to queue</button>
+        <span style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <button id="pdfBtn" class="btn ghost" title="Add a PDF from your device">PDF</button>
+          <button id="pasteBtn" class="btn ghost" title="Add the link you just copied">Paste link</button>
+          <button id="addBtn" class="btn primary">Add to queue</button>
+        </span>
       </div>
+      <input type="file" id="pdfInp" accept="application/pdf,.pdf" hidden>
     </div>
 
     <div class="qHead"><h2>Up next</h2><span id="qMeta"></span></div>
     <div id="queue"></div>
     <p class="tip" id="emptyTip" hidden>Your queue is empty.<br>Paste a link or an article above to get started.</p>
+    <p class="stats" id="statsRow" hidden></p>
     <p class="foot" id="footNote">Voices come from your device, so quality varies by phone or computer.<br>
     Keep this tab in the foreground while listening — mobile browsers pause read-aloud in the background.
     The queue lives in this session only.</p>
@@ -228,6 +239,10 @@
       <span>Autoplay next article</span>
       <button class="sw on" id="autoSw" role="switch" aria-checked="true" aria-label="Autoplay next article"></button>
     </div>
+    <div class="fRow swRow">
+      <span>Word-by-word highlight</span>
+      <button class="sw on" id="wordSw" role="switch" aria-checked="true" aria-label="Word-by-word highlight"></button>
+    </div>
   </div>
 </div>
 
@@ -262,11 +277,13 @@ var state = {
   view: 'home',
   userScrollTs: 0,
   fetching: false,
+  wordHl: true,
   aiOn: false,
   aiKey: null,
   aiVoice: 'nova'
 };
 var uid = 1;
+var stats = { days: {}, finished: 0 };
 var synthOK = ('speechSynthesis' in window) && ('SpeechSynthesisUtterance' in window);
 
 /* ---- device persistence (no-ops gracefully where storage is unavailable) ---- */
@@ -300,7 +317,8 @@ function persist(){
                words:a.words, progress:a.progress, played:a.played };
     });
     var blob = { v:1, rate:state.rate, voiceURI:state.voiceURI, autoplay:state.autoplay,
-                 aiOn:state.aiOn, aiKey:state.aiKey, aiVoice:state.aiVoice, articles:arts };
+                 aiOn:state.aiOn, aiKey:state.aiKey, aiVoice:state.aiVoice,
+                 wordHl:state.wordHl, stats:stats, articles:arts };
     if (!store.set('earmark.v1', blob)) {
       blob.articles = arts.filter(function(a){ return !a.played; });
       store.set('earmark.v1', blob);
@@ -316,6 +334,11 @@ function restore(){
   if (typeof saved.aiKey === 'string' && saved.aiKey) state.aiKey = saved.aiKey;
   if (typeof saved.aiVoice === 'string' && saved.aiVoice) state.aiVoice = saved.aiVoice;
   state.aiOn = saved.aiOn === true && !!state.aiKey;
+  state.wordHl = saved.wordHl !== false;
+  if (saved.stats && typeof saved.stats === 'object') {
+    if (saved.stats.days && typeof saved.stats.days === 'object') stats.days = saved.stats.days;
+    if (typeof saved.stats.finished === 'number') stats.finished = saved.stats.finished;
+  }
   var arts = Array.isArray(saved.articles) ? saved.articles : [];
   var maxId = 0;
   for (var i=0;i<arts.length;i++){
@@ -347,6 +370,41 @@ function toast(msg, ms){
   el.textContent = msg; el.hidden = false; el.classList.add('show');
   clearTimeout(toast._t);
   toast._t = setTimeout(function(){ el.classList.remove('show'); }, ms||2600);
+}
+
+/* ============================== listening stats ============================== */
+function dayKey(d){
+  var m = d.getMonth() + 1, dd = d.getDate();
+  return d.getFullYear() + '-' + (m < 10 ? '0' : '') + m + '-' + (dd < 10 ? '0' : '') + dd;
+}
+function addListen(sec){
+  if (!(sec > 0) || sec > 60) return;
+  var k = dayKey(new Date());
+  stats.days[k] = (stats.days[k] || 0) + sec;
+  var keys = Object.keys(stats.days);
+  if (keys.length > 90) {
+    keys.sort();
+    for (var i=0;i<keys.length-90;i++) delete stats.days[keys[i]];
+  }
+  renderStats();
+  persist();
+}
+function streakDays(){
+  var n = 0, d = new Date();
+  while (stats.days[dayKey(d)] > 0) { n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+function renderStats(){
+  var el = $('statsRow'); if (!el) return;
+  var today = stats.days[dayKey(new Date())] || 0;
+  if (!stats.finished && !Object.keys(stats.days).length) { el.hidden = true; return; }
+  var bits = [];
+  var st = streakDays();
+  if (st >= 2) bits.push('🔥 ' + st + '-day streak');
+  bits.push(today >= 60 ? Math.round(today / 60) + ' min today' : (today > 0 ? 'under a minute today' : 'nothing yet today'));
+  bits.push(stats.finished + (stats.finished === 1 ? ' article finished' : ' articles finished'));
+  el.textContent = bits.join(' · ');
+  el.hidden = false;
 }
 
 /* ============================== text cleanup ============================== */
@@ -575,6 +633,61 @@ function fetchArticle(url){
       if (!p.text || p.text.length < 180) throw new Error('thin');
       return p;
     });
+  });
+}
+
+/* ============================== PDF import ============================== */
+var pdfjsLibP = null;
+function loadPdfJs(){
+  if (pdfjsLibP) return pdfjsLibP;
+  pdfjsLibP = import('https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/legacy/build/pdf.min.mjs').then(function(m){
+    var lib = (m && m.getDocument) ? m : (m.default || m);
+    try { lib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/legacy/build/pdf.worker.min.mjs'; } catch(e){}
+    return lib;
+  }, function(err){ pdfjsLibP = null; throw err; });
+  return pdfjsLibP;
+}
+function pdfPageText(tc){
+  var items = tc.items || [], out = '', lastY = null;
+  for (var i=0;i<items.length;i++){
+    var it = items[i];
+    if (typeof it.str !== 'string') continue;
+    var y = (it.transform && it.transform.length > 5) ? it.transform[5] : null;
+    if (lastY !== null && y !== null && Math.abs(y - lastY) > 3) out += (Math.abs(y - lastY) > 16 ? '\n\n' : '\n');
+    out += it.str + (it.hasEOL ? '\n' : ' ');
+    if (y !== null) lastY = y;
+  }
+  return out;
+}
+function importPDF(f){
+  if (state.fetching) return;
+  if (f.size > 25 * 1024 * 1024) { toast('That PDF is too big — 25 MB max'); return; }
+  setFetching(true, 'Reading PDF…');
+  loadPdfJs().then(function(pdfjs){
+    return f.arrayBuffer().then(function(buf){
+      return pdfjs.getDocument({ data: buf }).promise;
+    });
+  }).then(function(doc){
+    var pages = [];
+    var chain = Promise.resolve();
+    var n;
+    for (n = 1; n <= doc.numPages; n++) (function(pageNo){
+      chain = chain.then(function(){
+        return doc.getPage(pageNo).then(function(pg){ return pg.getTextContent(); })
+          .then(function(tc){ pages.push(pdfPageText(tc)); });
+      });
+    })(n);
+    return chain.then(function(){ return pages.join('\n\n'); });
+  }).then(function(text){
+    setFetching(false);
+    var art = buildArticle(text, { clean: $('cleanChk').checked, title: f.name.replace(/\.pdf$/i, ''), source: 'PDF' });
+    if (!art) { toast('Couldn’t find readable text in that PDF — it may be a scan of images', 4200); return; }
+    state.articles.push(art);
+    toast('Added: ' + art.title.slice(0, 40) + (art.title.length > 40 ? '…' : ''));
+    render(); persist();
+  }).catch(function(){
+    setFetching(false);
+    toast('Couldn’t read that PDF — it may be a scan or password-protected', 4200);
   });
 }
 
@@ -862,6 +975,7 @@ function onAiMeta(){
     }
     if (tot > 0 && pre > 0) { try { aiAudio.currentTime = aiAudio.duration * pre / tot; } catch(e){} }
   }
+  aiNow.lastT = aiAudio.currentTime;
   aiAudio.playbackRate = state.rate;
   if ('mediaSession' in navigator) {
     try {
@@ -875,6 +989,11 @@ function onAiMeta(){
 function onAiTime(){
   if (!aiNow || !aiSess || aiNow.g !== state.gen || !state.playing) return;
   var art = cur(); if (!art || !aiAudio.duration) return;
+  if (aiNow.lastT != null) {
+    var dt = aiAudio.currentTime - aiNow.lastT;
+    if (dt > 0 && dt < 3) addListen(dt);
+  }
+  aiNow.lastT = aiAudio.currentTime;
   var ch = aiSess.chunks[aiNow.ci];
   var frac = aiAudio.currentTime / aiAudio.duration;
   var tot = 0, i;
@@ -887,6 +1006,17 @@ function onAiTime(){
   if (si !== state.idx) {
     state.idx = si; art.progress = si;
     highlight(true); persist();
+  }
+  if (state.wordHl && wrapped && wrapped.si === si) {
+    // estimate the word from how far the audio is into this sentence's share of the chunk
+    var startChars = 0;
+    for (i=ch.s0;i<si;i++) startChars += art.sentences[i].t.length + 1;
+    var sentLen = art.sentences[si].t.length + 1;
+    var into = (frac * tot - startChars) / sentLen;
+    if (into >= 0 && into <= 1.05) {
+      var t2 = art.sentences[si].t;
+      setWord(wordAtChar(t2, Math.min(t2.length - 1, Math.floor(into * t2.length))));
+    }
   }
 }
 
@@ -950,9 +1080,15 @@ function deviceSpeakFrom(i){
     var v = getVoice();
     if (v) { u.voice = v; u.lang = v.lang; }
     u.onstart = function(){ consecErr = 0; };
+    u.onboundary = function(ev){
+      if (g !== state.gen || !state.wordHl) return;
+      if (ev.name && ev.name !== 'word') return;
+      setWord(wordAtChar(art.sentences[state.idx].t, ev.charIndex || 0));
+    };
     u.onend = function(){
       if (g !== state.gen) return;
       consecErr = 0;
+      addListen(art.sentences[state.idx].w / (WPM * state.rate) * 60);
       state.idx++;
       art.progress = state.idx;
       highlight(true); updateProgressUI(art);
@@ -1013,6 +1149,8 @@ function onArticleEnd(art){
   art.played = true;
   art.progress = art.sentences.length;
   state.playing = false;
+  stats.finished++;
+  renderStats();
   updatePlayerUI(); renderQueue(); persist();
   if (state.autoplay) {
     var pos = -1;
@@ -1122,9 +1260,51 @@ function highlight(scroll){
   var el = document.querySelector('.s[data-i="' + state.idx + '"]');
   if (el) {
     el.classList.add('cur');
+    if (state.wordHl && state.playing && art.sentences[state.idx]) {
+      if (!wrapped || wrapped.el !== el) {
+        unwrapSentence();
+        wrapSentence(el, art.sentences[state.idx].t);
+        wrapped = { el: el, si: state.idx, t: art.sentences[state.idx].t };
+      }
+    } else unwrapSentence();
     if (scroll) scrollToCur(true);
   }
   updateProgressUI(art);
+}
+
+/* ---- word-by-word highlight: only the current sentence is split into word spans ---- */
+var wrapped = null; // {el, si, t}
+function wrapSentence(el, t){
+  var parts = t.split(/(\s+)/), h = '', wi = 0;
+  for (var i=0;i<parts.length;i++){
+    if (!parts[i]) continue;
+    if (/^\s+$/.test(parts[i])) h += parts[i];
+    else { h += '<span class="w" data-w="' + wi + '">' + escapeHtml(parts[i]) + '</span>'; wi++; }
+  }
+  el.innerHTML = h;
+}
+function unwrapSentence(){
+  if (!wrapped) return;
+  if (wrapped.el) { try { wrapped.el.textContent = wrapped.t; } catch(e){} }
+  wrapped = null;
+}
+function setWord(wi){
+  if (!wrapped || !wrapped.el) return;
+  var prevW = wrapped.el.querySelector('.w.cur');
+  if (prevW) prevW.classList.remove('cur');
+  var wEl = wrapped.el.querySelector('.w[data-w="' + wi + '"]');
+  if (wEl) wEl.classList.add('cur');
+}
+function wordAtChar(t, ci){
+  var parts = t.split(/(\s+)/), wi = 0, pos = 0;
+  for (var i=0;i<parts.length;i++){
+    if (!parts[i]) continue;
+    var isW = !/^\s+$/.test(parts[i]);
+    if (isW && pos + parts[i].length > ci) break;
+    if (isW) wi++;
+    pos += parts[i].length;
+  }
+  return wi;
 }
 function scrollToCur(smooth){
   if (state.view !== 'reader') return;
@@ -1195,6 +1375,8 @@ function openSheet(){
   renderSpeedChips();
   $('autoSw').classList.toggle('on', state.autoplay);
   $('autoSw').setAttribute('aria-checked', String(state.autoplay));
+  $('wordSw').classList.toggle('on', state.wordHl);
+  $('wordSw').setAttribute('aria-checked', String(state.wordHl));
   $('sheetWrap').hidden = false;
 }
 function closeSheet(){ $('sheetWrap').hidden = true; }
@@ -1239,6 +1421,27 @@ function init(){
 
   $('addBtn').addEventListener('click', addFromInput);
   $('inp').addEventListener('input', autoGrow);
+  $('pdfBtn').addEventListener('click', function(){ $('pdfInp').click(); });
+  $('pdfInp').addEventListener('change', function(){
+    var f = this.files && this.files[0];
+    this.value = '';
+    if (f) importPDF(f);
+  });
+  $('pasteBtn').addEventListener('click', function(){
+    unlockAudio();
+    if (!(navigator.clipboard && navigator.clipboard.readText)) {
+      toast('This browser doesn’t allow reading the clipboard — paste into the box instead');
+      return;
+    }
+    navigator.clipboard.readText().then(function(t){
+      t = (t || '').trim();
+      if (!t) { toast('Nothing on the clipboard — copy a link first'); return; }
+      $('inp').value = t; autoGrow();
+      addFromInput();
+    }, function(){
+      toast('Couldn’t read the clipboard — paste into the box instead');
+    });
+  });
   $('playBtn').addEventListener('click', togglePlay);
   $('prevBtn').addEventListener('click', function(){ unlockAudio(); jump(state.idx - 1); });
   $('nextBtn').addEventListener('click', function(){ unlockAudio(); jump(state.idx + 1); });
@@ -1357,6 +1560,13 @@ function init(){
     this.setAttribute('aria-checked', String(state.autoplay));
     persist();
   });
+  $('wordSw').addEventListener('click', function(){
+    state.wordHl = !state.wordHl;
+    this.classList.toggle('on', state.wordHl);
+    this.setAttribute('aria-checked', String(state.wordHl));
+    if (!state.wordHl) unwrapSentence();
+    persist();
+  });
 
   window.addEventListener('wheel', function(){ state.userScrollTs = Date.now(); }, {passive:true});
   window.addEventListener('touchmove', function(){ state.userScrollTs = Date.now(); }, {passive:true});
@@ -1392,7 +1602,7 @@ function init(){
       'Welcome to Earmark\n\n' +
       'Earmark turns your newsletters into something you can listen to — like a private podcast, read by your device.\n\n' +
       'How to use it\n\n' +
-      'Copy a link to any newsletter or article, paste it in the box above, and tap Add to queue. You can even paste several links at once, one per line. If a link can’t be fetched, just copy the text of the email itself and paste that instead — that always works, and the cleanup option strips out unsubscribe footers and other junk so you only hear the writing.\n\n' +
+      'Copy a link to any newsletter or article, paste it in the box above, and tap Add to queue. Even quicker: copy a link in your email app, open Earmark, and tap Paste link — one tap and it’s queued. The PDF button lets you pick a PDF from your device and listen to that too. If a link can’t be fetched, just copy the text of the email itself and paste that instead — that always works, and the cleanup option strips out unsubscribe footers and other junk so you only hear the writing.\n\n' +
       'Articles stack up in your queue and play one after another, like episodes. While something is playing, each sentence is highlighted as it’s read, and you can tap any sentence to jump straight to it.\n\n' +
       'Tap the speed chip in the player to cycle through speeds, and the settings icon to pick a different voice. The free voices come from your device — and if you add an OpenAI key in the settings, you get a natural AI voice that keeps reading even when you minimize the app or lock your phone.\n\n' +
       'Your queue, your place in each article, and your listening settings are saved on this device whenever your browser allows it — so your articles should still be here when you come back.\n\n' +
@@ -1409,7 +1619,20 @@ function init(){
   }
 
   render();
+  renderStats();
   autoGrow();
+
+  // ?add=<url> — auto-queue a link (used by shortcuts and shared links from email)
+  try {
+    var qs = new URLSearchParams(location.search);
+    var addU = qs.get('add');
+    if (addU && isURL(addU.trim())) {
+      $('inp').value = addU.trim();
+      autoGrow();
+      addFromInput();
+      history.replaceState(null, '', location.pathname);
+    }
+  } catch(e){}
 
   // offline shell (only when served over https, e.g. GitHub Pages)
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
