@@ -115,7 +115,11 @@ estimate is never mistaken for a fresh count.
    the most logged orders first; until order history builds up it falls back
    to each item's usage rate). Type or ±
    what's on the shelf, in counting units. "Levels" on each card edits Max,
-   Reorder-at, pack config, and the Backup toggle. **Save count** stores a
+   Reorder-at, pack config, and the Backup toggle, and — for items that carry
+   an optional `url` field — ends with a **"Product details ↗"** link to the
+   manufacturer's page (opens in a new tab; items without a `url` render no
+   link, and it sits inside Levels so it never crowds the count list).
+   **Save count** stores a
    dated snapshot of only the items recounted since the previous save (items
    not touched are left out and the save message says how many — this keeps
    measured usage honest; save after every walk). The Count header is
@@ -204,6 +208,13 @@ estimate is never mistaken for a fresh count.
   `bwd`/`bwe` + measured usage are the live rate system.
 - Item `code` strings are display notes (SKU + pack breakdown), not parseable
   SKUs; `alt` holds an alternate SKU when known. "pending" in a code means the
-  owner hasn't confirmed it from a box label yet.
+  owner hasn't confirmed it from a box label yet. An optional `url` field
+  points at the manufacturer's product page and surfaces as the "Product
+  details" link in Levels — it is reference material only and feeds no logic.
+- Do **not** infer storage rules from a product category. The Monin fruit
+  purée is sugar-first, acidified and pectin-set, and the maker states
+  "refrigeration not required" — the same as their syrups. Check the maker's
+  page (that's what the `url` links are for) rather than reasoning from
+  "purées need a fridge".
 - Before flagging "X should be ordered", check `orderedDaysAgo` — it may
   already be on a logged order awaiting Friday's truck.
