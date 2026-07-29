@@ -168,6 +168,7 @@ const ITEMS = [
   { id: "doogh", st: "food", name: "Doogh", code: "Ayran Naan mint · 24/473 mL", alt: "#7911929", pack: "cs", use: 0, lt: 1, ss: 1, cu: "bottle", cpc: 24 },
   { id: "syrupblue", st: "food", name: "Blue curaçao syrup", code: "Monin M-FR007F · 4/1 L PET", alt: "#4814343", pack: "cs", use: 0, lt: 1, ss: 1, cu: "bottle", cpc: 4 },
   { id: "syrupcherry", st: "food", name: "Tart cherry syrup", code: "Monin M-FR259F · 4/1 L PET · SUPC pending", alt: "", pack: "cs", use: 0, lt: 1, ss: 1, cu: "bottle", cpc: 4 },
+  { id: "pureemango", st: "food", name: "Mango purée (Monin)", code: "Le Fruit de Monin · 1 L · fridge after opening · SUPC pending", alt: "", pack: "cs", use: 0, lt: 1, ss: 1, cu: "bottle", cpc: 4, cpcTBD: true },
   { id: "water", st: "food", name: "Water bottles", code: "Spring water · 24/500 mL", alt: "#8333271", pack: "cs", use: 0, lt: 1, ss: 1, cu: "cs" },
   { id: "apple", st: "food", name: "Apple slices", code: "Apple red wedge · 24×2 oz", alt: "#1668765", pack: "cs", use: 0, lt: 1, ss: 1 },
   { id: "ketchupbtl", st: "food", name: "Ketchup bottles", code: "House Recipe tomato ketchup · 4/4.5 kg?", alt: "", pack: "cs", use: 0, lt: 1, ss: 1, tag: "TBC", cu: "bottle", cpc: 4 },
@@ -208,7 +209,7 @@ const ITEMS = [
   { id: "printer", st: "front", name: "Printer paper rolls", code: "Thermal roll 3-1/8 in", alt: "#4471223", pack: "50/cs", use: 0, lt: 1, ss: 1, cu: "roll", cpc: 50 }
 ];
 const CAP = {
-  paneer: 2, flour: 2, salt: 2, oil: 2, fries: 2, doogh: 48, syrupblue: 4, syrupcherry: 4, water: 2, apple: 2, ketchupbtl: 8, ketchuppkt: 2, sugarpkt: 1, chickpeas: 10,
+  paneer: 2, flour: 2, salt: 2, oil: 2, fries: 2, doogh: 48, syrupblue: 4, syrupcherry: 4, pureemango: 4, water: 2, apple: 2, ketchupbtl: 8, ketchuppkt: 2, sugarpkt: 1, chickpeas: 10,
   kabobfoil: 2, alufoil: 2, bigfilm: 2, smallfilm: 2, friesbox: 8, fohbox: 4, bolanibox: 2, straws: 8, burgerbags: 8, pattypaper: 2, plates9: 4, servspoon: 2,
   vinyl: 20, poly: 2,
   grillcleaner: 4, glasscleaner: 4, quat: 4, floorfinish: 4, liquidsoap: 12, soapdisp: 2, mophead: 2, dishstone: 8, greenpads: 8, steelscrub: 2, rinseaid: 4, bleach: 12,
@@ -264,7 +265,7 @@ const baselineOf = (it, cpc) => {
   return { bwd, bwe, ppcu, daily: (bwd * 4 + bwe * 3) / 7 / ppcu };
 };
 const capOf = (it) => CAP[it.id] != null ? CAP[it.id] : Math.max(1, Math.round(it.use * 0.75));
-const REORD = {};
+const REORD = { pureemango: 2 };
 const STORE_KEY = "sysco-inventory-v1";
 const APP_ID = "sysco";
 const OTHER_LABEL = "Champion";
