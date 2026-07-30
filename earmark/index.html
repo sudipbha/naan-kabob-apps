@@ -1053,7 +1053,9 @@ function unlockAudio(){
 }
 
 function stopEngines(){
-  try { speechSynthesis.cancel(); } catch(e){}
+  // only cancel when something is actually queued — cancel() right before
+  // speak() makes some phones stall for a beat before the next utterance
+  try { if (speechSynthesis.speaking || speechSynthesis.pending) speechSynthesis.cancel(); } catch(e){}
   if (aiAudio) { try { aiAudio.pause(); } catch(e){} }
 }
 
@@ -1147,6 +1149,20 @@ function aiFailMsg(err){
   if (m === 'ai-http-401') return 'OpenAI didn’t accept your key — check it under the gear icon';
   if (m === 'ai-http-429') return 'OpenAI is busy or out of credit — check your account, or try again in a minute';
   return 'Couldn’t reach the AI voice — check your connection';
+}
+
+// while nothing is playing and no audio session exists, quietly generate the
+// first piece of the next listen so pressing play starts instantly
+function aiPrefetchFirst(){
+  if (!aiActive() || state.playing || aiSess) return;
+  var art = cur();
+  if (art && art.played) art = null;
+  if (!art) {
+    for (var i=0;i<state.articles.length;i++) if (!state.articles[i].played) { art = state.articles[i]; break; }
+  }
+  if (!art || !art.sentences || !art.sentences.length) return;
+  aiSess = { key: art.id + ':full', voice: state.aiVoice, chunks: aiChunksFor(art), urls: [], pending: {} };
+  aiEnsure(art, 0).then(null, function(){});
 }
 
 function aiSpeakFrom(i){
@@ -1553,6 +1569,8 @@ function deviceSpeakFrom(i){
       step();
     };
     try { speechSynthesis.speak(u); } catch(e){}
+    // some browsers start the engine in a stuck-paused state — nudge it
+    try { speechSynthesis.resume(); } catch(e){}
   }
   step();
 }
@@ -1671,6 +1689,7 @@ function renderQueue(){
   }
   q.innerHTML = html;
   $('emptyTip').hidden = state.articles.length > 0;
+  aiPrefetchFirst();
   $('qMeta').textContent = state.articles.length
     ? state.articles.length + (state.articles.length === 1 ? ' article · ' : ' articles · ') + fmtDur(totalWords, state.rate) + ' at ' + fmtRate(state.rate)
     : '';
