@@ -691,11 +691,17 @@ function buildDoc(raw){
 }
 
 /* ============================== AI text generation (modes + ask) ============================== */
-function chatFetch(messages, maxTok){
+// newest budget model first (GPT-5.6 Luna, priced near the old model since the
+// July 2026 cut); proven fallback second for accounts that don't have it yet
+var CHAT_PRIMARY = 'gpt-5.6-luna';
+var CHAT_FALLBACK = 'gpt-4o-mini';
+function chatFetchWith(model, messages, maxTok){
+  var body = { model: model, messages: messages, max_completion_tokens: maxTok || 900 };
+  if (model === CHAT_FALLBACK) body.temperature = 0.4;
   return fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: { 'Authorization': 'Bearer ' + state.aiKey, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ model: 'gpt-4o-mini', messages: messages, max_tokens: maxTok || 900, temperature: 0.4 })
+    body: JSON.stringify(body)
   }).then(function(res){
     if (!res.ok) throw new Error('ai-http-' + res.status);
     return res.json();
@@ -703,6 +709,17 @@ function chatFetch(messages, maxTok){
     var t = j && j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content;
     if (!t) throw new Error('ai-empty');
     return t.trim();
+  });
+}
+function chatFetch(messages, maxTok){
+  // give newer models headroom in case they spend completion tokens on reasoning
+  return chatFetchWith(CHAT_PRIMARY, messages, (maxTok || 900) * 2).catch(function(err){
+    var m = (err && err.message) || '';
+    // model missing on this account, parameter rejected, or empty output → proven fallback
+    if (m === 'ai-http-404' || m === 'ai-http-400' || m === 'ai-http-403' || m === 'ai-empty') {
+      return chatFetchWith(CHAT_FALLBACK, messages, maxTok);
+    }
+    throw err;
   });
 }
 function articleContext(art, cap){
