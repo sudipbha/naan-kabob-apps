@@ -237,10 +237,58 @@ const packUnitOf = (it) => { const p = String(it.pack || "").toLowerCase(); retu
 const guessPerCase = (it, u) => { const p = String(it.pack || ""); let m = p.match(/(\d+)\s*(rl|jg|bx|bn|bg)\s*\/\s*cs/i); if (m) return parseInt(m[1]); m = p.match(/(\d+)\s*\/\s*(cs|bx|bn|bg)/i) || String(it.code || "").match(/(\d+)\s*\/\s*(cs|bx|bn|bg)/i); const t = m ? parseInt(m[1]) : null; if (u === "sleeve") return t ? Math.max(1, Math.round(t / 25)) : 4; if (u === "jug" || u === "roll") return t || 4; return t || 6; };
 const unitLabel = (u) => u === "box" ? "boxes" : u + "s";
 const DAYW = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+// Ontario holidays. Two effects, both real for this restaurant:
+//   1. the day itself trades like a weekend day (busy), and
+//   2. suppliers don't deliver on it - Good Friday, Christmas and New Year's
+//      all land on Fridays in some years, which are normal delivery days.
+// Computed per year (no table to expire). Civic Holiday is included: it is not
+// an ESA statutory holiday, but trade and supplier closures follow it anyway.
+const HOL_CACHE = {};
+function easterSunday(y) {
+  const a = y % 19, b = Math.floor(y / 100), c = y % 100;
+  const d = Math.floor(b / 4), e = b % 4;
+  const f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3);
+  const h = (19 * a + b - d - g + 15) % 30;
+  const i = Math.floor(c / 4), k = c % 4;
+  const l = (32 + 2 * e + 2 * i - h - k) % 7;
+  const m = Math.floor((a + 11 * h + 22 * l) / 451);
+  const mo = Math.floor((h + l - 7 * m + 114) / 31);
+  const da = ((h + l - 7 * m + 114) % 31) + 1;
+  return new Date(y, mo - 1, da);
+}
+const ymdKey = (d) => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+function nthMonday(y, mo, n) {
+  const d = new Date(y, mo, 1);
+  while (d.getDay() !== 1) d.setDate(d.getDate() + 1);
+  d.setDate(d.getDate() + 7 * (n - 1));
+  return d;
+}
+function holidaysFor(y) {
+  if (HOL_CACHE[y]) return HOL_CACHE[y];
+  const gf = easterSunday(y); gf.setDate(gf.getDate() - 2);
+  const vic = new Date(y, 4, 24);
+  while (vic.getDay() !== 1) vic.setDate(vic.getDate() - 1);
+  const m = {};
+  m[ymdKey(new Date(y, 0, 1))] = "New Year's Day";
+  m[ymdKey(nthMonday(y, 1, 3))] = "Family Day";
+  m[ymdKey(gf)] = "Good Friday";
+  m[ymdKey(vic)] = "Victoria Day";
+  m[ymdKey(new Date(y, 6, 1))] = "Canada Day";
+  m[ymdKey(nthMonday(y, 7, 1))] = "Civic Holiday";
+  m[ymdKey(nthMonday(y, 8, 1))] = "Labour Day";
+  m[ymdKey(nthMonday(y, 9, 2))] = "Thanksgiving";
+  m[ymdKey(new Date(y, 11, 25))] = "Christmas Day";
+  m[ymdKey(new Date(y, 11, 26))] = "Boxing Day";
+  HOL_CACHE[y] = m;
+  return m;
+}
+const holidayName = (d) => holidaysFor(d.getFullYear())[ymdKey(d)] || null;
+// The one predicate every rate calculation uses: Fri/Sat/Sun, or a holiday.
+const isBusyDay = (d) => { const g = d.getDay(); return g === 5 || g === 6 || g === 0 || holidayName(d) != null; };
 const DELIVERY_DAYS = [2, 5];
 function deliveryWindows(now) {
   const n = now || /* @__PURE__ */ new Date();
-  const nextOf = (from) => { const d = new Date(from.getFullYear(), from.getMonth(), from.getDate()); do { d.setDate(d.getDate() + 1); } while (!DELIVERY_DAYS.includes(d.getDay())); return d; };
+  const nextOf = (from) => { const d = new Date(from.getFullYear(), from.getMonth(), from.getDate()); do { d.setDate(d.getDate() + 1); } while (!DELIVERY_DAYS.includes(d.getDay()) || holidayName(d) != null); return d; };
   const next = nextOf(n);
   const following = nextOf(next);
   const bucket = (from, to, extra) => {
@@ -248,11 +296,18 @@ function deliveryWindows(now) {
     const d = new Date(from.getFullYear(), from.getMonth(), from.getDate());
     const end = new Date(to.getFullYear(), to.getMonth(), to.getDate());
     end.setDate(end.getDate() + (extra || 0));
-    while (d < end) { const g = d.getDay(); if (g === 5 || g === 6 || g === 0) c.we += 1; else c.wd += 1; d.setDate(d.getDate() + 1); }
+    while (d < end) { if (isBusyDay(d)) c.we += 1; else c.wd += 1; d.setDate(d.getDate() + 1); }
     return c;
   };
   const today = new Date(n.getFullYear(), n.getMonth(), n.getDate());
-  return { next, following, toNext: bucket(today, next), full: bucket(today, following, 1), nextName: DAYW[next.getDay()], followingName: DAYW[following.getDay()] };
+  const hols = [];
+  {
+    const d = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const end = new Date(following.getFullYear(), following.getMonth(), following.getDate());
+    end.setDate(end.getDate() + 1);
+    while (d < end) { const nm = holidayName(d); if (nm) hols.push({ name: nm, day: DAYW[d.getDay()], date: new Date(d) }); d.setDate(d.getDate() + 1); }
+  }
+  return { next, following, toNext: bucket(today, next), full: bucket(today, following, 1), nextName: DAYW[next.getDay()], followingName: DAYW[following.getDay()], holidays: hols };
 }
 const MAX_DELIVERY_GAP = (() => {
   const ds = [...DELIVERY_DAYS].sort((a, b) => a - b);
@@ -793,8 +848,7 @@ function ChampionTracker() {
       const full = Math.floor(daysBetween(countedAt, (/* @__PURE__ */ new Date()).toISOString()));
       let awd = 0, awe = 0;
       for (let k = 1; k <= Math.min(full, 60); k++) {
-        const g = new Date(d0.getTime() + k * 864e5).getDay();
-        if (g === 5 || g === 6 || g === 0) awe += 1; else awd += 1;
+        if (isBusyDay(new Date(d0.getTime() + k * 864e5))) awe += 1; else awd += 1;
       }
       const used = rWd * awd + rWe * awe;
       if (used > 0.05) {
@@ -858,7 +912,7 @@ function ChampionTracker() {
         let wdN = 0, weN = 0;
         const d0v = new Date(prev.date);
         const nD = Math.round(days);
-        for (let k = 1; k <= nD; k++) { const g = new Date(d0v.getTime() + k * 864e5).getDay(); if (g === 5 || g === 6 || g === 0) weN += 1; else wdN += 1; }
+        for (let k = 1; k <= nD; k++) { if (isBusyDay(new Date(d0v.getTime() + k * 864e5))) weN += 1; else wdN += 1; }
         expected = round1((baseV.bwd * wdN + baseV.bwe * weN) / baseV.ppcu);
       }
       let v = 0;
@@ -1181,7 +1235,7 @@ function CountCard({ r, rail, setStock, setCap, setReorder, setOrderQty, setPack
 }
 const BarChart3 = ({ size = 24, ...p }) => React.createElement("svg", { width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", ...p }, React.createElement("path", { d: "M3 3v18h18" }), React.createElement("rect", { x: "7", y: "12", width: "3", height: "5", rx: "1" }), React.createElement("rect", { x: "12", y: "8", width: "3", height: "9", rx: "1" }), React.createElement("rect", { x: "17", y: "5", width: "3", height: "12", rx: "1" }));
 function computeUsage(counts, receipts) {
-  const isWeekend = (d) => { const g = d.getDay(); return g === 5 || g === 6 || g === 0; };
+  const isWeekend = isBusyDay;
   const acc = {};
   let wdTotal = 0, weTotal = 0, periods = 0;
   for (let i = 1; i < counts.length; i++) {
@@ -1314,7 +1368,7 @@ function OrderView({ orderRows, orderText, cycle, copyOrder, copied, shareOrder,
   });
   const totalStr = Object.keys(totals).map((u) => totals[u] + "\xA0" + (totals[u] === 1 ? u : u === "box" ? "boxes" : u + "s")).join(" + ");
   const ordersEl = orders && orders.length ? React.createElement("div", { className: "px-4 pb-6 pt-2" }, React.createElement("div", { className: "text-[10px] font-black uppercase tracking-[0.2em] pb-2", style: { color: C.steel } }, "Recent orders"), React.createElement("div", { className: "space-y-1.5" }, [...orders].reverse().slice(0, 3).map((o, i) => React.createElement("div", { key: i, className: "rounded-lg px-3 py-2 text-xs", style: { background: C.card, color: C.steel } }, React.createElement("span", { style: { color: C.naan, fontWeight: 700 } }, shortDate(o.date)), " · ", Object.keys(o.items || {}).length, " items")))) : null;
-  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "px-4 pt-5 pb-3 sticky top-0 z-20", style: { background: C.bg, borderBottom: `1px solid ${C.line}` } }, /* @__PURE__ */ React.createElement("div", { className: "text-[10px] uppercase tracking-[0.25em]", style: { color: C.saffron } }, "Champion order"), /* @__PURE__ */ React.createElement("div", { className: "text-2xl font-black tracking-tight" }, orderRows.length, " item", orderRows.length !== 1 ? "s" : "", " to order"), /* @__PURE__ */ React.createElement("div", { className: "text-[11px] mt-1", style: { color: C.steel } }, "Deliveries " + DAYW[DELIVERY_DAYS[0]] + " & " + DAYW[DELIVERY_DAYS[1]] + " \u2014 at-reorder items refill to Max; early warnings cover through " + dwin.followingName + " (+1 day)."), orderRows.length > 0 ? React.createElement("div", { className: "text-sm font-black mt-1.5", style: { color: C.naan } }, "Order total: " + totalStr) : null), orderRows.length === 0 ? React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "px-6 py-16 text-center", style: { color: C.steel } }, "Nothing at reorder point. Count the shelves, then check back."), ordersEl) : /* @__PURE__ */ React.createElement("div", { className: "px-4 py-4 space-y-2" }, orderRows.map((r) => /* @__PURE__ */ React.createElement("div", { key: r.id, className: "flex items-center justify-between rounded-xl px-4 py-3", style: { background: C.card } }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "font-bold" }, r.name), /* @__PURE__ */ React.createElement("div", { className: "text-xs font-mono", style: { color: C.steel } }, r.code, r.alt ? ` \xB7 ${r.alt}` : ""), r.projShort && r.status !== "order" ? React.createElement("div", { className: "text-[10px] mt-0.5", style: { color: C.ember } }, "short before " + r.shortBefore) : null, r.orderedDaysAgo != null ? React.createElement("div", { className: "inline-block text-[10px] mt-0.5 font-black px-1.5 py-0.5 rounded", style: { background: C.mint + "22", color: C.mint } }, "ordered " + (r.orderedDaysAgo === 0 ? "today" : r.orderedDaysAgo + "d ago") + " \u2014 don\u2019t send twice") : null, r.aged ? React.createElement("div", { className: "text-[10px] mt-0.5", style: { color: C.saffron } }, "estimate \u2014 counted " + r.rawCur + " on " + shortDate(r.countedAt) + " \xB7 recount before sending") : null, r.packTBD ? React.createElement("div", { className: "text-[10px] mt-0.5", style: { color: C.saffron } }, "\u26a0 pack size unconfirmed \u2014 case qty estimated") : null), /* @__PURE__ */ React.createElement("div", { className: "text-right" }, /* @__PURE__ */ React.createElement("div", { className: "text-2xl font-black", style: { color: C.saffron } }, r.cpc > 1 ? r.orderCs : r.need), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] uppercase tracking-wide", style: { color: C.steel } }, r.pack.includes("bn") ? "bundles" : r.pack.includes("bx") ? "boxes" : r.pack.includes("bg") ? "bags" : "cases"), r.orderLastsDays != null && r.orderLastsDays <= 90 && React.createElement("div", { className: "text-[11px] mt-0.5 font-bold", style: { color: C.steel } }, "lasts " + String.fromCharCode(8776) + r.orderLastsDays + "d")))), /* @__PURE__ */ React.createElement("div", { className: "rounded-xl p-4 mt-4", style: { background: C.ink, border: `1px solid ${C.line}` } }, /* @__PURE__ */ React.createElement("pre", { className: "text-xs whitespace-pre-wrap font-mono leading-relaxed", style: { color: C.naan } }, orderText)), typeof navigator !== "undefined" && navigator.share ? React.createElement(
+  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "px-4 pt-5 pb-3 sticky top-0 z-20", style: { background: C.bg, borderBottom: `1px solid ${C.line}` } }, /* @__PURE__ */ React.createElement("div", { className: "text-[10px] uppercase tracking-[0.25em]", style: { color: C.saffron } }, "Champion order"), /* @__PURE__ */ React.createElement("div", { className: "text-2xl font-black tracking-tight" }, orderRows.length, " item", orderRows.length !== 1 ? "s" : "", " to order"), /* @__PURE__ */ React.createElement("div", { className: "text-[11px] mt-1", style: { color: C.steel } }, "Deliveries " + DAYW[DELIVERY_DAYS[0]] + " & " + DAYW[DELIVERY_DAYS[1]] + " \u2014 at-reorder items refill to Max; early warnings cover through " + dwin.followingName + " (+1 day)."), orderRows.length > 0 ? React.createElement("div", { className: "text-sm font-black mt-1.5", style: { color: C.naan } }, "Order total: " + totalStr) : null, dwin.holidays && dwin.holidays.length > 0 ? React.createElement("div", { className: "text-[11px] font-bold mt-1.5", style: { color: C.saffron } }, "\u26a0 " + dwin.holidays.map((h) => h.name + " (" + h.day + ")").join(" \xB7 ") + " \u2014 counted as busy days; next delivery " + dwin.nextName) : null), orderRows.length === 0 ? React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "px-6 py-16 text-center", style: { color: C.steel } }, "Nothing at reorder point. Count the shelves, then check back."), ordersEl) : /* @__PURE__ */ React.createElement("div", { className: "px-4 py-4 space-y-2" }, orderRows.map((r) => /* @__PURE__ */ React.createElement("div", { key: r.id, className: "flex items-center justify-between rounded-xl px-4 py-3", style: { background: C.card } }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "font-bold" }, r.name), /* @__PURE__ */ React.createElement("div", { className: "text-xs font-mono", style: { color: C.steel } }, r.code, r.alt ? ` \xB7 ${r.alt}` : ""), r.projShort && r.status !== "order" ? React.createElement("div", { className: "text-[10px] mt-0.5", style: { color: C.ember } }, "short before " + r.shortBefore) : null, r.orderedDaysAgo != null ? React.createElement("div", { className: "inline-block text-[10px] mt-0.5 font-black px-1.5 py-0.5 rounded", style: { background: C.mint + "22", color: C.mint } }, "ordered " + (r.orderedDaysAgo === 0 ? "today" : r.orderedDaysAgo + "d ago") + " \u2014 don\u2019t send twice") : null, r.aged ? React.createElement("div", { className: "text-[10px] mt-0.5", style: { color: C.saffron } }, "estimate \u2014 counted " + r.rawCur + " on " + shortDate(r.countedAt) + " \xB7 recount before sending") : null, r.packTBD ? React.createElement("div", { className: "text-[10px] mt-0.5", style: { color: C.saffron } }, "\u26a0 pack size unconfirmed \u2014 case qty estimated") : null), /* @__PURE__ */ React.createElement("div", { className: "text-right" }, /* @__PURE__ */ React.createElement("div", { className: "text-2xl font-black", style: { color: C.saffron } }, r.cpc > 1 ? r.orderCs : r.need), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] uppercase tracking-wide", style: { color: C.steel } }, r.pack.includes("bn") ? "bundles" : r.pack.includes("bx") ? "boxes" : r.pack.includes("bg") ? "bags" : "cases"), r.orderLastsDays != null && r.orderLastsDays <= 90 && React.createElement("div", { className: "text-[11px] mt-0.5 font-bold", style: { color: C.steel } }, "lasts " + String.fromCharCode(8776) + r.orderLastsDays + "d")))), /* @__PURE__ */ React.createElement("div", { className: "rounded-xl p-4 mt-4", style: { background: C.ink, border: `1px solid ${C.line}` } }, /* @__PURE__ */ React.createElement("pre", { className: "text-xs whitespace-pre-wrap font-mono leading-relaxed", style: { color: C.naan } }, orderText)), typeof navigator !== "undefined" && navigator.share ? React.createElement(
     "button",
     {
       onClick: shareOrder,

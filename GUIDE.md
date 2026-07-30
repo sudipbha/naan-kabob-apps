@@ -77,6 +77,18 @@ estimate — see §5. No chip means the number predates count-date tracking.
   weekday/weekend usage from real count differences (deliveries in between are
   added back) and it **overrides the baseline** per item. Cards say which source
   is in use ("measured usage" vs "baseline").
+- **Ontario holidays count as weekend days.** A single predicate, `isBusyDay`,
+  decides weekday vs weekend everywhere (measured usage, stock aging, variance
+  expectations, and the order coverage window): Fri/Sat/Sun **or** a holiday.
+  So a long-weekend Monday is charged at the weekend rate, and a holiday's real
+  trade is attributed to the weekend rate instead of inflating the weekday one.
+  Holidays are computed per year in `holidaysFor(y)` — no table to expire —
+  covering New Year's Day, Family Day, Good Friday, Victoria Day, Canada Day,
+  Civic Holiday, Labour Day, Thanksgiving, Christmas and Boxing Day.
+  Civic Holiday (Simcoe Day) is included even though it is not an ESA
+  statutory holiday, because trade and supplier closures follow it anyway.
+  Not included: Easter Monday, Truth and Reconciliation Day (Sep 30) and
+  Remembrance Day — suppliers deliver on those in Ontario.
 
 ## 4. Ordering logic (the "delicate balance")
 
@@ -88,7 +100,27 @@ weekday/weekend-aware rates, capped at the item's Max (rack space):
 - Not yet at reorder but won't last to the *next* truck → early-warning
   ("short before …") and it appears on the order list.
 - Suggested Reorder-at in Levels = usage × (longest delivery gap + 1 day).
+  This one uses the **normal-week** gap (`MAX_DELIVERY_GAP`, 4 days for a
+  Tue/Fri pattern) — it is a standing rule of thumb, not a holiday forecast.
+  The live order math below *is* holiday-aware.
 - Slow items naturally skip order cycles; nothing should run out between trucks.
+
+**Holidays shift both sides of this.** `deliveryWindows()` skips any delivery
+day that is a holiday, and buckets the days it covers with `isBusyDay` (§3):
+
+- A long-weekend Monday makes Fri → Tue **four busy days instead of three plus
+  a weekday**, so the Friday order is correspondingly larger.
+- A holiday landing *on* a delivery day removes that delivery. Good Friday,
+  and in some years Christmas and New Year's Day, fall on a Friday — then
+  Tue → Tue is a **7-day gap** and the app covers the whole stretch.
+- When a holiday sits inside the coverage window, the Order tab header shows
+  an amber line naming it, e.g. `⚠ Labour Day (Mon) — counted as busy days;
+  next delivery Tue`, so a larger-than-usual order is explained rather than
+  mysterious.
+- **Limitation:** the target is still `min(Max, projected need)`. Over a long
+  gap the honest need can exceed rack space, and the app will only ever order
+  up to Max. Before a 7-day gap, Max may need raising (or the order box
+  overridden by hand) — the app cannot invent shelf space.
 
 ## 5. Stock aging (auto-deduction)
 
