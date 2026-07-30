@@ -1507,23 +1507,32 @@ function deviceSpeakFrom(i){
   function step(){
     if (g !== state.gen) return;
     if (state.idx >= doc.sentences.length) { onTrackEnd(doc); return; }
-    var u = new SpeechSynthesisUtterance(doc.sentences[state.idx].t);
+    var si = state.idx; // capture: late events from this utterance can never mis-highlight
+    var u = new SpeechSynthesisUtterance(doc.sentences[si].t);
     u.rate = state.rate;
     var v = getVoice();
     if (v) { u.voice = v; u.lang = v.lang; }
-    u.onstart = function(){ consecErr = 0; };
+    u.onstart = function(){
+      if (g !== state.gen) return;
+      consecErr = 0;
+      // highlight when the voice actually starts this sentence — asking the
+      // phone to speak and it starting to speak can be a beat apart
+      state.idx = si;
+      doc.progress = si;
+      highlight(true);
+    };
     u.onboundary = function(ev){
       if (g !== state.gen || !state.wordHl) return;
       if (ev.name && ev.name !== 'word') return;
-      setWord(wordAtChar(doc.sentences[state.idx].t, ev.charIndex || 0));
+      setWord(wordAtChar(doc.sentences[si].t, ev.charIndex || 0));
     };
     u.onend = function(){
       if (g !== state.gen) return;
       consecErr = 0;
-      addListen(doc.sentences[state.idx].w / (WPM * state.rate) * 60);
-      state.idx++;
+      addListen(doc.sentences[si].w / (WPM * state.rate) * 60);
+      state.idx = si + 1;
       doc.progress = state.idx;
-      highlight(true); updateProgressUI();
+      updateProgressUI();
       persist();
       step();
     };
@@ -1539,7 +1548,7 @@ function deviceSpeakFrom(i){
         toast('Playback failed — try a different voice in the settings', 4200);
         return;
       }
-      state.idx++;
+      state.idx = si + 1;
       doc.progress = state.idx;
       step();
     };
