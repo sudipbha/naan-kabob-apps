@@ -1068,13 +1068,19 @@ function aiReset(){
   aiSess = null; aiNow = null;
 }
 
-// group consecutive sentences into TTS requests of ~1400 chars — short enough
-// that the first audio arrives fast, long enough that chunk seams are rare
+// group consecutive sentences into TTS requests. Short chunks (~450 chars,
+// a few sentences) keep the highlight tightly synced: the position estimate
+// resets to exactly-right at every chunk boundary.
+var AI_CHUNK_MAX = 450;
+// the voice pauses at sentence ends; give each sentence a time budget for it
+// so the in-chunk position estimate doesn't run ahead early and lag late
+var AI_PAUSE_W = 26;
+function sentW(s){ return s.t.length + 1 + AI_PAUSE_W; }
 function aiChunksFor(art){
   var chunks = [], s0 = 0, chars = 0;
   for (var i=0;i<art.sentences.length;i++){
     var L = art.sentences[i].t.length + 1;
-    if (chars > 0 && chars + L > 1400) { chunks.push({s0:s0, s1:i}); s0 = i; chars = 0; }
+    if (chars > 0 && chars + L > AI_CHUNK_MAX) { chunks.push({s0:s0, s1:i}); s0 = i; chars = 0; }
     chars += L;
   }
   if (chars > 0) chunks.push({s0:s0, s1:art.sentences.length});
@@ -1180,10 +1186,10 @@ function onAiMeta(){
   var doc = curDoc(); if (!doc) return;
   var ch = aiSess.chunks[aiNow.ci];
   if (aiNow.startIdx > ch.s0 && aiAudio.duration) {
-    // resume mid-chunk: estimate the seek point by character position
+    // resume mid-chunk: estimate the seek point by pause-weighted position
     var pre = 0, tot = 0;
     for (var i=ch.s0;i<ch.s1;i++){
-      var L = doc.sentences[i].t.length + 1;
+      var L = sentW(doc.sentences[i]);
       tot += L;
       if (i < aiNow.startIdx) pre += L;
     }
@@ -1211,10 +1217,10 @@ function onAiTime(){
   var ch = aiSess.chunks[aiNow.ci];
   var frac = aiAudio.currentTime / aiAudio.duration;
   var tot = 0, i;
-  for (i=ch.s0;i<ch.s1;i++) tot += doc.sentences[i].t.length + 1;
+  for (i=ch.s0;i<ch.s1;i++) tot += sentW(doc.sentences[i]);
   var si = ch.s1 - 1, acc = 0;
   for (i=ch.s0;i<ch.s1;i++){
-    acc += doc.sentences[i].t.length + 1;
+    acc += sentW(doc.sentences[i]);
     if (frac < acc / tot) { si = i; break; }
   }
   if (si !== state.idx) {
@@ -1222,9 +1228,10 @@ function onAiTime(){
     highlight(true); persist();
   }
   if (state.wordHl && wrapped && wrapped.si === si) {
-    // estimate the word from how far the audio is into this sentence's share of the chunk
+    // estimate the word from how far the audio is into this sentence's share
+    // of the chunk (words map over the spoken text, not the trailing pause)
     var startChars = 0;
-    for (i=ch.s0;i<si;i++) startChars += doc.sentences[i].t.length + 1;
+    for (i=ch.s0;i<si;i++) startChars += sentW(doc.sentences[i]);
     var sentLen = doc.sentences[si].t.length + 1;
     var into = (frac * tot - startChars) / sentLen;
     if (into >= 0 && into <= 1.05) {
