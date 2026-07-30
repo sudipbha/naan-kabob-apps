@@ -105,22 +105,33 @@ weekday/weekend-aware rates, capped at the item's Max (rack space):
   The live order math below *is* holiday-aware.
 - Slow items naturally skip order cycles; nothing should run out between trucks.
 
-**Holidays shift both sides of this.** `deliveryWindows()` skips any delivery
-day that is a holiday, and buckets the days it covers with `isBusyDay` (§3):
+**Holidays shift both sides of this.** `deliveryWindows()` adjusts the delivery
+dates, and buckets the days it covers with `isBusyDay` (§3):
 
-- A long-weekend Monday makes Fri → Tue **four busy days instead of three plus
-  a weekday**, so the Friday order is correspondingly larger.
-- A holiday landing *on* a delivery day removes that delivery. Good Friday,
-  and in some years Christmas and New Year's Day, fall on a Friday — then
-  Tue → Tue is a **7-day gap** and the app covers the whole stretch.
-- When a holiday sits inside the coverage window, the Order tab header shows
-  an amber line naming it, e.g. `⚠ Labour Day (Mon) — counted as busy days;
-  next delivery Tue`, so a larger-than-usual order is explained rather than
-  mysterious.
-- **Limitation:** the target is still `min(Max, projected need)`. Over a long
-  gap the honest need can exceed rack space, and the app will only ever order
-  up to Max. Before a 7-day gap, Max may need raising (or the order box
-  overridden by hand) — the app cannot invent shelf space.
+- A holiday landing *on* a delivery day moves that delivery **earlier**, to the
+  last working day before it — `pullEarlier()` walks backwards (repeatedly, so
+  a Christmas/Boxing Day pair is handled). **Friday off means Thursday**,
+  because the weekend rush still has to be stocked. Skipping *forward* to the
+  next scheduled day would strand the busiest days of the week with no
+  delivery; that is why the adjustment goes backwards, never forwards.
+  Worked example: Good Friday 2026 is Fri Apr 3, so the truck is **Thu Apr 2**,
+  and the stretch it must cover is Thu → Tue Apr 7 (5 days: 3 busy + 2
+  weekdays, with Good Friday itself charged as busy).
+- A **Monday** holiday moves nothing — Monday is not a delivery day. The
+  Tuesday truck arrives as normal; the long weekend shows up purely as the
+  extra busy day. Fri → Tue becomes **four busy days instead of three plus a
+  weekday**, so the Friday order is correspondingly larger.
+- When a holiday sits inside the coverage window, the Order tab header shows an
+  amber line naming it and saying what happens to the delivery — either
+  `⚠ Labour Day (Mon) — counted as busy days; next delivery Tue` or
+  `⚠ Good Friday (Fri) — counted as busy days; delivery moves up to Thu`
+  (driven by `dwin.movedUp`), so a larger-than-usual order is explained rather
+  than mysterious.
+- **Limitation:** the target is still `min(Max, projected need)`. The longest
+  real gap is 5 days (a moved-up Thursday truck through to Tuesday), and over
+  it the honest need can exceed rack space — the app will only ever order up to
+  Max. Before a holiday week, Max may need raising on fast movers (or the order
+  box overridden by hand); the app cannot invent shelf space.
 
 ## 5. Stock aging (auto-deduction)
 
