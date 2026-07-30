@@ -768,7 +768,43 @@ function extractFromHTML(html){
   return { title: title, text: outArr.join('\n\n') };
 }
 
+/* ---- X (Twitter) posts: X blocks generic readers, so go through the
+   public embed mirrors (fxtwitter, then vxtwitter) that return post JSON ---- */
+function parseXStatus(url){
+  var m = url.match(/^https?:\/\/(?:www\.|mobile\.)?(?:x|twitter)\.com\/([A-Za-z0-9_]{1,20})\/status(?:es)?\/(\d+)/i);
+  return m ? { user: m[1], id: m[2] } : null;
+}
+function fetchXPost(px){
+  return fetchTimeout('https://api.fxtwitter.com/' + px.user + '/status/' + px.id, 10000).then(function(body){
+    var j = JSON.parse(body);
+    var t = j && j.tweet;
+    if (!t || !t.text) throw new Error('thin');
+    var author = (t.author && (t.author.name || t.author.screen_name)) || px.user;
+    var text = t.text;
+    if (t.quote && t.quote.text) {
+      var qa = (t.quote.author && (t.quote.author.name || t.quote.author.screen_name)) || 'another post';
+      text += '\n\nQuoting ' + qa + ': ' + t.quote.text;
+    }
+    return { title: author + ' on X', text: text };
+  }).catch(function(){
+    return fetchTimeout('https://api.vxtwitter.com/' + px.user + '/status/' + px.id, 10000).then(function(body){
+      var j = JSON.parse(body);
+      if (!j || !j.text) throw new Error('thin');
+      return { title: (j.user_name || px.user) + ' on X', text: j.text };
+    });
+  });
+}
+
 function fetchArticle(url){
+  // X/Twitter post links get their own path; if the mirrors fail, fall through
+  // to the generic readers below (which occasionally work for public posts)
+  var px = parseXStatus(url);
+  if (px) {
+    return fetchXPost(px).catch(function(){ return fetchGeneric(url); });
+  }
+  return fetchGeneric(url);
+}
+function fetchGeneric(url){
   // 1) Jina reader (returns clean markdown, CORS-friendly)
   return fetchTimeout('https://r.jina.ai/' + url, 14000).then(function(body){
     var p = parseJina(body);
