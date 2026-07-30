@@ -774,18 +774,46 @@ function parseXStatus(url){
   var m = url.match(/^https?:\/\/(?:www\.|mobile\.)?(?:x|twitter)\.com\/([A-Za-z0-9_]{1,20})\/status(?:es)?\/(\d+)/i);
   return m ? { user: m[1], id: m[2] } : null;
 }
-function fetchXPost(px){
-  return fetchTimeout('https://api.fxtwitter.com/' + px.user + '/status/' + px.id, 10000).then(function(body){
-    var j = JSON.parse(body);
-    var t = j && j.tweet;
-    if (!t || !t.text) throw new Error('thin');
-    var author = (t.author && (t.author.name || t.author.screen_name)) || px.user;
-    var text = t.text;
-    if (t.quote && t.quote.text) {
-      var qa = (t.quote.author && (t.quote.author.name || t.quote.author.screen_name)) || 'another post';
-      text += '\n\nQuoting ' + qa + ': ' + t.quote.text;
+function xPostFrom(j, fallbackUser){
+  // FxTwitter serves {tweet:{…}} on the classic endpoint and {status:{…}} on /2/
+  var t = j && (j.status || j.tweet);
+  if (!t) return null;
+  var author = (t.author && (t.author.name || t.author.screen_name)) || fallbackUser || 'Post';
+  // X Articles (long-form posts) keep their real body in article.content.blocks —
+  // t.text alone is only the short announcement, so prefer the blocks when present
+  var xa = t.article;
+  var blocks = xa && xa.content && Object.prototype.toString.call(xa.content.blocks) === '[object Array]' ? xa.content.blocks : null;
+  var text = '';
+  if (blocks && blocks.length) {
+    var parts = [];
+    for (var i=0;i<blocks.length;i++){
+      var b = blocks[i];
+      var bt = (b && typeof b.text === 'string') ? b.text : (typeof b === 'string' ? b : '');
+      if (bt && bt.trim()) parts.push(bt.trim());
     }
-    return { title: author + ' on X', text: text };
+    text = parts.join('\n\n');
+  }
+  if (!text) text = t.text || '';
+  if (!text) return null;
+  if (!blocks && t.quote && t.quote.text) {
+    var qa = (t.quote.author && (t.quote.author.name || t.quote.author.screen_name)) || 'another post';
+    text += '\n\nQuoting ' + qa + ': ' + t.quote.text;
+  }
+  var title = (xa && xa.title) ? xa.title : (author + ' on X');
+  return { title: title, text: text };
+}
+function fetchXPost(px){
+  // current FxTwitter endpoint first, then its classic path, then vxtwitter
+  return fetchTimeout('https://api.fxtwitter.com/2/status/' + px.id, 10000).then(function(body){
+    var p = xPostFrom(JSON.parse(body), px.user);
+    if (!p) throw new Error('thin');
+    return p;
+  }).catch(function(){
+    return fetchTimeout('https://api.fxtwitter.com/' + px.user + '/status/' + px.id, 10000).then(function(body){
+      var p = xPostFrom(JSON.parse(body), px.user);
+      if (!p) throw new Error('thin');
+      return p;
+    });
   }).catch(function(){
     return fetchTimeout('https://api.vxtwitter.com/' + px.user + '/status/' + px.id, 10000).then(function(body){
       var j = JSON.parse(body);
