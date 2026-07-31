@@ -115,7 +115,7 @@
   #backdrop{position:absolute;inset:0;background:rgba(35,25,10,.35)}
   #sheet{position:absolute;left:0;right:0;bottom:0;max-width:720px;margin:0 auto;background:var(--card);
          border-radius:22px 22px 0 0;padding:20px 20px calc(24px + env(safe-area-inset-bottom));
-         box-shadow:0 -10px 40px rgba(0,0,0,.2)}
+         box-shadow:0 -10px 40px rgba(0,0,0,.2);max-height:82vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
   #sheet h3{margin:0 0 14px;font-size:16px}
   .fRow{margin-bottom:18px}
   .fLab{font-size:12.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin-bottom:8px}
@@ -243,6 +243,16 @@
       <select id="voiceSel"></select>
     </div>
     <div class="fRow">
+      <div class="fLab">Free AI voice — runs on your phone, no account</div>
+      <div class="swRow" style="margin-bottom:10px">
+        <span>Use free AI voice (Kokoro)</span>
+        <button class="sw" id="kkSw" role="switch" aria-checked="false" aria-label="Use free AI voice"></button>
+      </div>
+      <select id="kkVoiceSel"></select>
+      <button id="kkPrevBtn" class="btn ghost" style="margin-top:8px">Hear a sample</button>
+      <p class="aiHint">Open-source Kokoro voice, English only. The first use downloads about 90 MB once, then it works offline and costs nothing. Making the audio takes a bit longer than the OpenAI voice, and older phones may pause between pieces.</p>
+    </div>
+    <div class="fRow">
       <div class="fLab">AI voice — natural, keeps playing in the background</div>
       <div class="swRow" style="margin-bottom:10px">
         <span>Use AI voice (OpenAI)</span>
@@ -318,7 +328,9 @@ var state = {
   mode: 'full',
   aiOn: false,
   aiKey: null,
-  aiVoice: 'nova'
+  aiVoice: 'nova',
+  kkOn: false,
+  kkVoice: 'af_heart'
 };
 /* listening modes: each is its own track over the current article */
 var MODES = [
@@ -383,6 +395,7 @@ function persistNow(){
   });
   var blob = { v:1, rate:state.rate, voiceURI:state.voiceURI, autoplay:state.autoplay,
                aiOn:state.aiOn, aiKey:state.aiKey, aiVoice:state.aiVoice,
+               kkOn:state.kkOn, kkVoice:state.kkVoice,
                wordHl:state.wordHl, stats:stats, articles:arts };
   if (!store.set('earmark.v1', blob)) {
     blob.articles = arts.filter(function(a){ return !a.played; });
@@ -403,6 +416,9 @@ function restore(){
   if (typeof saved.aiKey === 'string' && saved.aiKey) state.aiKey = saved.aiKey;
   if (typeof saved.aiVoice === 'string' && saved.aiVoice) state.aiVoice = saved.aiVoice;
   state.aiOn = saved.aiOn === true && !!state.aiKey;
+  if (typeof saved.kkVoice === 'string' && saved.kkVoice) state.kkVoice = saved.kkVoice;
+  state.kkOn = saved.kkOn === true;
+  if (state.kkOn) state.aiOn = false;
   state.wordHl = saved.wordHl !== false;
   if (saved.stats && typeof saved.stats === 'object') {
     if (saved.stats.days && typeof saved.stats.days === 'object') stats.days = saved.stats.days;
@@ -1066,9 +1082,78 @@ var AI_VOICES = [
   ['echo','Echo — calm male'], ['ash','Ash — crisp male'], ['onyx','Onyx — deep male']
 ];
 var aiAudio = null;
-var aiSess = null;   // {artId, voice, chunks:[{s0,s1}], urls:[], pending:{}}
+var aiSess = null;   // {key, voice, chunks:[{s0,s1}], urls:[], pending:{}}
 var aiNow = null;    // {g, ci, startIdx}
 function aiActive(){ return state.aiOn && !!state.aiKey; }
+// any generated-audio engine (free on-phone Kokoro, or OpenAI)
+function genActive(){ return state.kkOn || aiActive(); }
+
+/* ---- free on-phone AI voice (open-source Kokoro, via kokoro-js) ---- */
+var KK_VOICES = [
+  ['af_heart', 'Heart — warm US female'],
+  ['af_bella', 'Bella — bright US female'],
+  ['af_nicole', 'Nicole — soft US female'],
+  ['af_sky', 'Sky — clear US female'],
+  ['am_adam', 'Adam — deep US male'],
+  ['am_michael', 'Michael — calm US male'],
+  ['bf_emma', 'Emma — UK female'],
+  ['bm_george', 'George — UK male']
+];
+var kkP = null, kkTTS = null, kkLastPct = -1;
+function kkProgress(p){
+  if (!p || p.status !== 'progress' || !p.total) return;
+  var pct = Math.round(100 * (p.loaded || 0) / p.total);
+  if (pct === kkLastPct) return;
+  kkLastPct = pct;
+  toast('Downloading the free voice — ' + pct + '% (one time only)', 2400);
+}
+function loadKokoro(){
+  if (kkP) return kkP;
+  toast('Getting the free voice ready…', 2600);
+  kkP = import('https://cdn.jsdelivr.net/npm/kokoro-js@1.2.1/+esm').then(function(m){
+    var K = m.KokoroTTS || (m.default && m.default.KokoroTTS);
+    if (!K) throw new Error('kk-load');
+    function tryDev(dev){
+      return K.from_pretrained('onnx-community/Kokoro-82M-v1.0-ONNX',
+        { dtype: 'q8', device: dev, progress_callback: kkProgress });
+    }
+    return navigator.gpu ? tryDev('webgpu').catch(function(){ return tryDev('wasm'); }) : tryDev('wasm');
+  }).then(function(t){
+    kkTTS = t;
+    toast('Free voice ready', 1800);
+    return t;
+  }, function(){ kkP = null; throw new Error('kk-load'); });
+  return kkP;
+}
+function f32ToWav(f32, rate){
+  var n = f32.length, b = new ArrayBuffer(44 + n * 2), v = new DataView(b);
+  function ws(o, s){ for (var i=0;i<s.length;i++) v.setUint8(o + i, s.charCodeAt(i)); }
+  ws(0,'RIFF'); v.setUint32(4, 36 + n*2, true); ws(8,'WAVE'); ws(12,'fmt ');
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, rate, true); v.setUint32(28, rate*2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+  ws(36,'data'); v.setUint32(40, n*2, true);
+  for (var j=0;j<n;j++){ var s = Math.max(-1, Math.min(1, f32[j])); v.setInt16(44 + j*2, s < 0 ? s * 0x8000 : s * 0x7FFF, true); }
+  return new Blob([b], { type: 'audio/wav' });
+}
+function kokoroFetch(text){
+  return loadKokoro().then(function(tts){
+    return tts.generate(text, { voice: state.kkVoice || 'af_heart' });
+  }).then(function(audio){
+    var blob = null;
+    try {
+      if (audio && typeof audio.toBlob === 'function') blob = audio.toBlob();
+      else if (audio && typeof audio.toWav === 'function') blob = new Blob([audio.toWav()], { type: 'audio/wav' });
+      else if (audio && audio.audio && audio.sampling_rate) blob = f32ToWav(audio.audio, audio.sampling_rate);
+    } catch(e){}
+    if (!blob) throw new Error('kk-gen');
+    return URL.createObjectURL(blob);
+  });
+}
+// route generated speech to whichever engine is on
+function ttsGenerate(text){
+  return state.kkOn ? kokoroFetch(text) : aiFetch(text);
+}
+function genVoiceKey(){ return state.kkOn ? ('kk:' + (state.kkVoice || 'af_heart')) : state.aiVoice; }
 
 function getAudioEl(){
   if (aiAudio) return aiAudio;
@@ -1096,10 +1181,13 @@ var AI_CHUNK_MAX = 450;
 var AI_PAUSE_W = 26;
 function sentW(s){ return s.t.length + 1 + AI_PAUSE_W; }
 function aiChunksFor(art){
+  // the on-phone voice generates locally and slower, so smaller pieces
+  // get the first sound out faster
+  var max = state.kkOn ? 220 : AI_CHUNK_MAX;
   var chunks = [], s0 = 0, chars = 0;
   for (var i=0;i<art.sentences.length;i++){
     var L = art.sentences[i].t.length + 1;
-    if (chars > 0 && chars + L > AI_CHUNK_MAX) { chunks.push({s0:s0, s1:i}); s0 = i; chars = 0; }
+    if (chars > 0 && chars + L > max) { chunks.push({s0:s0, s1:i}); s0 = i; chars = 0; }
     chars += L;
   }
   if (chars > 0) chunks.push({s0:s0, s1:art.sentences.length});
@@ -1134,7 +1222,7 @@ function aiFetch(text){
 function aiEnsure(art, ci){
   if (aiSess.urls[ci]) return Promise.resolve(aiSess.urls[ci]);
   if (aiSess.pending[ci]) return aiSess.pending[ci];
-  var p = aiFetch(aiText(art, aiSess.chunks[ci])).then(function(url){
+  var p = ttsGenerate(aiText(art, aiSess.chunks[ci])).then(function(url){
     if (aiSess) { aiSess.urls[ci] = url; delete aiSess.pending[ci]; }
     return url;
   }, function(err){
@@ -1148,20 +1236,25 @@ function aiFailMsg(err){
   var m = (err && err.message) || '';
   if (m === 'ai-http-401') return 'OpenAI didn’t accept your key — check it under the gear icon';
   if (m === 'ai-http-429') return 'OpenAI is busy or out of credit — check your account, or try again in a minute';
+  if (m === 'kk-load') return 'Couldn’t load the free voice — check your connection for its one-time download';
+  if (m === 'kk-gen') return 'The free voice couldn’t make audio on this device — try the OpenAI voice instead';
   return 'Couldn’t reach the AI voice — check your connection';
 }
 
 // while nothing is playing and no audio session exists, quietly generate the
 // first piece of the next listen so pressing play starts instantly
 function aiPrefetchFirst(){
-  if (!aiActive() || state.playing || aiSess) return;
+  if (!genActive() || state.playing || aiSess) return;
+  // never auto-start the free voice's big one-time download — only warm up
+  // once the model is already on the device
+  if (state.kkOn && !kkTTS) return;
   var art = cur();
   if (art && art.played) art = null;
   if (!art) {
     for (var i=0;i<state.articles.length;i++) if (!state.articles[i].played) { art = state.articles[i]; break; }
   }
   if (!art || !art.sentences || !art.sentences.length) return;
-  aiSess = { key: art.id + ':full', voice: state.aiVoice, chunks: aiChunksFor(art), urls: [], pending: {} };
+  aiSess = { key: art.id + ':full', voice: genVoiceKey(), chunks: aiChunksFor(art), urls: [], pending: {} };
   aiEnsure(art, 0).then(null, function(){});
 }
 
@@ -1174,12 +1267,12 @@ function aiSpeakFrom(i){
   doc.played = false;
   updatePlayerUI(); highlight(true);
   var key = state.currentId + ':' + state.mode;
-  if (!aiSess || aiSess.key !== key || aiSess.voice !== state.aiVoice) {
+  if (!aiSess || aiSess.key !== key || aiSess.voice !== genVoiceKey()) {
     aiReset();
-    aiSess = { key: key, voice: state.aiVoice, chunks: aiChunksFor(doc), urls: [], pending: {} };
+    aiSess = { key: key, voice: genVoiceKey(), chunks: aiChunksFor(doc), urls: [], pending: {} };
   }
   var ci = aiChunkOf(state.idx);
-  if (!aiSess.urls[ci]) toast('Preparing the AI voice…', 1800);
+  if (!aiSess.urls[ci]) toast(state.kkOn ? 'Making the audio on your device…' : 'Preparing the AI voice…', 1800);
   aiPlayChunk(doc, g, ci, state.idx);
 }
 
@@ -1311,7 +1404,7 @@ function setMediaSession(art){
 }
 
 function speakFrom(i){
-  if (aiActive()) aiSpeakFrom(i);
+  if (genActive()) aiSpeakFrom(i);
   else deviceSpeakFrom(i);
 }
 
@@ -1407,8 +1500,8 @@ function speakAnswer(answer){
     var ctx = askCtx; askCtx = null;
     if (ctx && ctx.wasPlaying) { $('askWrap').hidden = true; speakFrom(ctx.resumeIdx); }
   };
-  if (aiActive()) {
-    aiFetch(answer).then(function(url){
+  if (genActive()) {
+    ttsGenerate(answer).then(function(url){
       var el = getAudioEl();
       var onEnd = function(){
         el.removeEventListener('ended', onEnd);
@@ -1841,6 +1934,14 @@ function openSheet(){
   $('aiKey').value = state.aiKey || '';
   $('aiSw').classList.toggle('on', state.aiOn);
   $('aiSw').setAttribute('aria-checked', String(state.aiOn));
+  var kh = '';
+  for (var k2=0;k2<KK_VOICES.length;k2++){
+    kh += '<option value="' + KK_VOICES[k2][0] + '"' + (KK_VOICES[k2][0] === (state.kkVoice || 'af_heart') ? ' selected' : '') + '>'
+       + KK_VOICES[k2][1] + '</option>';
+  }
+  $('kkVoiceSel').innerHTML = kh;
+  $('kkSw').classList.toggle('on', state.kkOn);
+  $('kkSw').setAttribute('aria-checked', String(state.kkOn));
   $('spdRange').value = state.rate;
   $('spdLab').textContent = fmtRate(state.rate);
   renderSpeedChips();
@@ -1868,8 +1969,8 @@ function setRate(r, respeak){
   renderQueue();
   if (cur()) updateProgressUI();
   if (respeak !== false && state.playing) {
-    // the AI voice is real audio, so speed changes apply instantly in place
-    if (aiActive() && aiAudio && !aiAudio.paused) aiAudio.playbackRate = state.rate;
+    // generated voices are real audio, so speed changes apply instantly in place
+    if (genActive() && aiAudio && !aiAudio.paused) aiAudio.playbackRate = state.rate;
     else speakFrom(state.idx);
   }
   persist();
@@ -2049,8 +2150,54 @@ function init(){
 
   $('voiceSel').addEventListener('change', function(){
     state.voiceURI = this.value || null;
-    if (state.playing && !aiActive()) speakFrom(state.idx);
+    if (state.playing && !genActive()) speakFrom(state.idx);
     persist();
+  });
+  $('kkSw').addEventListener('click', function(){
+    state.kkOn = !state.kkOn;
+    if (state.kkOn && state.aiOn) {
+      state.aiOn = false;
+      $('aiSw').classList.remove('on');
+      $('aiSw').setAttribute('aria-checked', 'false');
+    }
+    this.classList.toggle('on', state.kkOn);
+    this.setAttribute('aria-checked', String(state.kkOn));
+    aiReset();
+    persist();
+    if (state.playing) speakFrom(state.idx);
+  });
+  $('kkVoiceSel').addEventListener('change', function(){
+    state.kkVoice = this.value || 'af_heart';
+    aiReset();
+    persist();
+    if (state.playing && state.kkOn) speakFrom(state.idx);
+  });
+  $('kkPrevBtn').addEventListener('click', function(){
+    var btn = this;
+    if (btn.disabled) return;
+    state.kkVoice = $('kkVoiceSel').value || state.kkVoice || 'af_heart';
+    persist();
+    state.gen++;
+    aiNow = null;
+    stopEngines();
+    if (state.playing) { state.playing = false; updatePlayerUI(); }
+    btn.disabled = true;
+    btn.textContent = 'Making the sample…';
+    kokoroFetch('Hi! I am the free voice that lives right on your device. I will happily read your newsletters just like this.')
+      .then(function(url){
+        btn.disabled = false;
+        btn.textContent = 'Hear a sample';
+        var el = getAudioEl();
+        el.src = url;
+        el.playbackRate = 1;
+        var p = el.play();
+        if (p && p.then) p.then(null, function(){ toast('Tap the button again to hear it'); });
+        setTimeout(function(){ try { URL.revokeObjectURL(url); } catch(e){} }, 60000);
+      }, function(err){
+        btn.disabled = false;
+        btn.textContent = 'Hear a sample';
+        toast(aiFailMsg(err), 5000);
+      });
   });
   $('aiSw').addEventListener('click', function(){
     if (!state.aiOn) {
@@ -2058,6 +2205,12 @@ function init(){
       if (!k) { toast('Paste your OpenAI key first — get one at platform.openai.com'); $('aiKey').focus(); return; }
       state.aiKey = k;
       state.aiOn = true;
+      if (state.kkOn) {
+        state.kkOn = false;
+        $('kkSw').classList.remove('on');
+        $('kkSw').setAttribute('aria-checked', 'false');
+        aiReset();
+      }
     } else {
       state.aiOn = false;
     }
@@ -2131,8 +2284,8 @@ function init(){
       if (voices.length || tries > 14) { clearInterval(poll); return; }
       loadVoices();
     }, 250);
-  } else if (!aiActive()) {
-    toast('This browser doesn’t support read-aloud — try Safari or Chrome, or turn on the AI voice in the settings', 5200);
+  } else if (!genActive()) {
+    toast('This browser doesn’t support read-aloud — try Safari or Chrome, or turn on an AI voice in the settings', 5200);
   }
 
   // restore saved queue and settings, or seed the welcome article on first run
@@ -2155,8 +2308,9 @@ function init(){
   }
   if (store.ok) {
     $('footNote').textContent = 'Your queue, progress, and settings are saved on this device. ' +
-      'The free device voices only play while the app is on screen — turn on the AI voice under the gear icon ' +
-      'at the top right for a natural voice that keeps reading when you minimize the app or lock the phone.';
+      'The device voices only play while the app is on screen — under the gear icon at the top right you can ' +
+      'turn on a natural AI voice (a free one that runs on your phone, or the OpenAI one) that keeps reading ' +
+      'when you minimize the app or lock the phone.';
   }
 
   render();
