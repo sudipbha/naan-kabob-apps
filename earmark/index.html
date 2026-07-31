@@ -250,7 +250,7 @@
       </div>
       <select id="kkVoiceSel"></select>
       <button id="kkPrevBtn" class="btn ghost" style="margin-top:8px">Hear a sample</button>
-      <p class="aiHint">Open-source Kokoro voice, English only. The first use downloads about 90 MB once, then it works offline and costs nothing. Making the audio takes a bit longer than the OpenAI voice, and older phones may pause between pieces.</p>
+      <p class="aiHint">Open-source Kokoro voice, English only. The first use downloads about 90 MB and then sets itself up — that first run can take a minute or two, and it gets faster afterwards. It then works offline and costs nothing. On slower phones the OpenAI voice will always feel snappier.</p>
     </div>
     <div class="fRow">
       <div class="fLab">AI voice — natural, keeps playing in the background</div>
@@ -1110,6 +1110,14 @@ function kkProgress(p){
 function loadKokoro(){
   if (kkP) return kkP;
   toast('Getting the free voice ready…', 2600);
+  // the download shows progress, but the setup/compile step after it can take
+  // a minute on phones with no feedback of its own — keep a heartbeat going
+  var hb = setInterval(function(){
+    if (kkTTS) { clearInterval(hb); return; }
+    toast(kkLastPct >= 0 && kkLastPct < 100
+      ? 'Downloading the free voice — ' + kkLastPct + '% (one time only)'
+      : 'Setting up the free voice — the first time takes a while, hang tight…', 2400);
+  }, 6000);
   kkP = import('https://cdn.jsdelivr.net/npm/kokoro-js@1.2.1/+esm').then(function(m){
     var K = m.KokoroTTS || (m.default && m.default.KokoroTTS);
     if (!K) throw new Error('kk-load');
@@ -1119,10 +1127,11 @@ function loadKokoro(){
     }
     return navigator.gpu ? tryDev('webgpu').catch(function(){ return tryDev('wasm'); }) : tryDev('wasm');
   }).then(function(t){
+    clearInterval(hb);
     kkTTS = t;
     toast('Free voice ready', 1800);
     return t;
-  }, function(){ kkP = null; throw new Error('kk-load'); });
+  }, function(){ clearInterval(hb); kkP = null; throw new Error('kk-load'); });
   return kkP;
 }
 function f32ToWav(f32, rate){
@@ -2183,10 +2192,20 @@ function init(){
     if (state.playing) { state.playing = false; updatePlayerUI(); }
     btn.disabled = true;
     btn.textContent = 'Making the sample…';
-    kokoroFetch('Hi! I am the free voice that lives right on your device. I will happily read your newsletters just like this.')
+    var t0 = Date.now();
+    var tick = setInterval(function(){
+      if (!btn.disabled) { clearInterval(tick); return; }
+      btn.textContent = 'Making the sample… ' + Math.round((Date.now() - t0) / 1000) + 's';
+    }, 1000);
+    kokoroFetch('Hi! This is the free voice, reading right on your device.')
       .then(function(url){
+        clearInterval(tick);
         btn.disabled = false;
         btn.textContent = 'Hear a sample';
+        var secs = Math.round((Date.now() - t0) / 1000);
+        if (kkTTS && secs > 45) {
+          toast('That took ' + secs + ' seconds — this device is on the slow side for the free voice. It gets somewhat faster after the first run, but the OpenAI voice will feel much snappier here.', 7000);
+        }
         var el = getAudioEl();
         el.src = url;
         el.playbackRate = 1;
@@ -2194,6 +2213,7 @@ function init(){
         if (p && p.then) p.then(null, function(){ toast('Tap the button again to hear it'); });
         setTimeout(function(){ try { URL.revokeObjectURL(url); } catch(e){} }, 60000);
       }, function(err){
+        clearInterval(tick);
         btn.disabled = false;
         btn.textContent = 'Hear a sample';
         toast(aiFailMsg(err), 5000);
