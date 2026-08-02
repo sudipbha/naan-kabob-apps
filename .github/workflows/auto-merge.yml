@@ -1,7 +1,7 @@
 name: Auto-merge phone PRs
 on:
   pull_request:
-    types: [opened, reopened, synchronize]
+    types: [opened, reopened, synchronize, ready_for_review]
 permissions:
   contents: write
   pull-requests: write
@@ -27,7 +27,10 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Render check (all tabs, both apps)
         run: node tests/render-check.js
+      # Draft PRs run the render check (evidence attaches to the PR) but are
+      # never merged - marking Ready for review triggers the merge run.
       - name: Squash-merge claude PR
+        if: github.event.pull_request.draft == false
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR: ${{ github.event.pull_request.number }}

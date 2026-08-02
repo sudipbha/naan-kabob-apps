@@ -96,6 +96,50 @@ Deliveries land Tue & Fri. For each item the app computes how much is needed to
 last **from now through the delivery after next, plus one buffer day**, using
 weekday/weekend-aware rates, capped at the item's Max (rack space):
 
+### Weekly-Tuesday trial mode (Champion only)
+
+Champion's Order tab carries a schedule switch: **Tue & Fri** (normal) /
+**Tue only** (the weekly trial). It is stored in the synced `cycle` field
+(`2` = Tue + Fri, `1` = weekly; Sysco clamps `cycle` to 2 on load and shows
+no switch — `WEEKLY_OK` is `false` there). In weekly mode:
+
+- **The count is an after-service evening count**, so the demand window
+  starts *tomorrow*: a Sunday-evening build covers **9 demand days
+  (Mon → next Tue inclusive)**. Building on the truck day itself produces a
+  ~15-day window — that is why the header always spells out the workflow
+  ("Order Sunday evening") and the exact coverage end date.
+- **Every non-backup item with positive window need goes on the order**,
+  with the reason "won't last to next Tue's truck" — inclusion does not
+  depend on Reorder-at. (In Tue + Fri mode the old filter stands: at-reorder,
+  manual, or short-before-next-truck. An item that survives to the next
+  truck can safely wait a cycle there; in weekly mode it can't.)
+- The Levels suggestion self-adjusts: usage × 8 days instead of × 5 (the
+  longest gap grows 4 → 7). It stays advisory — nothing is applied for you,
+  and flipping back restores the × 5 suggestion immediately.
+- Order rows explain themselves: "at reorder · N of M on shelf", "your
+  number, not the app's" (manual), or the weekly reason — plus two amber
+  warnings when relevant: `needs N ‹units› to last to ‹date› · Max caps it
+  at M`, and `arrives as N → ~K over Max on ‹day›` (projected stock at
+  arrival + whole-case delivery vs Max; shown for manual overrides too).
+- Logged orders record `sched` ("weekly-tue" / "tue-fri") and `coverTo`.
+
+### Emergency orders (Champion only)
+
+An always-visible **🚨 Emergency order** button on Champion's Order tab
+opens a sheet pre-selected with every item that is out or won't last to the
+next truck (searchable to add any other item). Each line suggests a
+**bridge quantity** — `ceil(burn(now → next truck, +1 day) − on hand)`,
+whole cases — just enough to reach the regular truck, never a second weekly
+order. The text is headed `EMERGENCY CHAMPION ORDER` with a requested
+delivery date and reason; Mark as ordered asks for confirmation and logs
+`{ kind: "emergency", expect, reason, items, coverTo }`. While pending:
+a banner on Order and Receive, "+N arriving" chips on affected cards, and —
+critically — **regular order math subtracts pending quantities**, so a
+Saturday emergency cannot be double-ordered on Sunday. Logging any delivery
+containing one of its items closes it; Cancel is undoable for 30 s.
+Emergency orders never change the schedule, Max, or Reorder-at, and each
+one is a dated viability mark against the weekly trial.
+
 - At/below Reorder-at → `ORDER`: refill to Max.
 - Not yet at reorder but won't last to the *next* truck → early-warning
   ("short before …") and it appears on the order list.
@@ -238,6 +282,12 @@ estimate is never mistaken for a fresh count.
 - `stocks` etc. are keyed by item `id` and denominated in **counting units**.
 - `orders[].items` and `receipts[].items` quantities are **counting units**;
   only the human-readable order *text* is in cases.
+- `orders[]` entries carry `sched` ("weekly-tue" / "tue-fri") and `coverTo`;
+  emergency orders add `kind: "emergency"`, `expect` (requested delivery,
+  YYYY-MM-DD), `reason`, and `closed` once received or cancelled. Open
+  emergency orders feed `pendingEm`, which the order math subtracts.
+- `cycle` (synced): `2` = Tue + Fri, `1` = weekly Tuesday. Only meaningful
+  where `WEEKLY_OK` is true (Champion); Sysco clamps it to 2 on load.
 
 ## 8. Notes for AI reviewers
 
