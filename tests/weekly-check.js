@@ -309,6 +309,40 @@ const napkinCs = (t) => { const m = t.match(/Dinner napkin[\s\S]{0,300}?(\d+)\s*
     await ctx.close();
   }
 
+  // ---------- H. backup items sink to the bottom of Count ----------
+  console.log('H. backups at the bottom');
+  {
+    // sysco: hardcoded bk items (vinyl gloves etc.)
+    const { ctx, page } = await open(browser, base, 'sysco', {}, '2026-08-02T20:00:00');
+    const t = await body(page);
+    const iBackupHdr = t.indexOf('Backup — ordered from');
+    const iVinyl = t.indexOf('Vinyl gloves');
+    const iPrinter = t.indexOf('Printer paper');
+    ck(iBackupHdr > -1, 'sysco walk: Backup group header present');
+    ck(iVinyl > iBackupHdr, 'sysco walk: backup item sits under the Backup header');
+    ck(iPrinter > -1 && iPrinter < iBackupHdr, 'sysco walk: last real station renders before the Backup group');
+    await ctx.close();
+  }
+  {
+    // champion: backup set via the Levels toggle (packcfg override path)
+    const { ctx, page } = await open(browser, base, 'champion',
+      { packcfg: { gloves: { bk: true } } }, '2026-08-02T20:00:00');
+    let t = await body(page);
+    const iHdr = t.indexOf('Backup — ordered from');
+    ck(iHdr > -1 && t.indexOf('Nitrile gloves') > iHdr || /gloves/i.test(t.slice(iHdr)),
+      'champion walk: toggled-backup item moved into the Backup group');
+    // frequent mode: backups last
+    await page.locator('button', { hasText: 'Frequent' }).first().evaluate((el) => el.click());
+    await page.waitForTimeout(300);
+    t = await body(page);
+    const cards = t.match(/BACKUP/g) || [];
+    const lastBackupIdx = t.lastIndexOf('BACKUP');
+    const lastOnShelfIdx = t.lastIndexOf('on shelf');
+    ck(cards.length > 0 && lastBackupIdx > 0, 'champion frequent: backup badge present');
+    ck(t.indexOf('BACKUP') > t.indexOf('on shelf'), 'champion frequent: first backup card comes after regular cards begin');
+    await ctx.close();
+  }
+
   // ---------- G. round-trip ----------
   {
     const { ctx, page } = await open(browser, base, 'champion', { cycle: 2 }, '2026-08-02T20:00:00');
