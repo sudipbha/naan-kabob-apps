@@ -225,7 +225,10 @@ estimate is never mistaken for a fresh count.
 1. **Count** — three sort modes: **Walk** (grouped by station, matches the
    shelves), **Status** (urgent first), and **Frequent** (items appearing in
    the most logged orders first; until order history builds up it falls back
-   to each item's usage rate). Type or ±
+   to each item's usage rate). **Backup items always sink to the bottom**:
+   Walk collects them into a final grey "Backup — ordered from ‹other
+   supplier›" group after the stations, Frequent sorts them last, and Status
+   already ranked them last. Type or ±
    what's on the shelf, in counting units. "Levels" on each card edits Max,
    Reorder-at, pack config, and the Backup toggle, and — for items that carry
    an optional `url` field — ends with a **"Product details ↗"** link to the
