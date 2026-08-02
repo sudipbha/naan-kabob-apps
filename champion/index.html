@@ -119,6 +119,16 @@ const mergeData = (base, local, remote) => {
     r.forEach((x) => { if (x && x.date) rD[x.date] = 1; });
     const kept = l.filter((x) => !(x && x.date && bD[x.date] && !rD[x.date]));
     r.forEach((x) => { if (x && x.date && !lD[x.date] && !bD[x.date]) kept.push(x); });
+    if (f === "orders") {
+      // closed/cancelled is terminal: a stale device holding the still-open
+      // copy of an emergency must not resurrect it over a closed remote one
+      const rBy = {};
+      r.forEach((x) => { if (x && x.date) rBy[x.date] = x; });
+      for (let i = 0; i < kept.length; i++) {
+        const rv = kept[i] && kept[i].date ? rBy[kept[i].date] : null;
+        if (rv && rv.closed && !kept[i].closed) kept[i] = rv;
+      }
+    }
     kept.sort((a, b2) => new Date(a.date) - new Date(b2.date));
     out[f] = kept.slice(-cap);
   });
@@ -237,6 +247,7 @@ const packUnitOf = (it) => { const p = String(it.pack || "").toLowerCase(); retu
 const guessPerCase = (it, u) => { const p = String(it.pack || ""); let m = p.match(/(\d+)\s*(rl|jg|bx|bn|bg)\s*\/\s*cs/i); if (m) return parseInt(m[1]); m = p.match(/(\d+)\s*\/\s*(cs|bx|bn|bg)/i) || String(it.code || "").match(/(\d+)\s*\/\s*(cs|bx|bn|bg)/i); const t = m ? parseInt(m[1]) : null; if (u === "sleeve") return t ? Math.max(1, Math.round(t / 25)) : 4; if (u === "jug" || u === "roll") return t || 4; return t || 6; };
 const unitLabel = (u) => u === "box" ? "boxes" : u + "s";
 const DAYW = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const ymdStr = (d) => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
 // Ontario holidays. Two effects, both real for this restaurant:
 //   1. the day itself trades like a weekend day (busy), and
 //   2. suppliers don't deliver on it - Good Friday, Christmas and New Year's
@@ -393,6 +404,7 @@ function ChampionTracker() {
   const [emQty, setEmQty] = useState({});
   const [emDate, setEmDate] = useState("");
   const [emReason, setEmReason] = useState("");
+  const [emTouched, setEmTouched] = useState({});
   const [importText, setImportText] = useState("");
   const [view, setView] = useState("count");
   const [countMode, setCountMode] = useState("walk");
@@ -765,8 +777,26 @@ function ChampionTracker() {
       for (const id of applied) n[id] = iso;
       return n;
     });
-    setReceipts((r) => [...r, { date: (/* @__PURE__ */ new Date()).toISOString(), items, note: recvNote.trim(), applied }].slice(-50));
-    setOrders((os) => os.map((o) => o.kind === "emergency" && !o.closed && Object.keys(items).some((id) => o.items && o.items[id] != null) ? { ...o, closed: true } : o));
+    const emAdj = {};
+    const emClosed = [];
+    const nextOrders = orders.map((o) => {
+      if (o.kind !== "emergency" || o.closed) return o;
+      const rem = { ...o.items };
+      const adj = {};
+      for (const [id, q] of Object.entries(items)) {
+        if (rem[id] == null) continue;
+        const used = Math.min(rem[id], q);
+        adj[id] = used;
+        const left = round1(rem[id] - used);
+        if (left > 0) rem[id] = left; else delete rem[id];
+      }
+      if (!Object.keys(adj).length) return o;
+      emAdj[o.date] = adj;
+      if (!Object.keys(rem).length) { emClosed.push(o.date); return { ...o, items: rem, closed: true }; }
+      return { ...o, items: rem };
+    });
+    setReceipts((r) => [...r, { date: (/* @__PURE__ */ new Date()).toISOString(), items, note: recvNote.trim(), applied, ...Object.keys(emAdj).length ? { emAdj, emClosed } : {} }].slice(-50));
+    if (Object.keys(emAdj).length) setOrders(nextOrders);
     const count = Object.keys(items).length;
     setRecv({});
     setRecvNote("");
@@ -776,6 +806,13 @@ function ChampionTracker() {
     if (!receipts.length) return;
     const last = receipts[receipts.length - 1];
     if (!window.confirm("Remove the delivery logged " + shortDate(last.date) + (last.note ? " (" + last.note + ")" : "") + "?\n\nIts quantities are subtracted back out of your on-hand counts.")) return;
+    if (last.emAdj) setOrders((os) => os.map((o) => {
+      const adj = last.emAdj[o.date];
+      if (!adj) return o;
+      const rem = { ...o.items };
+      for (const [id, q] of Object.entries(adj)) rem[id] = round1((rem[id] || 0) + q);
+      return { ...o, items: rem, closed: (last.emClosed || []).indexOf(o.date) !== -1 ? false : o.closed };
+    }));
     const appl = Array.isArray(last.applied) ? last.applied : null;
     const estOf = {};
     rows.forEach((r) => { if (r.cur !== void 0) estOf[r.id] = r.cur; });
@@ -851,15 +888,17 @@ function ChampionTracker() {
     }
     return m;
   }, [orders, receipts, today]);
+  const pendingOpen = useMemo(() => WEEKLY_OK ? orders.filter((o) => o.kind === "emergency" && !o.closed) : [], [orders]);
   const pendingEm = useMemo(() => {
     const m = {};
-    for (const o of orders) {
-      if (o.kind !== "emergency" || o.closed) continue;
+    for (const o of pendingOpen) {
+      // an emergency expected AFTER the next regular truck cannot cover the
+      // coming window - it must not reduce the regular order
+      if (o.expect && new Date(o.expect + "T00:00:00") > dwin.next) continue;
       for (const [id, q] of Object.entries(o.items || {})) m[id] = round1((m[id] || 0) + q);
     }
     return m;
-  }, [orders]);
-  const pendingOpen = useMemo(() => orders.filter((o) => o.kind === "emergency" && !o.closed), [orders]);
+  }, [pendingOpen, dwin]);
   const rows = useMemo(() => ITEMS.map((it) => {
     const cap = caps[it.id] != null ? caps[it.id] : capOf(it);
     const rp = Math.min(cap, reord[it.id] != null ? reord[it.id] : REORD[it.id] != null ? REORD[it.id] : cap / 2);
@@ -901,7 +940,6 @@ function ChampionTracker() {
     let covered = false;
     let uncapped = null;
     let arrivalCur = null;
-    let bridge = null;
     const ov = orderOv[it.id] != null;
     const daysLeft = daily > 0 && cur !== void 0 ? cur / daily : null;
     const horizon = maxGapOf(activeDays) + 1;
@@ -913,14 +951,39 @@ function ChampionTracker() {
       const windowNeed = Math.max(0, Math.ceil(round1(target - cur - pend)));
       projShort = cur + pend < burnToNext;
       arrivalCur = Math.max(0, round1(cur - burnToNext));
-      bridge = Math.max(0, Math.ceil(round1(burnToNext + (daily || 0) - cur - pend)));
       if (st === "order") covered = windowNeed <= 0;
       else autoNeed = windowNeed;
     }
     const need = ov ? orderOv[it.id] : autoNeed;
     const wks = it.use > 0 && cur !== void 0 ? cur / (it.use * cpc) : null;
-    return { ...it, bk, cap, cur, rawCur, aged, countedAt, status: st, rp, need, autoNeed, ov, wks, cpc, cu, ou, packTBD, packVerify, orderedDaysAgo: orderAge[it.id], daily, dailySrc, base, projShort, covered, uncapped, arrivalCur, bridge, pend, coveredTill: dwin.followingName, shortBefore: dwin.nextName, daysLeft, horizon, sugg, orderLastsDays: daily > 0 && need > 0 ? Math.round((cpc > 1 ? Math.ceil(need / cpc) * cpc : need) / daily) : null, orderCs: Math.ceil(need / cpc), caseOnHand: cur !== void 0 ? round1(cur / cpc) : null };
+    return { ...it, bk, cap, cur, rawCur, aged, countedAt, status: st, rp, need, autoNeed, ov, wks, cpc, cu, ou, packTBD, packVerify, orderedDaysAgo: orderAge[it.id], daily, dailySrc, base, projShort, covered, uncapped, arrivalCur, pend, rWd, rWe, coveredTill: dwin.followingName, shortBefore: dwin.nextName, daysLeft, horizon, sugg, orderLastsDays: daily > 0 && need > 0 ? Math.round((cpc > 1 ? Math.ceil(need / cpc) * cpc : need) / daily) : null, orderCs: Math.ceil(need / cpc), caseOnHand: cur !== void 0 ? round1(cur / cpc) : null };
   }), [stocks, stockAt, caps, reord, orderOv, packcfg, orderAge, dailyOf, rateOf, dwin, today, cycle, pendingEm]);
+  const burnBetween = (r, from, to) => {
+    if (r.rWd == null || r.rWe == null) return null;
+    let sum = 0;
+    const d = new Date(from.getFullYear(), from.getMonth(), from.getDate());
+    const end = new Date(to.getFullYear(), to.getMonth(), to.getDate());
+    while (d < end) { sum += isBusyDay(d) ? r.rWe : r.rWd; d.setDate(d.getDate() + 1); }
+    return sum;
+  };
+  const stockAtDate = (r, dateStr) => {
+    if (r.cur === void 0) return null;
+    const b = burnBetween(r, /* @__PURE__ */ new Date(), new Date(dateStr + "T00:00:00"));
+    return b == null ? null : Math.max(0, round1(r.cur - b));
+  };
+  const bridgeFor = (r, dateStr) => {
+    // enough to last from the emergency delivery through the next regular
+    // truck day (the truck day itself is the buffer, at that day's rate)
+    if (r.cur === void 0 || r.rWd == null) return null;
+    const exp = new Date(dateStr + "T00:00:00");
+    if (exp > dwin.next) return null;
+    const atExpect = stockAtDate(r, dateStr);
+    const bufEnd = new Date(dwin.next);
+    bufEnd.setDate(bufEnd.getDate() + 1);
+    const need = burnBetween(r, exp, bufEnd) - (atExpect || 0);
+    return Math.max(0, Math.ceil(round1(need)));
+  };
+  const weeklyAdvisory = useMemo(() => WEEKLY_OK && cycle === 1 ? rows.filter((r) => !r.bk && r.cur !== void 0 && r.need === 0 && r.uncapped != null && r.uncapped > r.cap) : [], [rows, cycle]);
   const counted = useMemo(() => rows.filter((r) => !r.bk && r.cur !== void 0).length, [rows]);
   const recounted = useMemo(() => rows.filter((r) => !r.bk && r.countedAt && (!counts.length || new Date(r.countedAt) > new Date(counts[counts.length - 1].date))).length, [rows, counts]);
   const orderFreq = useMemo(() => { const m = {}; for (const o of orders) for (const id of Object.keys(o.items || {})) m[id] = (m[id] || 0) + 1; return m; }, [orders]);
@@ -1010,21 +1073,42 @@ ${lines.join("\n")}`;
     }
   };
   const openEmergency = () => {
+    if (pendingOpen.length) { flash("An emergency order is already pending \u2014 receive it under Receive, or cancel it, first"); return; }
+    const t = new Date();
+    t.setDate(t.getDate() + 1);
+    if (t > dwin.next) t.setTime(dwin.next.getTime());
+    const dstr = ymdStr(t);
     const sel = {};
     const qv = {};
     rows.forEach((r) => {
       if (!r.bk && r.cur !== void 0 && (r.cur === 0 || r.projShort)) {
         sel[r.id] = true;
-        if (r.bridge != null && r.bridge > 0) qv[r.id] = r.bridge;
+        const b = bridgeFor(r, dstr);
+        if (b != null && b > 0) qv[r.id] = b;
       }
     });
     setEmSel(sel);
     setEmQty(qv);
+    setEmTouched({});
     setEmReason("");
-    const t = new Date();
-    t.setDate(t.getDate() + 1);
-    setEmDate(t.getFullYear() + "-" + String(t.getMonth() + 1).padStart(2, "0") + "-" + String(t.getDate()).padStart(2, "0"));
+    setEmDate(dstr);
     setEmOpen(true);
+  };
+  const emSetQty = (id, v) => {
+    setEmTouched((t) => ({ ...t, [id]: true }));
+    setEmQty((m) => ({ ...m, [id]: v }));
+  };
+  const emSetDate = (v) => {
+    setEmDate(v);
+    setEmQty((m) => {
+      const n = { ...m };
+      rows.forEach((r) => {
+        if (!emSel[r.id] || emTouched[r.id]) return;
+        const b = bridgeFor(r, v);
+        if (b != null) n[r.id] = b;
+      });
+      return n;
+    });
   };
   const emLines = () => rows.filter((r) => emSel[r.id] && parseNum(emQty[r.id]) > 0).map((r) => {
     const u = parseNum(emQty[r.id]);
@@ -1034,11 +1118,18 @@ ${lines.join("\n")}`;
   const buildEmText = () => {
     const ls = emLines();
     if (!ls.length) return "";
-    return "EMERGENCY CHAMPION ORDER \u2014 Naan Kabob\nRequested delivery : " + emDate + (emReason.trim() ? "\nReason : " + emReason.trim() : "") + "\n\n" + ls.map(({ r, cs }) => r.name + " (" + r.code + ") \u2014 " + cs + "\xa0cs").join("\n");
+    return "EMERGENCY CHAMPION ORDER \u2014 Naan Kabob\nRequested delivery : " + emDate + (emReason.trim() ? "\nReason : " + emReason.trim() : "") + "\n\n" + ls.map(({ r, cs }) => r.name + " (" + r.code + ") \u2014 " + cs + "\xa0" + r.ou).join("\n");
   };
   const placeEmergency = () => {
     const ls = emLines();
     if (!ls.length) { flash("Pick at least one item and a quantity"); return; }
+    const t0 = /* @__PURE__ */ new Date();
+    const today0 = new Date(t0.getFullYear(), t0.getMonth(), t0.getDate());
+    const exp = emDate ? new Date(emDate + "T00:00:00") : null;
+    if (!exp || isNaN(exp) || exp < today0 || exp > dwin.next) {
+      flash("Expected delivery must be between today and " + dwin.nextName + " " + shortDate(dwin.next.toISOString()));
+      return;
+    }
     if (!window.confirm("Log this EMERGENCY order?\n\n" + ls.length + " item" + (ls.length > 1 ? "s" : "") + ", expected " + emDate + ".\nSend the text to Champion first (Copy or Share), then confirm.")) return;
     const items = {};
     ls.forEach(({ r, deliver }) => { items[r.id] = deliver; });
@@ -1152,7 +1243,7 @@ ${lines.join("\n")}`;
     { id: "usage", label: "Usage", Icon: BarChart3 },
     { id: "order", label: "Order", Icon: Send }
   ];
-  return /* @__PURE__ */ React.createElement("div", { style: { background: C.bg, minHeight: "100vh", color: C.naan, fontFamily: "ui-sans-serif, system-ui", paddingBottom: "calc(92px + env(safe-area-inset-bottom))" } }, /* @__PURE__ */ React.createElement("style", null, `* { -webkit-tap-highlight-color: transparent; } button, a { -webkit-user-select: none; user-select: none; touch-action: manipulation; } .sticky.top-0 { padding-top: calc(20px + env(safe-area-inset-top)); }`), view === "count" && /* @__PURE__ */ React.createElement(CountView, { ...{ rows, counted, recounted, countMode, setCountMode, setStock, setCap, setReorder, setOrderQty, setPackVal, cycle, setCycle, saveCount, resetCounts, lastCount, setShowSync, orderFreq } }), view === "receive" && /* @__PURE__ */ React.createElement(ReceiveView, { ...{ rows, recv, setRecvQty, recvNote, setRecvNote, logDelivery, receipts, lastOrder, undoReceipt, pendingOpen, cancelEmergency } }), view === "variance" && /* @__PURE__ */ React.createElement(VarianceView, { variance, counts, lastCount }), view === "usage" && React.createElement(UsageView, { counts, receipts, rows }), view === "order" && /* @__PURE__ */ React.createElement(OrderView, { ...{ orderRows, orderText, cycle, copyOrder, copied, shareOrder, sentPrompt, setSentPrompt, markOrdered, orders, dwin, setSchedule, openEmergency, pendingOpen, cancelEmergency } }), emOpen && React.createElement(EmergencySheet, { rows, sel: emSel, setSel: setEmSel, qty: emQty, setQty: setEmQty, date: emDate, setDate: setEmDate, reason: emReason, setReason: setEmReason, onClose: () => setEmOpen(false), setStock, place: placeEmergency, copyText: emCopy, shareText: emShare, dwin }), showSync && /* @__PURE__ */ React.createElement("div", { className: "fixed inset-0 z-50 flex items-end justify-center", style: { background: "rgba(0,0,0,0.6)" }, onClick: () => setShowSync(false) }, /* @__PURE__ */ React.createElement("div", { className: "w-full rounded-t-2xl p-4", style: { background: C.card, maxWidth: 520, paddingBottom: "calc(28px + env(safe-area-inset-bottom))" }, onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between mb-1" }, /* @__PURE__ */ React.createElement("div", { className: "text-lg font-black" }, "Move data between devices"), /* @__PURE__ */ React.createElement("button", { onClick: () => setShowSync(false), className: "text-sm font-bold", style: { color: C.steel } }, "Close")), React.createElement("div", { className: "text-[11px] mb-1", style: { color: C.steel } }, lastSync ? "Cloud sync \xB7 last synced " + syncAgo(lastSync) : syncErr ? "Cloud sync \xB7 offline \u2014 changes are saved on this phone" : "Cloud sync \xB7 connecting\u2026"), /* @__PURE__ */ React.createElement("div", { className: "mt-3" }, /* @__PURE__ */ React.createElement("div", { className: "text-[11px] font-black uppercase tracking-wider mb-1", style: { color: C.saffron } }, "1 \xB7 On the device that HAS your data"), /* @__PURE__ */ React.createElement("div", { className: "text-xs mb-2", style: { color: C.steel } }, "Tap Copy, then send the code to your other device (text it to yourself, email, or Notes)."), /* @__PURE__ */ React.createElement(
+  return /* @__PURE__ */ React.createElement("div", { style: { background: C.bg, minHeight: "100vh", color: C.naan, fontFamily: "ui-sans-serif, system-ui", paddingBottom: "calc(92px + env(safe-area-inset-bottom))" } }, /* @__PURE__ */ React.createElement("style", null, `* { -webkit-tap-highlight-color: transparent; } button, a { -webkit-user-select: none; user-select: none; touch-action: manipulation; } .sticky.top-0 { padding-top: calc(20px + env(safe-area-inset-top)); }`), view === "count" && /* @__PURE__ */ React.createElement(CountView, { ...{ rows, counted, recounted, countMode, setCountMode, setStock, setCap, setReorder, setOrderQty, setPackVal, cycle, setCycle, saveCount, resetCounts, lastCount, setShowSync, orderFreq } }), view === "receive" && /* @__PURE__ */ React.createElement(ReceiveView, { ...{ rows, recv, setRecvQty, recvNote, setRecvNote, logDelivery, receipts, lastOrder, undoReceipt, pendingOpen, cancelEmergency } }), view === "variance" && /* @__PURE__ */ React.createElement(VarianceView, { variance, counts, lastCount }), view === "usage" && React.createElement(UsageView, { counts, receipts, rows }), view === "order" && /* @__PURE__ */ React.createElement(OrderView, { ...{ orderRows, orderText, cycle, copyOrder, copied, shareOrder, sentPrompt, setSentPrompt, markOrdered, orders, dwin, setSchedule, openEmergency, pendingOpen, cancelEmergency, weeklyAdvisory } }), emOpen && React.createElement(EmergencySheet, { rows, sel: emSel, setSel: setEmSel, qty: emQty, setQtyOne: emSetQty, date: emDate, dateMin: ymdStr(/* @__PURE__ */ new Date()), dateMax: ymdStr(dwin.next), onDateChange: emSetDate, reason: emReason, setReason: setEmReason, onClose: () => setEmOpen(false), setStock, place: placeEmergency, copyText: emCopy, shareText: emShare, stockAtDate, dwin }), showSync && /* @__PURE__ */ React.createElement("div", { className: "fixed inset-0 z-50 flex items-end justify-center", style: { background: "rgba(0,0,0,0.6)" }, onClick: () => setShowSync(false) }, /* @__PURE__ */ React.createElement("div", { className: "w-full rounded-t-2xl p-4", style: { background: C.card, maxWidth: 520, paddingBottom: "calc(28px + env(safe-area-inset-bottom))" }, onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between mb-1" }, /* @__PURE__ */ React.createElement("div", { className: "text-lg font-black" }, "Move data between devices"), /* @__PURE__ */ React.createElement("button", { onClick: () => setShowSync(false), className: "text-sm font-bold", style: { color: C.steel } }, "Close")), React.createElement("div", { className: "text-[11px] mb-1", style: { color: C.steel } }, lastSync ? "Cloud sync \xB7 last synced " + syncAgo(lastSync) : syncErr ? "Cloud sync \xB7 offline \u2014 changes are saved on this phone" : "Cloud sync \xB7 connecting\u2026"), /* @__PURE__ */ React.createElement("div", { className: "mt-3" }, /* @__PURE__ */ React.createElement("div", { className: "text-[11px] font-black uppercase tracking-wider mb-1", style: { color: C.saffron } }, "1 \xB7 On the device that HAS your data"), /* @__PURE__ */ React.createElement("div", { className: "text-xs mb-2", style: { color: C.steel } }, "Tap Copy, then send the code to your other device (text it to yourself, email, or Notes)."), /* @__PURE__ */ React.createElement(
     "textarea",
     {
       readOnly: true,
@@ -1214,7 +1305,7 @@ ${lines.join("\n")}`;
     ));
   })));
 }
-function EmergencySheet({ rows, sel, setSel, qty, setQty, date, setDate, reason, setReason, onClose, setStock, place, copyText, shareText, dwin }) {
+function EmergencySheet({ rows, sel, setSel, qty, setQtyOne, date, dateMin, dateMax, onDateChange, reason, setReason, onClose, setStock, place, copyText, shareText, stockAtDate, dwin }) {
   const [q, setQ] = useState("");
   const ql = q.trim().toLowerCase();
   const shown = rows.filter((r) => !r.bk && (sel[r.id] || ql && [r.name, r.code, r.alt].some((f) => f && String(f).toLowerCase().includes(ql))));
@@ -1227,7 +1318,7 @@ function EmergencySheet({ rows, sel, setSel, qty, setQty, date, setDate, reason,
       React.createElement("div", { className: "text-[11px] mb-2", style: { color: C.steel } }, "Just enough to reach the next regular truck (" + dwin.nextName + ") \u2014 the regular order still does the full refill. Items that are out or running dry are pre-selected."),
       React.createElement("div", { className: "flex items-center gap-2 mb-2" },
         React.createElement("label", { className: "text-[11px] font-bold", style: { color: C.steel } }, "Expected delivery"),
-        React.createElement("input", { type: "date", value: date, onChange: (e) => setDate(e.target.value), className: "h-10 px-2 rounded-lg outline-none", style: fld })),
+        React.createElement("input", { type: "date", value: date, min: dateMin, max: dateMax, onChange: (e) => onDateChange(e.target.value), className: "h-10 px-2 rounded-lg outline-none", style: fld })),
       React.createElement("input", { value: reason, onChange: (e) => setReason(e.target.value), placeholder: "Reason \u2014 what ran out and why\u2026", className: "w-full h-10 px-3 mb-2 rounded-lg outline-none", style: fld }),
       React.createElement("input", { value: q, onChange: (e) => setQ(e.target.value), placeholder: "Search to add more items\u2026", inputMode: "search", className: "w-full h-10 px-3 mb-2 rounded-lg outline-none", style: fld }),
       shown.length === 0 ? React.createElement("div", { className: "text-sm py-6 text-center", style: { color: C.steel } }, "Nothing selected \u2014 search above to add items.") : null,
@@ -1235,7 +1326,8 @@ function EmergencySheet({ rows, sel, setSel, qty, setQty, date, setDate, reason,
         const uv = parseNum(qty[r.id]);
         const cs = uv > 0 ? r.cpc > 1 ? Math.ceil(uv / r.cpc) : Math.ceil(uv) : 0;
         const deliver = r.cpc > 1 ? cs * r.cpc : cs;
-        const over = uv > 0 && r.arrivalCur != null ? round1(r.arrivalCur + deliver - r.cap) : 0;
+        const atX = uv > 0 && stockAtDate ? stockAtDate(r, date) : null;
+        const over = atX != null ? round1(atX + deliver - r.cap) : 0;
         return React.createElement("div", { key: r.id, className: "rounded-xl p-2.5", style: { background: C.cardUp, opacity: sel[r.id] ? 1 : 0.75 } },
           React.createElement("div", { className: "flex items-center gap-2" },
             React.createElement("input", { type: "checkbox", checked: !!sel[r.id], onChange: (e) => setSel((m) => ({ ...m, [r.id]: e.target.checked })) }),
@@ -1246,10 +1338,10 @@ function EmergencySheet({ rows, sel, setSel, qty, setQty, date, setDate, reason,
               React.createElement(NumField, { value: r.cur !== void 0 ? r.cur : null, placeholder: "\u2014", onCommit: (s2) => setStock(r.id, s2), className: "w-14 h-10 rounded-lg text-center font-black outline-none", style: fld }),
               React.createElement("div", { className: "text-[9px] uppercase mt-0.5", style: { color: C.steel } }, "on shelf")),
             React.createElement("div", { className: "flex flex-col items-center" },
-              React.createElement(NumField, { value: qty[r.id] != null ? qty[r.id] : null, placeholder: "0", onCommit: (s2) => setQty((m) => ({ ...m, [r.id]: s2 })), className: "w-14 h-10 rounded-lg text-center font-black outline-none", style: fld }),
+              React.createElement(NumField, { value: qty[r.id] != null ? qty[r.id] : null, placeholder: "0", onCommit: (s2) => setQtyOne(r.id, s2), className: "w-14 h-10 rounded-lg text-center font-black outline-none", style: fld }),
               React.createElement("div", { className: "text-[9px] uppercase mt-0.5", style: { color: C.steel } }, "send"))),
           uv > 0 && r.cpc > 1 ? React.createElement("div", { className: "text-[10px] mt-1 text-right font-bold", style: { color: C.steel } }, "= " + cs + " " + r.ou + " (" + deliver + " " + unitLabel(r.cu) + ")") : null,
-          over > 0.5 ? React.createElement("div", { className: "text-[10px] mt-0.5 text-right", style: { color: C.saffron } }, "arrives as " + deliver + " \u2192 ~" + over + " over Max on " + dwin.nextName) : null);
+          over > 0.5 ? React.createElement("div", { className: "text-[10px] mt-0.5 text-right", style: { color: C.saffron } }, "arrives as " + deliver + " \u2192 ~" + over + " over Max on arrival") : null);
       })),
       React.createElement("div", { className: "flex gap-2 mt-3" },
         React.createElement("button", { onClick: copyText, className: "flex-1 rounded-xl py-3 font-black text-sm active:scale-95", style: { border: "1px solid " + C.line, color: C.naan } }, "Copy text"),
@@ -1516,7 +1608,7 @@ function VarianceView({ variance, counts, lastCount }) {
     return /* @__PURE__ */ React.createElement("div", { key: r.id, className: "rounded-xl p-3", style: { background: C.card, borderLeft: `3px solid ${col}` } }, /* @__PURE__ */ React.createElement("div", { className: "flex items-center justify-between gap-2" }, /* @__PURE__ */ React.createElement("div", { className: "min-w-0" }, /* @__PURE__ */ React.createElement("div", { className: "font-bold leading-tight truncate" }, r.name), /* @__PURE__ */ React.createElement("div", { className: "text-[11px] font-mono", style: { color: C.steel } }, r.code)), /* @__PURE__ */ React.createElement("div", { className: "text-right shrink-0" }, /* @__PURE__ */ React.createElement("div", { className: "text-lg font-black leading-none", style: { color: col } }, r.v > 0 ? "+" : "", r.v, " " + (r.unit || "cs")), /* @__PURE__ */ React.createElement("div", { className: "text-[9px] uppercase tracking-wide", style: { color: C.steel } }, "variance"))), /* @__PURE__ */ React.createElement("div", { className: "flex gap-3 mt-2 text-[11px]", style: { color: C.steel } }, /* @__PURE__ */ React.createElement("span", null, "expected ", /* @__PURE__ */ React.createElement("span", { style: { color: C.naan, fontWeight: 700 } }, r.expected)), /* @__PURE__ */ React.createElement("span", null, "actual ", /* @__PURE__ */ React.createElement("span", { style: { color: C.naan, fontWeight: 700 } }, r.actual)), r.received > 0 && /* @__PURE__ */ React.createElement("span", null, "received ", /* @__PURE__ */ React.createElement("span", { style: { color: C.naan, fontWeight: 700 } }, round1(r.received)))), r.flag !== "ok" && /* @__PURE__ */ React.createElement("div", { className: "text-[11px] mt-1.5", style: { color: col } }, note));
   })), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] px-1 pb-2", style: { color: C.steel } }, "Actual usage = baseline count + deliveries received \u2212 latest count. Most accurate right after a fresh full count at both ends."));
 }
-function OrderView({ orderRows, orderText, cycle, copyOrder, copied, shareOrder, sentPrompt, setSentPrompt, markOrdered, orders, dwin, setSchedule, openEmergency, pendingOpen, cancelEmergency }) {
+function OrderView({ orderRows, orderText, cycle, copyOrder, copied, shareOrder, sentPrompt, setSentPrompt, markOrdered, orders, dwin, setSchedule, openEmergency, pendingOpen, cancelEmergency, weeklyAdvisory }) {
   const sms = orderText ? (/android/i.test(navigator.userAgent) ? "sms:?body=" : "sms:&body=") + encodeURIComponent(orderText) : "";
   const totals = {};
   orderRows.forEach((r) => {
@@ -1528,7 +1620,7 @@ function OrderView({ orderRows, orderText, cycle, copyOrder, copied, shareOrder,
   return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "px-4 pt-5 pb-3 sticky top-0 z-20", style: { background: C.bg, borderBottom: `1px solid ${C.line}` } }, /* @__PURE__ */ React.createElement("div", { className: "text-[10px] uppercase tracking-[0.25em]", style: { color: C.saffron } }, "Champion order"), /* @__PURE__ */ React.createElement("div", { className: "text-2xl font-black tracking-tight" }, orderRows.length, " item", orderRows.length !== 1 ? "s" : "", " to order"), /* @__PURE__ */ React.createElement("div", { className: "text-[11px] mt-1", style: { color: C.steel } }, dwin.weekly ? "Weekly trial \u2014 one truck a week (" + DAYW[WEEKLY_DAYS[0]] + "). Order Sunday evening; this order covers through " + dwin.followingName + " " + shortDate(dwin.following.toISOString()) + "." : "Deliveries " + DAYW[DELIVERY_DAYS[0]] + " & " + DAYW[DELIVERY_DAYS[1]] + " \u2014 at-reorder items refill to Max; early warnings cover through " + dwin.followingName + " (+1 day)."), WEEKLY_OK ? React.createElement("div", { className: "flex items-center gap-2 mt-2 flex-wrap" },
     React.createElement("div", { className: "flex rounded-lg overflow-hidden text-xs font-bold", style: { border: "1px solid " + C.line } },
       [[2, "Tue & Fri"], [1, "Tue only"]].map(([v, lbl]) => React.createElement("button", { key: v, onClick: () => setSchedule(v), className: "px-3 py-1.5", style: v === cycle ? { background: C.naan, color: C.ink } : { color: C.steel } }, lbl))),
-    React.createElement("button", { onClick: openEmergency, className: "text-xs font-bold px-3 py-1.5 rounded-lg active:scale-95", style: { border: "1px solid " + C.ember, color: C.ember } }, "\ud83d\udea8 Emergency order")) : null, pendingOpen && pendingOpen.length > 0 ? React.createElement("div", { className: "rounded-lg px-3 py-2 mt-2 text-[11px] font-bold flex items-center justify-between gap-2", style: { background: C.ember + "22", color: C.ember } }, React.createElement("span", null, "\ud83d\udea8 Emergency order pending \u2014 expected " + (pendingOpen[0].expect || "soon") + " \u00b7 " + Object.keys(pendingOpen[0].items || {}).length + " item" + (Object.keys(pendingOpen[0].items || {}).length !== 1 ? "s" : "")), React.createElement("button", { onClick: cancelEmergency, className: "px-2 py-1 rounded font-black active:scale-95", style: { border: "1px solid " + C.ember, color: C.ember } }, "Cancel")) : null, orderRows.length > 0 ? React.createElement("div", { className: "text-sm font-black mt-1.5", style: { color: C.naan } }, "Order total: " + totalStr) : null, dwin.holidays && dwin.holidays.length > 0 ? React.createElement("div", { className: "text-[11px] font-bold mt-1.5", style: { color: C.saffron } }, "\u26a0 " + dwin.holidays.map((h) => h.name + " (" + h.day + ")").join(" \xB7 ") + " \u2014 counted as busy days; " + (dwin.movedUp ? "delivery moves up to " : "next delivery ") + dwin.nextName) : null), orderRows.length === 0 ? React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "px-6 py-16 text-center", style: { color: C.steel } }, "Nothing at reorder point. Count the shelves, then check back."), ordersEl) : /* @__PURE__ */ React.createElement("div", { className: "px-4 py-4 space-y-2" }, orderRows.map((r) => /* @__PURE__ */ React.createElement("div", { key: r.id, className: "flex items-center justify-between rounded-xl px-4 py-3", style: { background: C.card } }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "font-bold" }, r.name), /* @__PURE__ */ React.createElement("div", { className: "text-xs font-mono", style: { color: C.steel } }, r.code, r.alt ? ` \xB7 ${r.alt}` : ""), r.ov ? React.createElement("div", { className: "text-[10px] mt-0.5 font-bold", style: { color: C.saffron } }, "your number, not the app\u2019s") : r.status === "order" ? React.createElement("div", { className: "text-[10px] mt-0.5", style: { color: C.steel } }, "at reorder \u00b7 " + (r.cur !== void 0 ? r.cur : "\u2014") + " of " + r.cap + " on shelf") : dwin.weekly && !r.projShort ? React.createElement("div", { className: "text-[10px] mt-0.5", style: { color: C.steel } }, "won\u2019t last to next " + dwin.followingName + "\u2019s truck") : null, r.pend > 0 ? React.createElement("div", { className: "text-[10px] mt-0.5 font-bold", style: { color: C.mint } }, "+" + r.pend + " already arriving from the emergency order") : null, r.projShort && r.status !== "order" ? React.createElement("div", { className: "text-[10px] mt-0.5", style: { color: C.ember } }, "short before " + r.shortBefore) : null, r.orderedDaysAgo != null ? React.createElement("div", { className: "inline-block text-[10px] mt-0.5 font-black px-1.5 py-0.5 rounded", style: { background: C.mint + "22", color: C.mint } }, "ordered " + (r.orderedDaysAgo === 0 ? "today" : r.orderedDaysAgo + "d ago") + " \u2014 don\u2019t send twice") : null, r.aged ? React.createElement("div", { className: "text-[10px] mt-0.5", style: { color: C.saffron } }, "estimate \u2014 counted " + r.rawCur + " on " + shortDate(r.countedAt) + " \xB7 recount before sending") : null, r.packTBD ? React.createElement("div", { className: "text-[10px] mt-0.5", style: { color: C.saffron } }, "\u26a0 pack size unconfirmed \u2014 case qty estimated") : null, r.uncapped != null && r.uncapped > r.cap ? React.createElement("div", { className: "text-[10px] mt-0.5 font-bold", style: { color: C.saffron } }, "needs " + Math.ceil(r.uncapped) + " " + (r.cpc > 1 ? unitLabel(r.cu) : r.ou) + " to last to " + dwin.followingName + " " + shortDate(dwin.following.toISOString()) + " \u00b7 Max caps it at " + r.cap) : null, (() => { const arrive = r.cpc > 1 ? r.orderCs * r.cpc : r.need; const over = r.arrivalCur != null ? round1(r.arrivalCur + arrive - r.cap) : 0; return over > 0.5 ? React.createElement("div", { className: "text-[10px] mt-0.5", style: { color: C.saffron } }, "arrives as " + arrive + " \u2192 ~" + over + " over Max on " + dwin.nextName) : null; })()), /* @__PURE__ */ React.createElement("div", { className: "text-right" }, /* @__PURE__ */ React.createElement("div", { className: "text-2xl font-black", style: { color: C.saffron } }, r.cpc > 1 ? r.orderCs : r.need), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] uppercase tracking-wide", style: { color: C.steel } }, r.pack.includes("bn") ? "bundles" : r.pack.includes("bx") ? "boxes" : r.pack.includes("bg") ? "bags" : "cases"), r.orderLastsDays != null && r.orderLastsDays <= 90 && React.createElement("div", { className: "text-[11px] mt-0.5 font-bold", style: { color: C.steel } }, "lasts " + String.fromCharCode(8776) + r.orderLastsDays + "d")))), /* @__PURE__ */ React.createElement("div", { className: "rounded-xl p-4 mt-4", style: { background: C.ink, border: `1px solid ${C.line}` } }, /* @__PURE__ */ React.createElement("pre", { className: "text-xs whitespace-pre-wrap font-mono leading-relaxed", style: { color: C.naan } }, orderText)), typeof navigator !== "undefined" && navigator.share ? React.createElement(
+    React.createElement("button", { onClick: openEmergency, className: "text-xs font-bold px-3 py-1.5 rounded-lg active:scale-95", style: { border: "1px solid " + C.ember, color: C.ember } }, "\ud83d\udea8 Emergency order")) : null, WEEKLY_OK && cycle === 1 && orders.filter((o) => o.kind === "emergency").length > 0 ? React.createElement("div", { className: "text-[11px] mt-1.5 font-bold", style: { color: C.saffron } }, (() => { const n = orders.filter((o) => o.kind === "emergency").length; return n + " emergency order" + (n !== 1 ? "s" : "") + " logged this trial"; })()) : null, weeklyAdvisory && weeklyAdvisory.length > 0 ? React.createElement("div", { className: "rounded-lg px-3 py-2 mt-2 text-[10px] font-bold", style: { background: C.saffron + "22", color: C.saffron } }, "\u26a0 Full shelf, but won\u2019t last the week \u2014 raise Max or plan a mid-week top-up: " + weeklyAdvisory.map((r) => r.name + " (needs " + Math.ceil(r.uncapped) + ", Max " + r.cap + ")").join(" \u00b7 ")) : null, pendingOpen && pendingOpen.length > 0 ? React.createElement("div", { className: "rounded-lg px-3 py-2 mt-2 text-[11px] font-bold flex items-center justify-between gap-2", style: { background: C.ember + "22", color: C.ember } }, React.createElement("span", null, "\ud83d\udea8 Emergency order pending \u2014 expected " + (pendingOpen[0].expect || "soon") + " \u00b7 " + Object.keys(pendingOpen[0].items || {}).length + " item" + (Object.keys(pendingOpen[0].items || {}).length !== 1 ? "s" : "")), React.createElement("button", { onClick: cancelEmergency, className: "px-2 py-1 rounded font-black active:scale-95", style: { border: "1px solid " + C.ember, color: C.ember } }, "Cancel")) : null, orderRows.length > 0 ? React.createElement("div", { className: "text-sm font-black mt-1.5", style: { color: C.naan } }, "Order total: " + totalStr) : null, dwin.holidays && dwin.holidays.length > 0 ? React.createElement("div", { className: "text-[11px] font-bold mt-1.5", style: { color: C.saffron } }, "\u26a0 " + dwin.holidays.map((h) => h.name + " (" + h.day + ")").join(" \xB7 ") + " \u2014 counted as busy days; " + (dwin.movedUp ? "delivery moves up to " : "next delivery ") + dwin.nextName) : null), orderRows.length === 0 ? React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { className: "px-6 py-16 text-center", style: { color: C.steel } }, "Nothing at reorder point. Count the shelves, then check back."), ordersEl) : /* @__PURE__ */ React.createElement("div", { className: "px-4 py-4 space-y-2" }, orderRows.map((r) => /* @__PURE__ */ React.createElement("div", { key: r.id, className: "flex items-center justify-between rounded-xl px-4 py-3", style: { background: C.card } }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "font-bold" }, r.name), /* @__PURE__ */ React.createElement("div", { className: "text-xs font-mono", style: { color: C.steel } }, r.code, r.alt ? ` \xB7 ${r.alt}` : ""), r.ov ? React.createElement("div", { className: "text-[10px] mt-0.5 font-bold", style: { color: C.saffron } }, "your number, not the app\u2019s") : r.status === "order" ? React.createElement("div", { className: "text-[10px] mt-0.5", style: { color: C.steel } }, "at reorder \u00b7 " + (r.cur !== void 0 ? r.cur : "\u2014") + " of " + r.cap + " on shelf") : dwin.weekly && !r.projShort ? React.createElement("div", { className: "text-[10px] mt-0.5", style: { color: C.steel } }, "won\u2019t last to next " + dwin.followingName + "\u2019s truck") : null, r.pend > 0 ? React.createElement("div", { className: "text-[10px] mt-0.5 font-bold", style: { color: C.mint } }, "+" + r.pend + " already arriving from the emergency order") : null, r.projShort && r.status !== "order" ? React.createElement("div", { className: "text-[10px] mt-0.5", style: { color: C.ember } }, "short before " + r.shortBefore) : null, r.orderedDaysAgo != null ? React.createElement("div", { className: "inline-block text-[10px] mt-0.5 font-black px-1.5 py-0.5 rounded", style: { background: C.mint + "22", color: C.mint } }, "ordered " + (r.orderedDaysAgo === 0 ? "today" : r.orderedDaysAgo + "d ago") + " \u2014 don\u2019t send twice") : null, r.aged ? React.createElement("div", { className: "text-[10px] mt-0.5", style: { color: C.saffron } }, "estimate \u2014 counted " + r.rawCur + " on " + shortDate(r.countedAt) + " \xB7 recount before sending") : null, r.packTBD ? React.createElement("div", { className: "text-[10px] mt-0.5", style: { color: C.saffron } }, "\u26a0 pack size unconfirmed \u2014 case qty estimated") : null, r.uncapped != null && r.uncapped > r.cap ? React.createElement("div", { className: "text-[10px] mt-0.5 font-bold", style: { color: C.saffron } }, "needs " + Math.ceil(r.uncapped) + " " + (r.cpc > 1 ? unitLabel(r.cu) : r.ou) + " to last to " + dwin.followingName + " " + shortDate(dwin.following.toISOString()) + " \u00b7 Max caps it at " + r.cap) : null, (() => { const arrive = r.cpc > 1 ? r.orderCs * r.cpc : r.need; const over = r.arrivalCur != null ? round1(r.arrivalCur + arrive - r.cap) : 0; return over > 0.5 ? React.createElement("div", { className: "text-[10px] mt-0.5", style: { color: C.saffron } }, "arrives as " + arrive + " \u2192 ~" + over + " over Max on " + dwin.nextName) : null; })()), /* @__PURE__ */ React.createElement("div", { className: "text-right" }, /* @__PURE__ */ React.createElement("div", { className: "text-2xl font-black", style: { color: C.saffron } }, r.cpc > 1 ? r.orderCs : r.need), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] uppercase tracking-wide", style: { color: C.steel } }, r.pack.includes("bn") ? "bundles" : r.pack.includes("bx") ? "boxes" : r.pack.includes("bg") ? "bags" : "cases"), r.orderLastsDays != null && r.orderLastsDays <= 90 && React.createElement("div", { className: "text-[11px] mt-0.5 font-bold", style: { color: C.steel } }, "lasts " + String.fromCharCode(8776) + r.orderLastsDays + "d")))), /* @__PURE__ */ React.createElement("div", { className: "rounded-xl p-4 mt-4", style: { background: C.ink, border: `1px solid ${C.line}` } }, /* @__PURE__ */ React.createElement("pre", { className: "text-xs whitespace-pre-wrap font-mono leading-relaxed", style: { color: C.naan } }, orderText)), typeof navigator !== "undefined" && navigator.share ? React.createElement(
     "button",
     {
       onClick: shareOrder,

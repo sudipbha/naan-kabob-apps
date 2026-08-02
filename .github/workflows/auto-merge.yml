@@ -27,6 +27,8 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Render check (all tabs, both apps)
         run: node tests/render-check.js
+      - name: Weekly + emergency behaviour check
+        run: node tests/weekly-check.js
       # Draft PRs run the render check (evidence attaches to the PR) but are
       # never merged - marking Ready for review triggers the merge run.
       - name: Squash-merge claude PR

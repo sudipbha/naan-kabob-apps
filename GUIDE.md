@@ -127,18 +127,43 @@ no switch — `WEEKLY_OK` is `false` there). In weekly mode:
 
 An always-visible **🚨 Emergency order** button on Champion's Order tab
 opens a sheet pre-selected with every item that is out or won't last to the
-next truck (searchable to add any other item). Each line suggests a
-**bridge quantity** — `ceil(burn(now → next truck, +1 day) − on hand)`,
-whole cases — just enough to reach the regular truck, never a second weekly
-order. The text is headed `EMERGENCY CHAMPION ORDER` with a requested
-delivery date and reason; Mark as ordered asks for confirmation and logs
-`{ kind: "emergency", expect, reason, items, coverTo }`. While pending:
-a banner on Order and Receive, "+N arriving" chips on affected cards, and —
-critically — **regular order math subtracts pending quantities**, so a
-Saturday emergency cannot be double-ordered on Sunday. Logging any delivery
-containing one of its items closes it; Cancel is undoable for 30 s.
-Emergency orders never change the schedule, Max, or Reorder-at, and each
-one is a dated viability mark against the weekly trial.
+next truck (searchable to add any other item; on-hand is editable in place
+and writes through the normal count state). **One emergency can be pending
+at a time** — receive or cancel it before placing another.
+
+- **Expected delivery date is constrained to [today … next regular truck]**
+  (picker min/max plus validation on placement). Each line suggests a
+  **bridge quantity computed from that date**: projected stock remaining at
+  the delivery date, then burn from there through the truck day inclusive
+  at each day's own weekday/weekend/holiday rate — whole cases, never a
+  second weekly order. Changing the date re-computes suggestions the user
+  hasn't typed over. The arrival-overflow warning projects stock at the
+  chosen date, not the regular truck.
+- The text is headed `EMERGENCY CHAMPION ORDER` with the requested date and
+  reason, in **purchase units** (cs/bn/bx/bg per item). Mark as ordered
+  confirms, then logs `{ kind: "emergency", expect, reason, items,
+  coverTo }`.
+- While pending: a banner on Order and Receive, "+N arriving" chips, and
+  **regular order math subtracts pending quantities — but only when the
+  expected date is on or before the next regular truck** (a late emergency
+  must not shrink Tuesday's order).
+- **Receiving decrements per item**: a delivery reduces the pending order
+  by exactly the overlapping quantities received (recorded on the receipt
+  as `emAdj`/`emClosed`); it closes only when every item is fully covered.
+  Partial deliveries keep it pending; unrelated deliveries don't touch it;
+  **undoing a receipt restores the quantities it consumed and reopens the
+  order** if that receipt had closed it. Cancel is undoable for 30 s.
+- `closed` is **terminal across devices**: the orders merge prefers a
+  closed/cancelled copy over a stale open one with the same date.
+- In weekly mode the Order header shows **"N emergency orders logged this
+  trial"** — the trial's failure meter — and a **full-shelf advisory**
+  lists any item whose 9-day demand exceeds its Max even when full
+  ("raise Max or plan a mid-week top-up"), since such items never appear
+  as order rows.
+- Sysco is fully inert: `pendingOpen`/`pendingEm` are empty when
+  `WEEKLY_OK` is false, so imported emergency-shaped data can't affect its
+  math or UI. Emergency orders never change the schedule, Max, or
+  Reorder-at.
 
 - At/below Reorder-at → `ORDER`: refill to Max.
 - Not yet at reorder but won't last to the *next* truck → early-warning
