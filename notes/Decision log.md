@@ -28,14 +28,18 @@ The rules behind it, because allergy answers have to be honest:
 - Every allergen line comes with a reminder to confirm on the package
   label, because makers change recipes without telling anyone.
 
-Coverage: 75 of 78 items got researched info; 5 carry real allergen
-warnings (flour, fries, Biscoff cookies and spread, and paneer — which
-also lists possible traces), 11 carry a verified all-clear, and 53 got
-new product links. Three honest misses with nothing to show: the Doogh
-(the "Naan" brand ayran couldn't be found online), the logo smoothie cup,
-and the Champion app's poly gloves. One thing worth doing by hand: the
-paneer entry uses Nanak's label (the leading Canadian malai paneer brand)
-as the best-supported match — confirm the brand on the next delivery.
+Coverage: 76 of 78 items carry info; 6 have real allergen warnings
+(flour, fries, Biscoff cookies and spread, paneer — which also lists
+possible traces — and the Doogh), 11 carry a verified all-clear, and 53
+got new product links. Two honest blanks remain: the logo smoothie cup
+and the Champion app's poly gloves.
+
+Two follow-ups were settled by the owner's July 13 Sysco invoice: the
+paneer's package brand "Asli" turned out to be Nanak's own product line
+(asli means "genuine"), so the baked Nanak label was right all along —
+and the invoice's "YOGURT DRINK AYRAN NAAN MINT" line confirmed the
+Doogh is dairy, so it now carries the milk allergen warning. Both items
+also got their real Sysco item numbers from the invoice.
 
 ## 2026-08-02 — The coding journal itself
 
