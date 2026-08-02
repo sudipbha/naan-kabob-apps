@@ -6,6 +6,18 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-08-02 — Mop heads join the Champion app
+
+The Champion invoice showed mop heads are ordered from Champion too
+(TS3016, 16 oz cotton cut-end, white, 12 per case), but only the Sysco
+app tracked them. Champion now counts them as well — in heads, 12 to a
+case, Max 12, reorder at 3 — with the cotton material in its "What's in
+it" panel. Both apps track mop heads for now; whichever supplier ends up
+as the fallback can be flipped with the Backup toggle in Levels. The
+same invoice raised one open question: its toilet-roll line reads
+SUNJ700 (1,100 sq ft rolls) while the app tracks SUNJ600 — if the 700 is
+the new standard, the card should be updated to match.
+
 ## 2026-08-02 — Every item can now answer "what's in it?"
 
 Both apps got a **"What's in it"** panel inside each item's Levels sheet:
