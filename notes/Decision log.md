@@ -14,9 +14,10 @@ app tracked them. Champion now counts them as well — in heads, 12 to a
 case, Max 12, reorder at 3 — with the cotton material in its "What's in
 it" panel. Both apps track mop heads for now; whichever supplier ends up
 as the fallback can be flipped with the Backup toggle in Levels. The
-same invoice raised one open question: its toilet-roll line reads
-SUNJ700 (1,100 sq ft rolls) while the app tracks SUNJ600 — if the 700 is
-the new standard, the card should be updated to match.
+same invoice also caught a product switch the owner confirmed: the
+jumbo toilet roll is now SUNJ700 (Snow Soft 2-ply, 1,100 sq ft) instead
+of the old SUNJ600, so the card, its details and its product link were
+updated — still counted in rolls, 8 to a case, so nothing else changes.
 
 ## 2026-08-02 — Every item can now answer "what's in it?"
 
