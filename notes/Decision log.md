@@ -21,19 +21,21 @@ The rules behind it, because allergy answers have to be honest:
 - **Verified or invisible.** An allergen line only shows if the verifier
   confirmed the source really says it. Claims that couldn't be confirmed
   were dropped — a missing panel means *unknown*, never "allergen-free".
-- The verifier earned its keep: both glove listings turned out not to say
-  "latex-free" anywhere, so the app now says what's actually true — vinyl
-  and poly gloves are plastic, not rubber, so there's no natural rubber
-  latex in the material.
+- The verifier earned its keep: the glove pages didn't clearly declare
+  "latex-free", so instead of quoting a claim the sources don't make, the
+  app leads with what's physically true — vinyl and poly gloves are
+  plastic, not rubber.
 - Every allergen line comes with a reminder to confirm on the package
   label, because makers change recipes without telling anyone.
 
-Coverage: 75 of 78 items got researched info; 6 carry real allergen
-warnings (flour, fries, Biscoff cookies and spread, paneer — plus the
-paneer "may contain" list), 11 carry a verified all-clear, and 54 got new
-product links. Three honest misses with nothing to show: the Doogh (the
-"Naan" brand ayran couldn't be found online), the logo smoothie cup, and
-the poly gloves' exact listing.
+Coverage: 75 of 78 items got researched info; 5 carry real allergen
+warnings (flour, fries, Biscoff cookies and spread, and paneer — which
+also lists possible traces), 11 carry a verified all-clear, and 53 got
+new product links. Three honest misses with nothing to show: the Doogh
+(the "Naan" brand ayran couldn't be found online), the logo smoothie cup,
+and the Champion app's poly gloves. One thing worth doing by hand: the
+paneer entry uses Nanak's label (the leading Canadian malai paneer brand)
+as the best-supported match — confirm the brand on the next delivery.
 
 ## 2026-08-02 — The coding journal itself
 

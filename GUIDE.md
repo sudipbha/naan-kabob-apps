@@ -237,8 +237,8 @@ estimate is never mistaken for a fresh count.
    Levels also shows a read-only **"What's in it"** panel for items that
    carry researched info: declared **allergens** (amber ⚠ line, or a green
    "✓ No priority allergens declared"), a **"May contain"** line, the
-   ingredient or material text, and — for cleaning chemicals — a bold
-   safety line. Whenever an allergen line is shown, a small italic reminder
+   ingredient or material text, and a bold note line (safety warnings
+   for chemicals, practical facts for everything else). Whenever an allergen line is shown, a small italic reminder
    says the data comes from the maker's info and to always confirm on the
    package label. Items with no researched data render no panel.
    **Save count** stores a
@@ -319,7 +319,7 @@ estimate is never mistaken for a fresh count.
   "may contain", note/safety line). They render in the Levels "What's in
   it" panel, feed **no** calculations, and are not synced or user-editable.
   Allergen strings follow Health Canada's priority-allergen list, taken
-  from manufacturer labels (researched Aug 2026); `alg: "none declared"`
+  from maker or retailer product pages (researched Aug 2026); `alg: "none declared"`
   means a source positively showed no priority allergens. A missing `alg`
   means **unknown**, never "allergen-free".
 - `stocks` etc. are keyed by item `id` and denominated in **counting units**.
@@ -354,7 +354,7 @@ estimate is never mistaken for a fresh count.
   "purées need a fridge".
 - Before flagging "X should be ordered", check `orderedDaysAgo` — it may
   already be on a logged order awaiting Friday's truck.
-- A missing "What's in it" panel means no verified data was found for that
+- A missing "What's in it" panel means no usable data was found for that
   item — not a bug. Food-item allergen lines were independently verified
   against manufacturer sources before being baked in; unverified claims
   were deliberately dropped rather than shown.
