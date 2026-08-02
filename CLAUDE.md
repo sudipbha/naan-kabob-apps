@@ -34,6 +34,18 @@ leaves the PR open. Local gates remain the first line of defense (CI adds
    seed `localStorage`, and block non-localhost requests so the real
    Supabase state can't leak in).
 
+## notes/ — the owner's journal (mirrors into their Obsidian vault)
+
+`notes/*.md` is a plain-language project journal. The owner's computer
+mirrors GUIDE.md + `notes/` into their Obsidian vault hourly
+(`tools/obsidian-sync.ps1`; one-way repo → vault, vault edits get
+overwritten). Keep it alive, unasked: when a PR ships a feature, makes a
+real decision, or hits an incident, add a dated entry (newest first) to
+`notes/Decision log.md` in that same PR; post-mortems go in
+`notes/Incidents and lessons.md`. Plain language only — the reader is the
+owner, not a programmer. Avoid renaming/deleting note files: the sync never
+deletes in the vault, so renames strand stale copies there.
+
 ## Deploys
 
 - GitHub Pages is the ONLY live host (`.github/workflows/pages.yml`).
