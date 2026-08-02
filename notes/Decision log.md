@@ -6,6 +6,37 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-08-02 — Every item can now answer "what's in it?"
+
+Both apps got a **"What's in it"** panel inside each item's Levels sheet:
+declared allergens (amber warning, or a green "no priority allergens
+declared"), a "may contain" line, the ingredient or material text, a safety
+line for cleaning chemicals, and a product link. A fleet of research agents
+combed manufacturer and Canadian retailer pages for all 78 items; every
+food and glove allergen claim was then re-checked by an independent
+verifier before being allowed into the app.
+
+The rules behind it, because allergy answers have to be honest:
+
+- **Verified or invisible.** An allergen line only shows if the verifier
+  confirmed the source really says it. Claims that couldn't be confirmed
+  were dropped — a missing panel means *unknown*, never "allergen-free".
+- The verifier earned its keep: the glove pages didn't clearly declare
+  "latex-free", so instead of quoting a claim the sources don't make, the
+  app leads with what's physically true — vinyl and poly gloves are
+  plastic, not rubber.
+- Every allergen line comes with a reminder to confirm on the package
+  label, because makers change recipes without telling anyone.
+
+Coverage: 75 of 78 items got researched info; 5 carry real allergen
+warnings (flour, fries, Biscoff cookies and spread, and paneer — which
+also lists possible traces), 11 carry a verified all-clear, and 53 got
+new product links. Three honest misses with nothing to show: the Doogh
+(the "Naan" brand ayran couldn't be found online), the logo smoothie cup,
+and the Champion app's poly gloves. One thing worth doing by hand: the
+paneer entry uses Nanak's label (the leading Canadian malai paneer brand)
+as the best-supported match — confirm the brand on the next delivery.
+
 ## 2026-08-02 — The coding journal itself
 
 Created this `notes/` folder and a small sync program so the project's story

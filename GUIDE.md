@@ -234,6 +234,13 @@ estimate is never mistaken for a fresh count.
    an optional `url` field — ends with a **"Product details ↗"** link to the
    manufacturer's page (opens in a new tab; items without a `url` render no
    link, and it sits inside Levels so it never crowds the count list).
+   Levels also shows a read-only **"What's in it"** panel for items that
+   carry researched info: declared **allergens** (amber ⚠ line, or a green
+   "✓ No priority allergens declared"), a **"May contain"** line, the
+   ingredient or material text, and a bold note line (safety warnings
+   for chemicals, practical facts for everything else). Whenever an allergen line is shown, a small italic reminder
+   says the data comes from the maker's info and to always confirm on the
+   package label. Items with no researched data render no panel.
    **Save count** stores a
    dated snapshot of only the items recounted since the previous save (items
    not touched are left out and the save message says how many — this keeps
@@ -307,6 +314,14 @@ estimate is never mistaken for a fresh count.
   in the Count-tab header).
 - `packcfg[id] = { u, pc, bk }` holds per-item overrides: counting unit,
   per-case count, backup flag. These beat the item defaults baked in code.
+- `ing` / `alg` / `may` / `aln` are optional per-item constants baked in
+  code (ingredients or material, declared allergens, precautionary
+  "may contain", note/safety line). They render in the Levels "What's in
+  it" panel, feed **no** calculations, and are not synced or user-editable.
+  Allergen strings follow Health Canada's priority-allergen list, taken
+  from maker or retailer product pages (researched Aug 2026); `alg: "none declared"`
+  means a source positively showed no priority allergens. A missing `alg`
+  means **unknown**, never "allergen-free".
 - `stocks` etc. are keyed by item `id` and denominated in **counting units**.
 - `orders[].items` and `receipts[].items` quantities are **counting units**;
   only the human-readable order *text* is in cases.
@@ -339,3 +354,7 @@ estimate is never mistaken for a fresh count.
   "purées need a fridge".
 - Before flagging "X should be ordered", check `orderedDaysAgo` — it may
   already be on a logged order awaiting Friday's truck.
+- A missing "What's in it" panel means no usable data was found for that
+  item — not a bug. Food-item allergen lines were independently verified
+  against manufacturer sources before being baked in; unverified claims
+  were deliberately dropped rather than shown.
