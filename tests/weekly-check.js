@@ -37,7 +37,7 @@ const tab = async (page, label, marker) => {
   await page.waitForFunction((m) => new RegExp(m, 'i').test(document.body.innerText), marker, { timeout: 10000 });
   await page.waitForTimeout(250);
 };
-const body = (page) => page.evaluate(() => document.body.innerText);
+const body = (page) => page.evaluate(() => document.body.innerText + '\n' + [...document.querySelectorAll('textarea')].map((t) => t.value).join('\n'));
 const napkinCs = (t) => { const m = t.match(/Dinner napkin[\s\S]{0,300}?(\d+)\s*cs/); return m ? +m[1] : null; };
 
 (async () => {
