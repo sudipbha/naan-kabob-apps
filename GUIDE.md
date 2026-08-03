@@ -293,7 +293,16 @@ estimate is never mistaken for a fresh count.
    an **"Order date"** line showing *tomorrow's* date — the owner texts the
    order the day before, and that's the day the rep enters it. **Send order**
    (share sheet) or **Open in Messages** → then **Mark as ordered** logs it
-   (feeds "ordered Nd ago" chips and Receive prefill).
+   (feeds "ordered Nd ago" chips and Receive prefill). The **order text is
+   editable**: tap into it to tweak wording or add a note for the rep
+   before sending. While edited, an amber "✏ edited by hand" chip and a
+   **restore app's version** button appear, and the app stops regenerating
+   the text (recounts no longer update it until restored). Send order,
+   Open in Messages, Copy and the logged order's `text` all carry the
+   edited version — but the structured `items` quantities (which feed
+   Receive prefill and "ordered" chips) still come from the app's own
+   numbers, so quantity changes belong in the Count tab's order boxes,
+   not in the text. Mark as ordered clears the edit for the next cycle.
 
 ## 7. Data, sync, storage (for technical readers)
 

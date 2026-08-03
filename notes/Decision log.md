@@ -6,6 +6,19 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-08-03 — The order message can be edited before sending
+
+The order text at the bottom of the Order tab used to be
+take-it-or-leave-it. Now it's a text box: tap into it to fix wording or
+add a note for the rep ("deliver before 11am please"). While edited, an
+amber "✏ edited by hand" chip appears with a restore button, and the app
+stops rewriting the text underneath you. Send order, Open in Messages,
+Copy and the order log all carry exactly what was typed. One thing to
+know: the quantities the app *remembers* — what Receive expects, the
+"ordered" chips — still come from the app's own numbers, so to change
+how much to order, use the "to order" box on the item's card. The text
+editing is for words, not math.
+
 ## 2026-08-02 — Mop heads join the Champion app
 
 The Champion invoice showed mop heads are ordered from Champion too
