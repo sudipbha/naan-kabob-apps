@@ -1378,16 +1378,8 @@ function CountView({ rows, counted, recounted, countMode, setCountMode, setStock
   ), /* @__PURE__ */ React.createElement("div", { className: "text-[10px] leading-snug", style: { color: recounted > 0 ? C.saffron : C.steel } }, recounted > 0 ? `${recounted} new \xB7 saved ${lastCount ? shortDate(lastCount.date) : "never"}` : lastCount ? `last saved ${shortDate(lastCount.date)}` : "no count saved yet"), /* @__PURE__ */ React.createElement(
     "button",
     {
-      onClick: resetCounts,
-      className: "ml-auto text-xs font-bold px-3 py-2 rounded-lg",
-      style: { border: `1px solid ${C.ember}`, color: C.ember }
-    },
-    "↺ Reset"
-  ), /* @__PURE__ */ React.createElement(
-    "button",
-    {
       onClick: () => setShowSync(true),
-      className: "text-xs font-bold px-3 py-2 rounded-lg",
+      className: "ml-auto text-xs font-bold px-3 py-2 rounded-lg",
       style: { border: `1px solid ${C.line}`, color: C.naan }
     },
     "\u21C4 Sync"

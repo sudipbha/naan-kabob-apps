@@ -6,6 +6,14 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-08-03 — The Reset button is tucked away
+
+The red "↺ Reset" button in the Count header — the one that wiped every
+on-hand number for a from-scratch recount — is hidden in both apps. The
+owner never uses it, and a destructive button nobody uses is just a tap
+waiting to go wrong. The machinery behind it is still in the code, so it
+can come back with one small change if a full recount is ever wanted.
+
 ## 2026-08-03 — The order message can be edited before sending
 
 The order text at the bottom of the Order tab used to be
