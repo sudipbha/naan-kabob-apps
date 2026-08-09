@@ -187,7 +187,7 @@ const ITEMS = [
   { id: "chickpeas", st: "food", name: "Chickpeas", code: "Biena Sea Salt · 5 lb bulk?", alt: "#7096388", pack: "cs", use: 0, lt: 1, ss: 1, cu: "bag", cpc: 5, cpcTBD: true, ing: "Chickpeas, expeller-pressed high oleic sunflower or safflower oil, sea salt", alg: "none declared", url: "https://roundeyesupply.com/products/biena-snacks-bulk-sea-salt-chickpeas-1-5-lb-699780" },
   { id: "lotuscookie", st: "food", name: "Lotus Biscoff cookies", code: "250 g pack · $4.99 · per-case + SUPC pending", alt: "", pack: "cs", use: 0, lt: 1, ss: 1, cu: "pack", cpc: 10, cpcTBD: true, tag: "TBC", url: "https://www.lotusbiscoff.com/en-ca/products/biscoff", ing: "Wheat flour, sugars (sugar, brown sugar syrup), vegetable oils (palm oil, soybean oil), sodium bicarbonate, soy flour, salt, cinnamon.", alg: "wheat/gluten, soy" },
   { id: "lotusspread", st: "food", name: "Lotus Biscoff spread", code: "380 g jar · $6.98 · per-case + SUPC pending", alt: "", pack: "cs", use: 0, lt: 1, ss: 1, cu: "jar", cpc: 8, cpcTBD: true, tag: "TBC", url: "https://www.lotusbiscoff.com/en-ca/producten/lotus-biscoff-spread", ing: "Caramelized cookies (wheat flour, sugars [sugar, brown sugar syrup], vegetable oils [palm oil, canola oil], sodium bicarbonate, soy flour, salt, cinnamon), canola oil, sugar, soy lecithin, citric acid.", alg: "wheat/gluten, soy", may: "milk, egg" },
-  { id: "lotuscrumbs", st: "food", name: "Lotus Biscoff crumbs", code: "SMALL case · 8 × 750 g bags — not the 7.5 kg bulk · SUPC pending", alt: "", pack: "cs", use: 0, lt: 1, ss: 1, cu: "bag", cpc: 8, tag: "TBC", ing: "Wheat flour, sugars (sugar, brown sugar syrup), vegetable oils (palm oil, canola oil), sodium bicarbonate, soy flour, salt, cinnamon. Vegan, nut-free.", alg: "wheat/gluten, soy", url: "https://www.restaurantsupplywholesale.ca/products/lotus-biscoff-crumb-topping-1-65-lb-8-case" },
+  { id: "lotuscrumbs", st: "food", name: "Lotus Biscoff crumbs", code: "Single 750 g pack — not a case, not the 7.5 kg bulk · SUPC pending", alt: "", pack: "bg", use: 0, lt: 1, ss: 1, cu: "bag", cpc: 1, tag: "TBC", ing: "Wheat flour, sugars (sugar, brown sugar syrup), vegetable oils (palm oil, canola oil), sodium bicarbonate, soy flour, salt, cinnamon. Vegan, nut-free.", alg: "wheat/gluten, soy", url: "https://www.restaurantsupplywholesale.ca/products/lotus-biscoff-crumb-topping-1-65-lb-8-case" },
   { id: "kabobfoil", st: "pkg", name: "Kabob wrap foil", code: "Foil insul-wrap 12×12 (30.5 cm)", alt: "#S61513474", pack: "cs", use: 0, lt: 1, ss: 1, ing: "Aluminum foil laminated to paper (foil-to-paper insulated sandwich/kabob wrap)", aln: "Grease, moisture and stain resistant; deadfold construction holds shape around hot wrapped kabobs/sandwiches.", url: "https://www.chickenpieces.com/sysco-classic-wrap-foil-insulated-12x12-1000-case-grease-stain-resistant/" },
   { id: "alufoil", bk: true, st: "pkg", name: "Aluminum foil", code: "Foil roll 45 cm", alt: "", pack: "cs", use: 0, lt: 1, ss: 1, ing: "Aluminum foil", aln: "100% recyclable aluminum foil roll with a built-in cutting edge", url: "https://www.chickenpieces.com/sysco-classic-standard-gauge-aluminum-foil-roll-18-x-328-ft-durable-recyclable/" },
   { id: "bigfilm", st: "pkg", name: "Big film wrap", code: "Cling w/ cutterbox · 24 in × 2000 ft", alt: "#0257790 · C-BX1472", pack: "cs", use: 0, lt: 1, ss: 1, ing: "Plastic cling film, PVC (polyvinyl chloride) - typical construction for this product type/size", aln: "Food-contact wrap film dispensed from a built-in cutter box" },
@@ -222,7 +222,7 @@ const ITEMS = [
   { id: "printer", st: "front", name: "Printer paper rolls", code: "Thermal roll 3-1/8 in", alt: "#4471223", pack: "50/cs", use: 0, lt: 1, ss: 1, cu: "roll", cpc: 50, ing: "Thermal receipt paper (heat-sensitive coating, no ink)", aln: "Not food-contact; BPA-free varies by product — check the roll’s wrapper if it matters" }
 ];
 const CAP = {
-  paneer: 2, flour: 2, salt: 2, oil: 2, fries: 2, doogh: 48, syrupblue: 4, pureecherry: 4, pureemango: 4, water: 2, apple: 2, ketchupbtl: 8, ketchuppkt: 2, sugarpkt: 1, chickpeas: 10, lotuscookie: 2, lotusspread: 2, lotuscrumbs: 8,
+  paneer: 2, flour: 2, salt: 2, oil: 2, fries: 2, doogh: 48, syrupblue: 4, pureecherry: 4, pureemango: 4, water: 2, apple: 2, ketchupbtl: 8, ketchuppkt: 2, sugarpkt: 1, chickpeas: 10, lotuscookie: 2, lotusspread: 2, lotuscrumbs: 2,
   kabobfoil: 2, alufoil: 2, bigfilm: 2, smallfilm: 2, friesbox: 8, fohbox: 4, bolanibox: 2, straws: 8, burgerbags: 8, pattypaper: 2, plates9: 4, servspoon: 2,
   vinyl: 20, poly: 2,
   grillcleaner: 4, glasscleaner: 4, quat: 4, floorfinish: 4, liquidsoap: 12, soapdisp: 2, mophead: 2, dishstone: 8, greenpads: 8, steelscrub: 2, rinseaid: 4, bleach: 12,
@@ -355,7 +355,7 @@ const baselineOf = (it, cpc) => {
   return { bwd, bwe, ppcu, daily: (bwd * 4 + bwe * 3) / 7 / ppcu };
 };
 const capOf = (it) => CAP[it.id] != null ? CAP[it.id] : Math.max(1, Math.round(it.use * 0.75));
-const REORD = { pureemango: 2, pureecherry: 2, lotuscrumbs: 2 };
+const REORD = { pureemango: 2, pureecherry: 2, lotuscrumbs: 1 };
 const STORE_KEY = "sysco-inventory-v1";
 const APP_ID = "sysco";
 const WEEKLY_OK = false; // weekly-Tuesday trial toggle is offered in this app

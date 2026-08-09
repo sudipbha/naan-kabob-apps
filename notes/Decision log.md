@@ -8,12 +8,14 @@ is the *why*, in plain language.)
 
 ## 2026-08-09 — Biscoff crumbs join Sysco (the small case)
 
-Lotus Biscoff cookie crumbs are now tracked in Sysco, counted in bags.
-Lotus sells crumbs two ways — a big 7.5 kg bulk bag and a small case of
-8 × 750 g bags — and the owner buys the SMALL case, so the card (and the
-order text the rep sees) says exactly that. Max is one case (8 bags),
-reorder at 2. Same allergens as the cookies: wheat/gluten and soy;
-vegan and nut-free per the maker. SUPC still pending from an invoice.
+Lotus Biscoff cookie crumbs are now tracked in Sysco, counted and
+ordered in single 750 g bags. Lotus sells crumbs as a 7.5 kg bulk bag,
+a case of 8 × 750 g bags, or per pack — and the owner buys ONE pack at
+a time, so the card (and the order text the rep sees) says exactly
+that: "single 750 g pack — not a case, not the 7.5 kg bulk". Max 2
+bags, reorder at 1. Same allergens as the cookies: wheat/gluten and
+soy; vegan and nut-free per the maker. SUPC still pending from an
+invoice.
 
 ## 2026-08-03 — The Reset button is tucked away
 
