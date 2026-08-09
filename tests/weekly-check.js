@@ -16,7 +16,7 @@ async function open(browser, base, app, seed, when) {
   if (when) await ctx.clock.install({ time: new Date(when) });
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
   // seed only on first load - reloads keep what the app saved
-  await ctx.addInitScript(([k, v]) => { if (!localStorage.getItem(k)) localStorage.setItem(k, v); }, [KEY[app], JSON.stringify({
+  await ctx.addInitScript(([k, v]) => { localStorage.removeItem(k + ':uipos'); if (!localStorage.getItem(k)) localStorage.setItem(k, v); }, [KEY[app], JSON.stringify({
     stocks: {}, stockAt: {}, counts: [], receipts: [], caps: {}, reord: {}, orderOv: {}, packcfg: {}, orders: [], cycle: 2, ...seed,
   })]);
   const page = await ctx.newPage();
