@@ -6,6 +6,17 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-08-10 — The spoons card was the wrong spoons
+
+The Sysco card said "Serving spoons 10 in" (a big Sabert serving
+utensil) — but what the restaurant actually buys is small white plastic
+spoons, cutlery-kit size. The card is now "Plastic spoons (small,
+white)": Sysco Classic, medium-heavy weight, 1,000 to a case. The old
+Sabert item number and product link were removed so the rep can't be
+pointed at the wrong product again; the real Sysco item number is
+marked pending until it shows on an invoice. Counts carry over — the
+item keeps its identity, only its description was wrong.
+
 ## 2026-08-10 — Typing 0 now means "skip it", not "ask the app"
 
 The owner typed 0 in the "to order" box to keep an item off the order —
