@@ -6,6 +6,15 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-08-10 — The app stays where you left it
+
+Switching tabs or minimizing the app used to throw you back to the top
+of the list — mid-walk, that meant scrolling back to find your place
+every single time. Now each tab remembers its own scroll spot, and
+leaving the app (or even a full reload when the phone restarts the
+page) brings back the same tab at the same spot. Counting can continue
+from exactly where it left off.
+
 ## 2026-08-10 — The spoons card was the wrong spoons
 
 The Sysco card said "Serving spoons 10 in" (a big Sabert serving

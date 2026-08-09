@@ -25,7 +25,7 @@
 <div id="root"><div style="color:#8A94A0;font-family:-apple-system,system-ui,sans-serif;padding:48px 24px;text-align:center;font-size:15px">Loading Naan Kabob tracker…</div></div>
 <script>window.React || (document.getElementById("root").innerHTML = '<div style="color:#8A94A0;font-family:-apple-system,system-ui,sans-serif;padding:48px 24px;text-align:center;font-size:15px">Connect to the internet once to load the app, then it works offline.</div>');</script>
 <script>
-const { useState, useEffect, useMemo, useRef } = React;
+const { useState, useEffect, useLayoutEffect, useMemo, useRef } = React;
 const _ic = (size, p, children) => React.createElement("svg", Object.assign({ width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round" }, p), children);
 const Plus = ({ size = 24, ...p }) => /* @__PURE__ */ React.createElement("svg", { width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", ...p }, /* @__PURE__ */ React.createElement("line", { x1: "5", y1: "12", x2: "19", y2: "12" }), /* @__PURE__ */ React.createElement("line", { x1: "12", y1: "5", x2: "12", y2: "19" }));
 const Minus = ({ size = 24, ...p }) => /* @__PURE__ */ React.createElement("svg", { width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", ...p }, /* @__PURE__ */ React.createElement("line", { x1: "5", y1: "12", x2: "19", y2: "12" }));
@@ -409,10 +409,44 @@ function ChampionTracker() {
   const [emTouched, setEmTouched] = useState({});
   const [importText, setImportText] = useState("");
   const [view, setView] = useState("count");
+  const scrollPosRef = useRef({});
+  const switchView = (v) => {
+    scrollPosRef.current[view] = window.scrollY;
+    setView(v);
+  };
+  useLayoutEffect(() => {
+    window.scrollTo(0, scrollPosRef.current[view] || 0);
+  }, [view]);
   const [countMode, setCountMode] = useState("walk");
   const [recv, setRecv] = useState({});
   const [recvNote, setRecvNote] = useState("");
   const [loaded, setLoaded] = useState(false);
+  useEffect(() => {
+    if (!loaded) return;
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORE_KEY + ":uipos") || "null");
+      if (saved && saved.view) {
+        scrollPosRef.current = saved.pos || {};
+        setView(saved.view);
+        const y = (saved.pos || {})[saved.view] || 0;
+        requestAnimationFrame(() => requestAnimationFrame(() => window.scrollTo(0, y)));
+      }
+    } catch (e) {}
+  }, [loaded]);
+  useEffect(() => {
+    if (!loaded) return;
+    const save = () => {
+      const pos = { ...scrollPosRef.current, [view]: window.scrollY };
+      try { localStorage.setItem(STORE_KEY + ":uipos", JSON.stringify({ view, pos })); } catch (e) {}
+    };
+    const onVis = () => { if (document.visibilityState === "hidden") save(); };
+    document.addEventListener("visibilitychange", onVis);
+    window.addEventListener("pagehide", save);
+    return () => {
+      document.removeEventListener("visibilitychange", onVis);
+      window.removeEventListener("pagehide", save);
+    };
+  }, [view, loaded]);
   const [copied, setCopied] = useState(false);
   const [toast, setToast] = useState("");
   const [undoSnap, setUndoSnap] = useState(null);
@@ -1289,7 +1323,7 @@ ${lines.join("\n")}`;
   ), /* @__PURE__ */ React.createElement("div", { className: "fixed bottom-0 left-0 right-0 z-40 flex", style: { background: C.ink, borderTop: `1px solid ${C.line}`, paddingBottom: "env(safe-area-inset-bottom)" } }, TABS.map(({ id, label, Icon }) => {
     const active = view === id;
     const badge = id === "order" ? orderRows.length : id === "variance" && variance ? variance.summary.over : 0;
-    return /* @__PURE__ */ React.createElement("button", { key: id, onClick: () => setView(id), className: "flex-1 py-2.5 flex flex-col items-center gap-0.5 relative" }, /* @__PURE__ */ React.createElement(Icon, { size: 20, color: active ? C.saffron : C.steel }), /* @__PURE__ */ React.createElement("span", { className: "text-[10px] font-bold", style: { color: active ? C.saffron : C.steel } }, label), badge > 0 && /* @__PURE__ */ React.createElement(
+    return /* @__PURE__ */ React.createElement("button", { key: id, onClick: () => switchView(id), className: "flex-1 py-2.5 flex flex-col items-center gap-0.5 relative" }, /* @__PURE__ */ React.createElement(Icon, { size: 20, color: active ? C.saffron : C.steel }), /* @__PURE__ */ React.createElement("span", { className: "text-[10px] font-bold", style: { color: active ? C.saffron : C.steel } }, label), badge > 0 && /* @__PURE__ */ React.createElement(
       "span",
       {
         className: "absolute top-1 right-1/2 translate-x-4 text-[9px] font-black px-1.5 rounded-full",
