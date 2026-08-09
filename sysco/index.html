@@ -620,15 +620,6 @@ function ChampionTracker() {
       clearInterval(iv);
     };
   }, [loaded]);
-  const clearOrderOv = (id) => {
-    if (orderOv[id] != null) flash("Order qty reset to auto (was " + orderOv[id] + ")");
-    setOrderOv((o) => {
-      if (o[id] == null) return o;
-      const n = { ...o };
-      delete n[id];
-      return n;
-    });
-  };
   const setStock = (id, v) => {
     if (v === null || v === "") {
       setStocks((s) => {
@@ -648,7 +639,6 @@ function ChampionTracker() {
       setStocks((s) => ({ ...s, [id]: Math.max(0, round1(num)) }));
       setStockAt((m) => ({ ...m, [id]: (/* @__PURE__ */ new Date()).toISOString() }));
     }
-    clearOrderOv(id);
   };
   const setCap = (id, v) => {
     const num = parseNum(v);
@@ -662,7 +652,6 @@ function ChampionTracker() {
     } else {
       setCaps((c) => ({ ...c, [id]: Math.max(0.1, round1(num)) }));
     }
-    clearOrderOv(id);
   };
   const setReorder = (id, v) => {
     const num = parseNum(v);

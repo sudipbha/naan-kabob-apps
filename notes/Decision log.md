@@ -6,6 +6,18 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-08-09 — Your order number is yours now
+
+The custom number typed into the "to order" box kept getting wiped: any
+recount, ± tap, or Max change silently reset it to the app's suggestion.
+That was an old deliberate rule ("a fresh count should recompute the
+order"), but in practice it fought the owner — set a number, touch the
+count, number gone, again and again. The rule is removed in both apps:
+a manual order number now stays until the owner types 0 to clear it.
+The amber "manual · 0=auto" label and the Order tab's "your number, not
+the app's" note still make it obvious when the app's math is being
+overridden.
+
 ## 2026-08-09 — Biscoff crumbs join Sysco (the small case)
 
 Lotus Biscoff cookie crumbs are now tracked in Sysco, counted and
