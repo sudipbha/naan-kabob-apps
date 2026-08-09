@@ -311,6 +311,12 @@ estimate is never mistaken for a fresh count.
    numbers, so quantity changes belong in the Count tab's order boxes,
    not in the text. Mark as ordered clears the edit for the next cycle.
 
+The app **remembers where you were**: each tab keeps its own scroll
+position while you switch between tabs, and leaving the app — or even a
+full reload — brings you back to the same tab at the same spot in the
+list (saved per app, per device; position is stored on tab switches and
+whenever the app goes to the background).
+
 ## 7. Data, sync, storage (for technical readers)
 
 - State lives in `localStorage` under `sysco-inventory-v1` /
