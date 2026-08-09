@@ -6,6 +6,19 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-08-10 — Typing 0 now means "skip it", not "ask the app"
+
+The owner typed 0 in the "to order" box to keep an item off the order —
+but 0 had always meant "back to automatic", so in weekly mode the app
+immediately put the item right back on the list with its own number.
+That rule dated from the days when the fear was silently muted items;
+weekly mode made it backfire. New rule in both apps: **typing 0 means
+order zero** — the item drops off the order and the box shows an amber
+"skipped" label so it's never silent. **Emptying the box** is now the
+way back to automatic. And when an order is marked as ordered, all
+manual numbers (including skips) clear, so each cycle starts fresh from
+the app's math.
+
 ## 2026-08-09 — Your order number is yours now
 
 The custom number typed into the "to order" box kept getting wiped: any
