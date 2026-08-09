@@ -263,8 +263,11 @@ estimate is never mistaken for a fresh count.
    under the box shows what the supplier will actually be asked for (orders
    round up to whole cases). Typing a number there is a manual override that
    beats the suggestion; typing **0 clears the override back to automatic**
-   (there is no way to silently mute an item). Re-counting the item also
-   clears any override.
+   (there is no way to silently mute an item). **The override is sticky**:
+   re-counting the item, tapping ±, or changing Max does NOT clear it —
+   only typing 0 does. The amber "manual · 0=auto" label on the box and
+   the Order row's "your number, not the app's" line keep the override
+   visible while it's active.
 2. **Receive** — when a truck arrives, enter what actually came, per item, in
    counting units ("receive in sleeves"). An "expected N · date" chip prefills
    from the last logged order, and an **"Everything arrived as ordered"**
