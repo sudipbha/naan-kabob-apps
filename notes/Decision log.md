@@ -6,6 +6,27 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-08-12 — The real reason two items didn't receive
+
+First guess was wrong: the owner showed the sent order and both the
+hand towel and toilet paper were plainly on it. Driving the whole cycle
+in a browser — build order, mark as ordered, receive with the green
+button — showed every item landing correctly, so the engine was fine.
+
+The gap was between *sending* and *logging*. Tapping "Open in Messages"
+hands the phone to Messages; iOS often discards the web page while
+you're away, and the "Sent it? → Mark as ordered" prompt lived only in
+memory. Come back, prompt gone, order never logged. Receive then
+prefilled from the *previous* order — which shared most items but not
+those two, so most of the delivery looked right and two items silently
+didn't.
+
+Two fixes: the "Sent it?" prompt is now saved on the phone, so it is
+still waiting when you come back from Messages; and if an order was
+sent but never logged, the Receive tab says so in amber instead of
+quietly using the older order. The green button also names the order it
+is filling from, so a stale one is visible at a glance.
+
 ## 2026-08-12 — "Everything arrived" only ever meant "everything ordered"
 
 A Champion delivery came in, the owner tapped the green button on
