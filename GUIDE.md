@@ -303,7 +303,14 @@ estimate is never mistaken for a fresh count.
    an **"Order date"** line showing *tomorrow's* date — the owner texts the
    order the day before, and that's the day the rep enters it. **Send order**
    (share sheet) or **Open in Messages** → then **Mark as ordered** logs it
-   (feeds "ordered Nd ago" chips and Receive prefill). The **order text is
+   (feeds "ordered Nd ago" chips and Receive prefill). **Sending is not
+   logging**: only Mark as ordered writes the order, and the "Sent it?"
+   prompt now **survives the app being backgrounded or reloaded**
+   (stored under `STORE_KEY:sent`, cleared when the order is logged) —
+   sharing to Messages used to lose it, leaving the order unlogged. If
+   an order was sent but never logged, the Receive tab shows an amber
+   warning saying so, because its prefill would otherwise silently come
+   from the previous order. The **order text is
    editable**: tap into it to tweak wording or add a note for the rep
    before sending. While edited, an amber "✏ edited by hand" chip and a
    **restore app's version** button appear, and the app stops regenerating
