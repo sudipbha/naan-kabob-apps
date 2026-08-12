@@ -274,8 +274,11 @@ estimate is never mistaken for a fresh count.
    marks nonzero overrides while active.
 2. **Receive** — when a truck arrives, enter what actually came, per item, in
    counting units ("receive in sleeves"). An "expected N · date" chip prefills
-   from the last logged order, and an **"Everything arrived as ordered"**
-   button fills every expected row in one tap (edit the exceptions, then log),
+   from the last logged order, and a **"Fill in the N items from ‹date›'s
+   order"** button fills every expected row in one tap (edit the
+   exceptions, then log). **It only fills what was on that order** — a
+   line under the button says so, because anything the truck brings that
+   the app never ordered stays blank until it is typed in by hand,
    while a **"Truck check: N of M expected items entered"** line in the header
    tracks progress against the logged order.
    Receiving an item that has never been counted **sets** its on-hand number

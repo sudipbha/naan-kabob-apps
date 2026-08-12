@@ -6,6 +6,21 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-08-12 — "Everything arrived" only ever meant "everything ordered"
+
+A Champion delivery came in, the owner tapped the green button on
+Receive, and the toilet paper and hand towel didn't move. The engine
+turned out to be fine — a test that receives a delivery containing both
+items adds them correctly. The catch was the button's promise: it fills
+**only the items on the last logged order**, and those two weren't on
+it, so they stayed blank with nothing to explain why.
+
+The button now says what it actually does — "Fill in the N items from
+‹date›'s order" — with a line underneath: "Only fills what was on that
+order — anything else the truck brought, type it in below". Same words
+in both apps. The lesson for future changes: a one-tap shortcut has to
+name its own limits, or it reads as a promise it never made.
+
 ## 2026-08-10 — The app stays where you left it
 
 Switching tabs or minimizing the app used to throw you back to the top
