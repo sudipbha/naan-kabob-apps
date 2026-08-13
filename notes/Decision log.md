@@ -6,6 +6,25 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-08-13 — The order text is always live; notes get their own box
+
+The freeze-on-edit design (and yesterday's red warning that patched over
+its worst symptom) is gone. The owner called it: ordering is back and
+forth — change a count, tweak a number, change it again — and a text
+that stops updating the moment you touch it fights that. "I should be
+able to change it whenever I want."
+
+New shape, both apps: the order text is **read-only and always matches
+the order** — every recount and every "to order" change shows up in it
+instantly, right up to the moment it's sent. The reason people edited
+the text — adding a line for the rep — has its own **"Note for the
+rep"** box underneath: whatever is typed there is added to the end of
+the message and *stays*, through every change and even closing the app,
+until Mark as ordered clears it for the next cycle. So nothing can go
+stale and nothing can be lost. As a bonus, each order line now carries
+the item's alternate/SUPC number automatically when the app knows it,
+so the rep gets both numbers without anyone typing them.
+
 ## 2026-08-13 — An edited order can't quietly drop items any more
 
 Editing the order text freezes it, by design — the app stops rewriting

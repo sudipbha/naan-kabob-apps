@@ -311,18 +311,22 @@ estimate is never mistaken for a fresh count.
    an order was sent but never logged, the Receive tab shows an amber
    warning saying so, because its prefill would otherwise silently come
    from the previous order. The **order text is
-   editable**: tap into it to tweak wording or add a note for the rep
-   before sending. While edited, an amber "✏ edited by hand" chip and a
-   **restore app's version** button appear, and the app stops regenerating
-   the text (recounts no longer update it until restored). Because it is
-   frozen, an order that grows afterwards would silently ship short — so
-   if any current order row's name is absent from the edited text, a red
-   warning names the missing items and points at restore. Send order,
-   Open in Messages, Copy and the logged order's `text` all carry the
-   edited version — but the structured `items` quantities (which feed
-   Receive prefill and "ordered" chips) still come from the app's own
-   numbers, so quantity changes belong in the Count tab's order boxes,
-   not in the text. Mark as ordered clears the edit for the next cycle.
+   read-only and always live**: it is regenerated from the current order
+   on every change, so recounts, "to order" edits and Max changes show up
+   in the text immediately, however much back-and-forth happens before
+   sending. Each line carries the item's order code plus the
+   alternate/SUPC number when one is known ("Name (CODE · ALT) — N cs").
+   Free text goes in the separate **"Note for the rep"** box under the
+   text: whatever is typed there is appended to the end of the message as
+   "Note for the rep: …" and **persists per device** (stored under
+   `STORE_KEY:note`) across recounts, quantity changes, tab switches and
+   app reloads — until **Mark as ordered** clears it for the next cycle.
+   Send order, Open in Messages, Copy and the logged order's `text` all
+   carry the item lines plus the note; the structured `items` quantities
+   (which feed Receive prefill and "ordered" chips) come from the app's
+   own numbers as always. (This replaces the earlier freeze-on-edit
+   design: a frozen edited text could go stale and silently drop items —
+   live lines plus a separate note cannot.)
 
 The app **remembers where you were**: each tab keeps its own scroll
 position while you switch between tabs, and leaving the app — or even a
