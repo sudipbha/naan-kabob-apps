@@ -6,6 +6,20 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-08-13 — An edited order can't quietly drop items any more
+
+Editing the order text freezes it, by design — the app stops rewriting
+what you typed. But the owner edited the text first and set custom
+order numbers afterwards, so three items (fries, water, apple slices)
+showed in the order list at the top yet were missing from the text that
+would actually be sent. Four cases of fries would have gone unordered.
+
+Both apps now compare the edited text against the live order list: if
+an item on the order isn't in the text, a red line names it and says
+the order changed after the edit, with "restore app's version" to
+rebuild. The freeze still holds — nothing is rewritten behind your back
+— but it can no longer hide a missing item.
+
 ## 2026-08-12 — The real reason two items didn't receive
 
 First guess was wrong: the owner showed the sent order and both the

@@ -314,7 +314,10 @@ estimate is never mistaken for a fresh count.
    editable**: tap into it to tweak wording or add a note for the rep
    before sending. While edited, an amber "✏ edited by hand" chip and a
    **restore app's version** button appear, and the app stops regenerating
-   the text (recounts no longer update it until restored). Send order,
+   the text (recounts no longer update it until restored). Because it is
+   frozen, an order that grows afterwards would silently ship short — so
+   if any current order row's name is absent from the edited text, a red
+   warning names the missing items and points at restore. Send order,
    Open in Messages, Copy and the logged order's `text` all carry the
    edited version — but the structured `items` quantities (which feed
    Receive prefill and "ordered" chips) still come from the app's own
