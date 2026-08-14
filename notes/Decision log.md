@@ -6,6 +6,20 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-08-14 — Ketchup packets: the real case is 1000, not 504
+
+A photo of the case on the shelf settled it: the ketchup packets are
+Heinz single-serve, **1000 × 8 mL to a case** (8 L total, Heinz code
+00331) — not the "504/8 mL" the card claimed. The card, its product
+link (now the official Heinz Canada foodservice page for this exact
+case) and the order text are updated to match. The old Sysco item
+number was removed the way the spoons number was: it may belong to the
+smaller case, and a number that might point the rep at the wrong
+product is worse than none. The real SUPC gets baked in when it shows
+on an invoice — until then the card says "SUPC pending" and the order
+line carries the Heinz code. Counts are in cases either way, so
+nothing else changes: Max 2, same recipe, same allergen all-clear.
+
 ## 2026-08-13 — The order text is always live; notes get their own box
 
 The freeze-on-edit design (and yesterday's red warning that patched over
