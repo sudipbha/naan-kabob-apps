@@ -9,9 +9,9 @@ Live: [Sysco](https://sudipbha.github.io/naan-kabob-apps/sysco/) · [Champion](h
 
 > The repo also hosts **[Earmark](https://sudipbha.github.io/naan-kabob-apps/earmark/)**
 > — a personal newsletter read-aloud app in `earmark/` — and **[The Ledger](https://sudipbha.github.io/naan-kabob-apps/ledger/)**,
-> a free-to-read finance reader in `ledger/` that loads public RSS feeds on
-> the phone. Both are separate from the inventory system and not covered by
-> this guide.
+> a free-to-read finance reader in `ledger/` that loads public RSS feeds and,
+> where the piece is free, the full article with the publisher named. Both
+> are separate from the inventory system and not covered by this guide.
 
 Two single-file React apps, one per supplier. Same engine, different item lists.
 **Sysco** delivers dry goods & chemicals; **Champion** delivers packaging.

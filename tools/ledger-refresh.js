@@ -92,12 +92,132 @@ function parseXml(xml, feed) {
       date: ts,
       url,
       section: classify(title, feed),
-      html: htmlSrc.slice(0, 12000),
-      full: strip(rawFull).length > 500,
+      html: htmlSrc.slice(0, 40000),
+      full: strip(rawFull).length > 700,
       sample: false,
       feedId: feed.id
     });
   }
+  return out;
+}
+
+const ALLOW = [
+  'bbc.co.uk', 'bbc.com', 'npr.org', 'cnbc.com',
+  'federalreserve.gov', 'stlouisfed.org', 'ecb.europa.eu',
+  'bankofengland.co.uk', 'bis.org', 'sec.gov',
+  'theconversation.com', 'calculatedriskblog.com', 'marginalrevolution.com',
+  'noahpinion.blog', 'apricitas.io', 'substack.com',
+  'awealthofcommonsense.com', 'ritholtz.com'
+];
+const BLOCK = [
+  'ft.com', 'wsj.com', 'bloomberg.com', 'economist.com',
+  'nytimes.com', 'washingtonpost.com', 'theathletic.com'
+];
+
+function hostOf(url) {
+  try { return new URL(url).hostname.replace(/^www\./, '').toLowerCase(); }
+  catch (e) { return ''; }
+}
+function hostOk(url) {
+  const h = hostOf(url);
+  if (!h) return false;
+  if (BLOCK.some((d) => h === d || h.endsWith('.' + d))) return false;
+  return ALLOW.some((d) => h === d || h.endsWith('.' + d));
+}
+function looksPaywalled(text) {
+  const t = String(text || '').toLowerCase();
+  return /subscribe to (continue|read|unlock)|already a subscriber|for subscribers only|create (a free )?account to (continue|read)|this article is for subscribers|metered[_ -]?paywall|piano-paywall|paywall-container|become a subscriber/.test(t);
+}
+function escapeHtml(s) {
+  return String(s || '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+function jinaToHtml(text) {
+  let body = String(text || '').replace(/^[\s\S]*?Markdown Content:\s*/i, '');
+  body = body.replace(/!\[[^\]]*\]\([^)]+\)/g, '');
+  body = body.split(/\n(?:More top stories|Related topics|Share this|Read more from|Sign up for|Subscribe to our)\b/i)[0];
+  const chunks = body.split(/\n{2,}/).map((p) => p.replace(/\n/g, ' ').trim()).filter(Boolean);
+  const out = [];
+  for (const raw of chunks) {
+    let p = raw.replace(/\*\*([^*]+)\*\*/g, '$1').replace(/^[-*]\s+/, '');
+    if (/^#{1,3}\s/.test(p)) {
+      out.push('<h2>' + escapeHtml(p.replace(/^#+\s+/, '')) + '</h2>');
+      continue;
+    }
+    if (/^>/.test(p)) {
+      out.push('<blockquote>' + escapeHtml(p.replace(/^>\s*/, '')) + '</blockquote>');
+      continue;
+    }
+    if (p.length < 40 && out.length) continue;
+    if (p.length < 25) continue;
+    out.push('<p>' + escapeHtml(p) + '</p>');
+  }
+  return out.join('');
+}
+async function fetchText(url, ms) {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), ms || 12000);
+  try {
+    const res = await fetch(url, {
+      signal: ctrl.signal,
+      headers: { 'user-agent': 'TheLedger/1.0 (public RSS reader; +https://sudipbha.github.io/naan-kabob-apps/ledger/)' }
+    });
+    if (!res.ok) throw new Error('http ' + res.status);
+    return await res.text();
+  } finally {
+    clearTimeout(t);
+  }
+}
+function sleep(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
+async function expandItem(it) {
+  if (it.full || strip(it.html).length > 700) {
+    it.full = strip(it.html).length > 700;
+    return it;
+  }
+  if (!hostOk(it.url)) return it;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const raw = await fetchText('https://r.jina.ai/' + it.url, 14000);
+      if (looksPaywalled(raw)) {
+        console.log('PAYWALL  ' + hostOf(it.url) + '  ' + it.title.slice(0, 50));
+        return it;
+      }
+      const html = jinaToHtml(raw);
+      const n = strip(html).length;
+      if (n > 700) {
+        it.html = html.slice(0, 40000);
+        it.full = true;
+        if (!it.standfirst) it.standfirst = strip(html).slice(0, 280);
+        console.log('FULL ' + n + '  ' + it.source + '  ' + it.title.slice(0, 40));
+      }
+      return it;
+    } catch (e) {
+      const msg = String(e.message || e);
+      if (/429/.test(msg) && attempt < 2) {
+        await sleep(3000 * (attempt + 1));
+        continue;
+      }
+      console.log('SKIP  ' + it.source + '  ' + msg);
+      return it;
+    }
+  }
+  return it;
+}
+async function mapLimit(list, n, fn) {
+  const out = new Array(list.length);
+  let i = 0, active = 0;
+  await new Promise((resolve) => {
+    const kick = () => {
+      if (i >= list.length && active === 0) { resolve(); return; }
+      while (active < n && i < list.length) {
+        const idx = i++;
+        active++;
+        Promise.resolve(fn(list[idx])).then((v) => { out[idx] = v; }, () => { out[idx] = list[idx]; })
+          .then(() => { active--; kick(); });
+      }
+    };
+    kick();
+  });
   return out;
 }
 
@@ -132,10 +252,20 @@ async function grab(feed) {
       if (!prev || prev.date < it.date) map.set(key, it);
     }
   }
-  const items = [...map.values()].sort((a, b) => b.date - a.date).slice(0, 80);
+  let items = [...map.values()].sort((a, b) => b.date - a.date).slice(0, 80);
+  const need = items.filter((it) => !it.full && strip(it.html).length <= 700 && hostOk(it.url)).length;
+  console.log('expanding ' + need + ' teaser stories into full free text…');
+  items = await mapLimit(items, 2, expandItem);
+  const leftover = items.filter((it) => !it.full && hostOk(it.url) && strip(it.html).length <= 700);
+  if (leftover.length) {
+    console.log('second pass for ' + leftover.length + ' remaining teasers…');
+    await sleep(4000);
+    await mapLimit(leftover, 1, expandItem);
+  }
+  const full = items.filter((it) => it.full).length;
   const out = { updated: Date.now(), items };
   const dest = path.join(__dirname, '..', 'ledger', 'headlines.json');
   fs.writeFileSync(dest, JSON.stringify(out));
-  console.log('wrote ' + items.length + ' stories -> ' + dest);
+  console.log('wrote ' + items.length + ' stories (' + full + ' full) -> ' + dest);
   if (!items.length) process.exit(1);
 })();
