@@ -6,6 +6,14 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-08-17 — Full free articles, always with the source named
+
+If a story is free to read, The Ledger now pulls the whole piece — not
+just the two-line RSS teaser — and still names the publisher at the top
+with a link back to the original. Anything that looks gated (a subscribe
+wall, a login) is left as a summary plus “Read the original”. The FT,
+WSJ, Bloomberg and The Economist are never fetched.
+
 ## 2026-08-17 — The Ledger now loads real stories, not just samples
 
 The first version looked right but stayed on the bundled sample briefings.
