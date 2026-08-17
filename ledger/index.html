@@ -1,0 +1,1480 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FFF1E5">
+<meta name="color-scheme" content="light dark">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="The Ledger">
+<meta name="description" content="The Ledger — a free-to-read finance reader.">
+<title>The Ledger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,800;1,500&family=Source+Sans+3:wght@400;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FFF1E5; --paper:#FFF8F2; --ink:#0A0A0A; --mut:#6B635B; --faint:#9A9086;
+    --line:#D4C4B5; --rule:#0A0A0A; --claret:#990F3D; --claret-soft:#F6D9E2;
+    --lead:#1A120C; --shadow:0 1px 0 rgba(10,10,10,.06);
+    --display:'Playfair Display',Georgia,'Times New Roman',serif;
+    --serif:'Source Serif 4',Georgia,'Iowan Old Style','Palatino Linotype',serif;
+    --sans:'Source Sans 3',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    --pad:18px; --max:720px; --text:1.125rem;
+  }
+  html.dark{
+    --bg:#161310; --paper:#1F1A16; --ink:#F4EBE3; --mut:#B4A89C; --faint:#7E746A;
+    --line:#3A332C; --rule:#F4EBE3; --claret:#E8A598; --claret-soft:#3A2428;
+    --lead:#F7F0E8; --shadow:0 1px 0 rgba(255,255,255,.04);
+    color-scheme:dark;
+  }
+  html[data-size="sm"]{ --text:1.02rem }
+  html[data-size="lg"]{ --text:1.28rem }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{ -webkit-text-size-adjust:100%; text-size-adjust:100% }
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink); font-family:var(--serif);
+    font-size:var(--text); line-height:1.62;
+    min-height:100dvh;
+    padding:env(safe-area-inset-top) 0 calc(88px + env(safe-area-inset-bottom));
+    overflow-x:hidden;
+  }
+  button,input,select,textarea{font:inherit;color:inherit}
+  button{border:0;background:none;cursor:pointer;padding:0}
+  img{max-width:100%;height:auto}
+  a{color:var(--claret)}
+  [hidden]{display:none!important}
+
+  .wrap{max-width:var(--max);margin:0 auto;padding:0 var(--pad)}
+
+  .mast{
+    padding:10px var(--pad) 0;
+    padding-top:max(10px, env(safe-area-inset-top));
+    border-bottom:1px solid var(--rule);
+    background:var(--bg);
+    position:sticky;top:0;z-index:20;
+  }
+  .mast-row{display:flex;align-items:center;gap:10px;min-height:48px}
+  .wordmark{font-family:var(--display);font-weight:800;font-size:28px;letter-spacing:-.03em;line-height:1}
+  .wordmark em{font-style:italic;font-weight:500}
+  .mast-date{margin-left:auto;font-family:var(--sans);font-size:12px;color:var(--mut);letter-spacing:.04em;text-transform:uppercase}
+  .iconB{
+    width:44px;height:44px;border-radius:50%;flex:none;
+    display:flex;align-items:center;justify-content:center;
+    color:var(--ink);
+  }
+  .iconB:active{background:var(--claret-soft)}
+  .rule-thick{height:3px;background:var(--rule);margin-top:8px}
+
+  .tabs{
+    display:flex;gap:4px;overflow-x:auto;-webkit-overflow-scrolling:touch;
+    scrollbar-width:none;padding:10px 0 8px;
+  }
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{
+    flex:none;min-height:36px;padding:8px 12px;font-family:var(--sans);
+    font-size:12.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--mut);border-bottom:2px solid transparent;
+  }
+  .tab.on{color:var(--ink);border-bottom-color:var(--claret)}
+
+  .search-row{padding:0 0 10px}
+  #q{
+    width:100%;border:1px solid var(--line);background:var(--paper);color:var(--ink);
+    border-radius:0;padding:11px 12px;min-height:44px;outline:none;font-family:var(--sans);font-size:15px;
+  }
+
+  .status{
+    font-family:var(--sans);font-size:12.5px;color:var(--mut);padding:10px 0 0;
+  }
+  .banner{
+    font-family:var(--sans);font-size:13px;background:var(--claret-soft);color:var(--ink);
+    padding:10px 12px;margin:12px 0 0;border-left:3px solid var(--claret);
+  }
+
+  .lead{padding:18px 0 8px;border-bottom:1px solid var(--line)}
+  .kicker{font-family:var(--sans);font-size:11.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--claret);margin:0 0 6px}
+  .hl{font-family:var(--display);font-weight:700;letter-spacing:-.02em;line-height:1.12;margin:0 0 8px;color:var(--lead)}
+  .lead .hl, .story.lead .hl{font-size:clamp(28px,7vw,40px)}
+  .stand{font-size:1.05em;line-height:1.45;color:var(--ink);margin:0 0 10px}
+  .meta{font-family:var(--sans);font-size:12.5px;color:var(--mut)}
+  .badge{display:inline-block;border:1px solid var(--line);padding:1px 6px;margin-right:6px;font-size:11px;letter-spacing:.04em;text-transform:uppercase}
+
+  .story{
+    display:block;width:100%;text-align:left;padding:16px 0;
+    border-bottom:1px solid var(--line);color:inherit;
+  }
+  .story:active{opacity:.72}
+  .story.read .hl{color:var(--mut)}
+  .story .hl{font-size:22px}
+  .tap{min-height:44px}
+
+  .rail{margin:22px 0 8px;border-top:3px solid var(--rule);padding-top:12px}
+  .rail h2{font-family:var(--sans);font-size:12px;letter-spacing:.14em;text-transform:uppercase;margin:0 0 10px}
+  .rail-item{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;padding:10px 0;border-bottom:1px solid var(--line);min-height:44px}
+  .rail-n{font-family:var(--display);font-size:22px;color:var(--faint);width:28px;flex:none;line-height:1}
+  .rail-item .hl{font-size:16px;margin:0}
+
+  .empty{font-family:var(--sans);color:var(--mut);padding:36px 8px;text-align:center}
+
+  .progress{
+    position:fixed;left:0;right:0;top:0;height:3px;z-index:40;background:transparent;pointer-events:none;
+  }
+  .progress i{display:block;height:100%;width:0;background:var(--claret)}
+
+  .art-top{
+    display:flex;align-items:center;gap:6px;padding:8px 0 4px;
+    position:sticky;top:0;background:linear-gradient(var(--bg) 70%,transparent);z-index:15;
+  }
+  article.post{padding:6px 0 40px}
+  article.post .hl{font-size:clamp(30px,8vw,44px);margin:4px 0 10px}
+  article.post .stand{font-size:1.12em;border-top:1px solid var(--line);padding-top:12px}
+  .byline{font-family:var(--sans);font-size:13px;color:var(--mut);margin:8px 0 22px}
+  .body{font-size:1.02em;line-height:1.72}
+  .body p{margin:0 0 1.15em}
+  .body > p:first-of-type::first-letter{
+    float:left;font-family:var(--display);font-weight:700;font-size:4.6rem;line-height:.78;
+    padding:10px 10px 0 0;color:var(--ink);
+  }
+  .body blockquote{
+    margin:1.4em 0;padding:0 0 0 16px;border-left:3px solid var(--claret);
+    font-family:var(--display);font-size:1.25em;line-height:1.35;color:var(--lead);
+  }
+  .body h2,.body h3{font-family:var(--display);line-height:1.2;margin:1.4em 0 .5em}
+  .src-note{
+    font-family:var(--sans);font-size:14px;background:var(--paper);border:1px solid var(--line);
+    padding:14px 16px;margin:8px 0 22px;
+  }
+  .src-note a.btn-src{
+    display:inline-flex;align-items:center;justify-content:center;min-height:44px;
+    margin-top:8px;padding:0 16px;background:var(--ink);color:var(--bg);text-decoration:none;
+    font-weight:700;letter-spacing:.04em;text-transform:uppercase;font-size:13px;
+  }
+  .acts{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 18px}
+  .act{
+    min-height:44px;padding:0 14px;border:1px solid var(--line);background:var(--paper);
+    font-family:var(--sans);font-size:13.5px;font-weight:600;
+  }
+  .act:active{background:var(--claret-soft)}
+  .act.on{border-color:var(--claret);color:var(--claret)}
+
+  #player{
+    position:fixed;left:0;right:0;bottom:0;z-index:30;
+    padding:0 var(--pad) calc(10px + env(safe-area-inset-bottom));
+    pointer-events:none;
+  }
+  .pInner{
+    pointer-events:auto;max-width:var(--max);margin:0 auto;
+    background:var(--paper);border:1px solid var(--line);border-bottom:0;
+    padding:10px 14px 12px;box-shadow:0 -8px 24px rgba(10,10,10,.08);
+  }
+  #npTitle{font-family:var(--sans);font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #npTime{font-family:var(--sans);font-size:12px;color:var(--mut);font-variant-numeric:tabular-nums}
+  .prow{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:6px}
+  #pbar{height:22px;display:flex;align-items:center;cursor:pointer}
+  #ptrack{height:3px;background:var(--line);flex:1;position:relative}
+  #pfill{height:100%;width:0;background:var(--claret)}
+  .ctr{display:flex;align-items:center;justify-content:space-between;margin-top:4px}
+  .chip{min-width:48px;min-height:44px;border:1px solid var(--line);padding:0 10px;font-family:var(--sans);font-weight:700;font-size:13px}
+  .iconP{width:44px;height:44px;display:flex;align-items:center;justify-content:center}
+  .playBig{width:56px;height:56px;border-radius:50%;background:var(--ink);color:var(--bg);display:flex;align-items:center;justify-content:center}
+
+  #sheetWrap{position:fixed;inset:0;z-index:50}
+  #backdrop{position:absolute;inset:0;background:rgba(20,14,8,.4)}
+  #sheet{
+    position:absolute;left:0;right:0;bottom:0;max-width:var(--max);margin:0 auto;
+    background:var(--paper);max-height:86dvh;overflow:auto;-webkit-overflow-scrolling:touch;
+    padding:18px 18px calc(22px + env(safe-area-inset-bottom));
+  }
+  #sheet h3{font-family:var(--display);font-size:24px;margin:4px 0 14px}
+  .fRow{margin-bottom:16px}
+  .fLab{font-family:var(--sans);font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-bottom:7px}
+  select, input[type=password], input[type=text]{
+    width:100%;min-height:44px;border:1px solid var(--line);background:var(--bg);
+    padding:10px 12px;outline:none;font-family:var(--sans);font-size:15px;
+  }
+  .hint{font-family:var(--sans);font-size:12.5px;color:var(--mut);line-height:1.5;margin:7px 0 0}
+  .swRow{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px}
+  .sw{position:relative;width:46px;height:28px;border-radius:99px;background:var(--line);flex:none}
+  .sw::after{content:'';position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:left .15s}
+  .sw.on{background:var(--claret)}
+  .sw.on::after{left:21px}
+  .feed{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-family:var(--sans);font-size:14.5px}
+  .ghost{min-height:44px;padding:0 14px;border:1px solid var(--line);font-family:var(--sans);font-size:14px}
+
+  #toast{
+    position:fixed;left:50%;transform:translateX(-50%);
+    bottom:calc(150px + env(safe-area-inset-bottom));z-index:60;
+    background:var(--ink);color:var(--bg);font-family:var(--sans);font-size:13.5px;
+    padding:10px 16px;max-width:86vw;text-align:center;opacity:0;transition:opacity .2s;pointer-events:none;
+  }
+  #toast.show{opacity:1}
+
+  .ptr{height:0;overflow:hidden;text-align:center;font-family:var(--sans);font-size:12px;color:var(--mut)}
+</style>
+</head>
+<body>
+<div class="progress" id="prog"><i></i></div>
+
+<header class="mast">
+  <div class="mast-row">
+    <div class="wordmark">The <em>Ledger</em></div>
+    <div class="mast-date" id="mastDate"></div>
+    <button class="iconB" id="searchBtn" aria-label="Search">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l5 5"/></svg>
+    </button>
+    <button class="iconB" id="gearBtn" aria-label="Settings">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.11-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.55-1.11 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34h.09a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87v.09a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1z"/></svg>
+    </button>
+  </div>
+  <div class="tabs" id="tabs"></div>
+  <div class="search-row" id="searchRow" hidden>
+    <input id="q" type="search" placeholder="Search headlines, sources, authors" enterkeyhint="search" autocomplete="off">
+  </div>
+  <div class="rule-thick"></div>
+</header>
+
+<main class="wrap" id="homeView">
+  <div class="ptr" id="ptr">Release to refresh</div>
+  <div class="status" id="status"></div>
+  <div id="home"></div>
+</main>
+
+<main class="wrap" id="artView" hidden>
+  <div class="art-top">
+    <button class="iconB" id="backBtn" aria-label="Back">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="14 5 7 12 14 19"/></svg>
+    </button>
+    <div class="meta" id="artCrumb" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></div>
+  </div>
+  <article class="post" id="post"></article>
+</main>
+
+<div id="player" hidden>
+  <div class="pInner">
+    <div class="prow">
+      <div id="npTitle"></div>
+      <div id="npTime">0:00 / 0:00</div>
+    </div>
+    <div id="pbar" aria-label="Seek"><div id="ptrack"><div id="pfill"></div></div></div>
+    <div class="ctr">
+      <button class="chip" id="rateBtn">1×</button>
+      <button class="iconP" id="back15" aria-label="Back 15 seconds">−15</button>
+      <button class="playBig" id="playBtn" aria-label="Play"></button>
+      <button class="iconP" id="fwd15" aria-label="Forward 15 seconds">+15</button>
+      <button class="iconP" id="stopBtn" aria-label="Close player">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="sheetWrap" hidden>
+  <div id="backdrop"></div>
+  <div id="sheet"></div>
+</div>
+<div id="toast"></div>
+
+<script>
+'use strict';
+
+var SECTIONS = ['Top','Markets','Companies','Economics','Central Banks','Opinion','Tech & Finance','Personal Finance','Saved'];
+var AI_VOICES = [
+  ['nova','Nova — bright'],['alloy','Alloy — balanced'],['echo','Echo — calm'],
+  ['fable','Fable — storyteller'],['onyx','Onyx — deep'],['shimmer','Shimmer — soft']
+];
+var RATES = [0.8, 1, 1.25, 1.5, 1.75, 2];
+var WPM = 220;
+var CHUNK = 4000;
+var TTS_RATE = 12;
+var PROXIES = [
+  function(u){ return 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u); },
+  function(u){ return 'https://corsproxy.io/?' + encodeURIComponent(u); },
+  function(u){ return 'https://r.jina.ai/' + u; }
+];
+
+var FEEDS = [
+  { id:'reuters-biz', name:'Reuters', url:'https://feeds.reuters.com/reuters/businessNews', section:'Companies' },
+  { id:'reuters-mkt', name:'Reuters', url:'https://feeds.reuters.com/reuters/USMarketsNews', section:'Markets' },
+  { id:'cnbc-top', name:'CNBC', url:'https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114', section:'Markets' },
+  { id:'cnbc-econ', name:'CNBC', url:'https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=20910258', section:'Economics' },
+  { id:'cnbc-pf', name:'CNBC', url:'https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=21324812', section:'Personal Finance' },
+  { id:'investopedia', name:'Investopedia', url:'https://www.investopedia.com/feedbuilder/feed/getfeed?feedName=rss_headline', section:'Personal Finance' },
+  { id:'morningstar', name:'Morningstar', url:'https://www.morningstar.com/rss', section:'Markets' },
+  { id:'fed', name:'Federal Reserve', url:'https://www.federalreserve.gov/feeds/press_all.xml', section:'Central Banks' },
+  { id:'fred', name:'FRED Blog', url:'https://fredblog.stlouisfed.org/feed/', section:'Economics' },
+  { id:'ecb', name:'ECB Blog', url:'https://www.ecb.europa.eu/rss/blog.html', section:'Central Banks' },
+  { id:'boe', name:'Bank of England', url:'https://www.bankofengland.co.uk/rss/news', section:'Central Banks' },
+  { id:'bis', name:'BIS', url:'https://www.bis.org/doclist/all_pressrels.rss', section:'Central Banks' },
+  { id:'imf', name:'IMF Blog', url:'https://www.imf.org/en/Blogs/rss', section:'Economics' },
+  { id:'wb', name:'World Bank Blogs', url:'https://blogs.worldbank.org/en/feed', section:'Economics' },
+  { id:'conv-biz', name:'The Conversation', url:'https://theconversation.com/us/business/articles.atom', section:'Companies' },
+  { id:'conv-econ', name:'The Conversation', url:'https://theconversation.com/us/economy/articles.atom', section:'Economics' },
+  { id:'cr', name:'Calculated Risk', url:'https://www.calculatedriskblog.com/feeds/posts/default?alt=rss', section:'Economics' },
+  { id:'mr', name:'Marginal Revolution', url:'https://marginalrevolution.com/feed', section:'Opinion' },
+  { id:'noah', name:'Noahpinion', url:'https://www.noahpinion.blog/feed', section:'Opinion' },
+  { id:'apricitas', name:'Apricitas Economics', url:'https://www.apricitas.io/feed', section:'Economics' },
+  { id:'klement', name:'Klement on Investing', url:'https://klementoninvesting.substack.com/feed', section:'Opinion' },
+  { id:'awocs', name:'A Wealth of Common Sense', url:'https://awealthofcommonsense.com/feed/', section:'Personal Finance' },
+  { id:'bigpic', name:'The Big Picture', url:'https://ritholtz.com/feed/', section:'Opinion' },
+  { id:'vanguard', name:'Vanguard', url:'https://corporate.vanguard.com/content/corporatesite/us/en/corp/who-we-are/pressroom/press-release-rss.xml', section:'Markets' },
+  { id:'blackrock', name:'BlackRock', url:'https://www.blackrock.com/us/individual/insights/feed', section:'Markets' },
+  { id:'gs', name:'Goldman Sachs', url:'https://www.goldmansachs.com/insights/insights-feed.rss', section:'Markets' },
+  { id:'jpm', name:'J.P. Morgan', url:'https://www.jpmorgan.com/insights/rss', section:'Markets' },
+  { id:'ms', name:'Morgan Stanley', url:'https://www.morganstanley.com/ideas/rss', section:'Markets' }
+];
+
+var SAMPLE = [
+  {
+    id:'sample-fed',
+    title:'Sample: How to read a central-bank decision without the jargon',
+    standfirst:'A bundled briefing on rates, balance sheets and why markets move when a governor speaks.',
+    source:'The Ledger',
+    author:'Ledger desk',
+    date: Date.now() - 3600e3,
+    url:'https://www.federalreserve.gov/',
+    section:'Central Banks',
+    sample:true,
+    html:'<p>This is a bundled sample story. The Ledger shows it when live feeds cannot be reached, so the app is never a blank page.</p><p>When a central bank holds or cuts its policy rate, the statement matters as much as the number. Traders parse every adjective: “gradual”, “vigilant”, “data-dependent”. Those words are not decoration. They are a map of what the committee will do next if inflation or jobs surprise.</p><blockquote>The rate is the headline. The paragraph after it is the story.</blockquote><p>A useful habit: read the vote, then the inflation paragraph, then the labour paragraph, then the balance-sheet note. If you only have a minute, that order still tells you whether policy is tightening, pausing or easing.</p><p>This sample is original to The Ledger. Live stories come from each publisher’s public feed, with a link back to the source.</p>',
+    full:true
+  },
+  {
+    id:'sample-mkt',
+    title:'Sample: What a quiet tape is trying to tell you',
+    standfirst:'Low volume is not the same as low risk. A short guide to reading a still market.',
+    source:'The Ledger',
+    author:'Ledger desk',
+    date: Date.now() - 7200e3,
+    url:'https://www.reuters.com/markets/',
+    section:'Markets',
+    sample:true,
+    html:'<p>Markets can look calm while positioning is crowded. A sample briefing on why a flat index is not a forecast.</p><p>When the same few stocks carry the average, breadth is the tell. If most names are slipping while the headline holds, the tape is narrower than it looks. That is not a trade by itself. It is a reason to ask what happens if the leaders pause.</p><p>Read the full piece at any markets desk you trust — this sample exists so The Ledger still has a front page offline.</p>',
+    full:true
+  },
+  {
+    id:'sample-co',
+    title:'Sample: Earnings season, in one sitting',
+    standfirst:'Revenue, margin, guidance — the three lines that usually matter, and the one footnote that sometimes matters more.',
+    source:'The Ledger',
+    author:'Ledger desk',
+    date: Date.now() - 10800e3,
+    url:'https://www.cnbc.com/earnings/',
+    section:'Companies',
+    sample:true,
+    html:'<p>Companies report in a ritual: beat, raise, rally — or miss, cut, sell off. The ritual is a shorthand, not an analysis.</p><p>Look at cash conversion before the adjective in the release. A beat that consumes cash is a different story from a beat that funds the dividend. Guidance is a claim about the next two quarters, not a personality test for the chief executive.</p>',
+    full:true
+  },
+  {
+    id:'sample-econ',
+    title:'Sample: Inflation prints and the two clocks',
+    standfirst:'Households feel prices monthly. Policy looks at the trend. Both clocks are real.',
+    source:'The Ledger',
+    author:'Ledger desk',
+    date: Date.now() - 14400e3,
+    url:'https://fredblog.stlouisfed.org/',
+    section:'Economics',
+    sample:true,
+    html:'<p>An inflation print is a photograph, not a movie. The photograph still matters: rents, energy and food are how most people meet the economy.</p><p>Economists prefer the movie — three-month annualised core, trimmed means, wages against productivity. You do not have to pick a side. Read the photograph for life, the movie for policy.</p>',
+    full:true
+  },
+  {
+    id:'sample-op',
+    title:'Sample: A defence of reading slowly in a fast market',
+    standfirst:'Opinion: the edge is rarely the alert. It is the second hour you spend with one good piece.',
+    source:'The Ledger',
+    author:'Ledger desk',
+    date: Date.now() - 18000e3,
+    url:'https://marginalrevolution.com/',
+    section:'Opinion',
+    sample:true,
+    html:'<p>There is always another headline. The scarce thing is a finished thought.</p><blockquote>Speed is a tool. It is a poor religion.</blockquote><p>The Ledger is built for the second hour: a calm page, a full paragraph, a link back to the people who did the reporting. This sample is here so that page still exists when the network does not.</p>',
+    full:true
+  },
+  {
+    id:'sample-tech',
+    title:'Sample: Payments, clouds and the plumbing under a trade',
+    standfirst:'Tech &amp; finance is not only IPOs. It is settlement, custody and the bill for compute.',
+    source:'The Ledger',
+    author:'Ledger desk',
+    date: Date.now() - 21600e3,
+    url:'https://www.bis.org/',
+    section:'Tech & Finance',
+    sample:true,
+    html:'<p>Every flashy app sits on dull rails: identity, custody, settlement, uptime. When those rails wobble, the app is a poster on a closed door.</p><p>If you follow technology stocks, follow the invoice for cloud and the rulebook for payments with equal care. That is the sample lesson; the live feeds will bring the reporting.</p>',
+    full:true
+  },
+  {
+    id:'sample-pf',
+    title:'Sample: A boring portfolio is doing its job',
+    standfirst:'Personal finance is mostly behaviour under a different name.',
+    source:'The Ledger',
+    author:'Ledger desk',
+    date: Date.now() - 25200e3,
+    url:'https://awealthofcommonsense.com/',
+    section:'Personal Finance',
+    sample:true,
+    html:'<p>Fees, savings rate and time in the market are unfashionable because they do not refresh every minute.</p><p>A simple allocation you can hold through a bad year will usually beat a clever one you abandon. That is not a product pitch. It is the whole sample.</p>',
+    full:true
+  },
+  {
+    id:'sample-imf',
+    title:'Sample: Why official research still earns a Saturday morning',
+    standfirst:'IMF, Fed and BIS notes are free, slow and often better than the recap.',
+    source:'The Ledger',
+    author:'Ledger desk',
+    date: Date.now() - 28800e3,
+    url:'https://www.imf.org/en/Blogs',
+    section:'Economics',
+    sample:true,
+    html:'<p>Official blogs do not chase a close. That is their virtue. A chart from FRED or a note from the BIS can outlast a week of takes.</p><p>The Ledger puts those feeds next to newsroom RSS so you can hear both clocks — the newsroom and the research desk — in one place. Always on their terms, always with a link home.</p>',
+    full:true
+  }
+];
+
+var store = (function(){
+  var ok = false;
+  try { localStorage.setItem('__ledger__','1'); localStorage.removeItem('__ledger__'); ok = true; } catch(e){}
+  return {
+    ok: ok,
+    get: function(k, fallback){
+      if (!ok) return fallback;
+      try { var v = localStorage.getItem(k); return v == null ? fallback : JSON.parse(v); } catch(e){ return fallback; }
+    },
+    set: function(k, v){
+      if (!ok) return;
+      try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){}
+    }
+  };
+})();
+
+var state = {
+  items: SAMPLE.slice(),
+  liveOk: false,
+  section: 'Top',
+  query: '',
+  showSearch: false,
+  currentId: null,
+  dark: !!store.get('ledger.dark', false),
+  size: store.get('ledger.size', 'md'),
+  aiKey: store.get('ledger.openaiKey', '') || '',
+  aiVoice: store.get('ledger.aiVoice', 'nova') || 'nova',
+  disabled: store.get('ledger.disabled', []) || [],
+  saved: store.get('ledger.saved', []) || [],
+  read: store.get('ledger.read', []) || [],
+  opens: store.get('ledger.opens', {}) || {},
+  playing: false,
+  rate: Number(store.get('ledger.rate', 1)) || 1,
+  idx: 0,
+  gen: 0,
+  lastRefresh: 0,
+  refreshing: false
+};
+
+var synthOK = ('speechSynthesis' in window) && ('SpeechSynthesisUtterance' in window);
+var aiAudio = null, aiSess = null, aiNow = null, unlocked = false;
+var SILENT_WAV = 'data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAIlYAAESsAAACABAAZGF0YQIAAAAAAA==';
+var toastT = null;
+
+function $(id){ return document.getElementById(id); }
+function escapeHtml(s){
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function hashStr(s){
+  var h = 5381;
+  s = String(s || '');
+  for (var i=0;i<s.length;i++) h = ((h << 5) + h) ^ s.charCodeAt(i);
+  return (h >>> 0).toString(36);
+}
+function toast(msg, ms){
+  var el = $('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(function(){ el.classList.remove('show'); }, ms || 2400);
+}
+function applyChrome(){
+  document.documentElement.classList.toggle('dark', !!state.dark);
+  document.documentElement.setAttribute('data-size', state.size || 'md');
+  var theme = state.dark ? '#161310' : '#FFF1E5';
+  var m = document.querySelector('meta[name="theme-color"]');
+  if (m) m.setAttribute('content', theme);
+}
+function persistPrefs(){
+  store.set('ledger.dark', state.dark);
+  store.set('ledger.size', state.size);
+  store.set('ledger.openaiKey', state.aiKey || '');
+  store.set('ledger.aiVoice', state.aiVoice);
+  store.set('ledger.disabled', state.disabled);
+  store.set('ledger.saved', state.saved);
+  store.set('ledger.read', state.read);
+  store.set('ledger.opens', state.opens);
+  store.set('ledger.rate', state.rate);
+}
+function isSaved(id){
+  for (var i=0;i<state.saved.length;i++) if (state.saved[i].id === id) return true;
+  return false;
+}
+function isRead(id){ return state.read.indexOf(id) !== -1; }
+function findItem(id){
+  var i, s;
+  for (i=0;i<state.items.length;i++) if (state.items[i].id === id) return state.items[i];
+  for (i=0;i<state.saved.length;i++) if (state.saved[i].id === id) return state.saved[i];
+  return null;
+}
+
+function stripHtml(html){
+  var d = document.createElement('div');
+  d.innerHTML = html || '';
+  return (d.textContent || '').replace(/\s+/g,' ').trim();
+}
+function sanitize(html){
+  var d = document.createElement('div');
+  d.innerHTML = html || '';
+  var bad = d.querySelectorAll('script,style,iframe,object,embed,form,input,button,link,meta,noscript');
+  for (var i=0;i<bad.length;i++) bad[i].parentNode.removeChild(bad[i]);
+  var all = d.querySelectorAll('*');
+  for (var j=0;j<all.length;j++){
+    var el = all[j];
+    for (var k=el.attributes.length-1;k>=0;k--){
+      var n = el.attributes[k].name;
+      var nl = n.toLowerCase();
+      var val = el.getAttribute(n) || '';
+      if (nl.indexOf('on') === 0 || nl === 'style' || nl === 'srcset') el.removeAttribute(n);
+      if ((nl === 'href' || nl === 'src') && /^\s*javascript:/i.test(val)) el.removeAttribute(n);
+    }
+    if (el.tagName === 'A'){ el.setAttribute('target','_blank'); el.setAttribute('rel','noopener noreferrer'); }
+    if (el.tagName === 'IMG'){ el.setAttribute('loading','lazy'); el.removeAttribute('srcset'); }
+  }
+  return d.innerHTML;
+}
+function wordsOf(text){
+  var t = String(text || '').trim();
+  if (!t) return 0;
+  return t.split(/\s+/).length;
+}
+function readMins(item){
+  var n = Math.max(1, Math.round(wordsOf(item.bodyText || stripHtml(item.html || item.standfirst || '')) / WPM));
+  return n + ' min read';
+}
+function relTime(ts){
+  var d = new Date(ts);
+  if (isNaN(d.getTime())) return '';
+  var sec = Math.max(0, (Date.now() - d.getTime()) / 1000);
+  if (sec < 60) return 'just now';
+  if (sec < 3600) return Math.floor(sec/60) + 'm ago';
+  if (sec < 86400) return Math.floor(sec/3600) + 'h ago';
+  if (sec < 172800) return 'yesterday';
+  return d.toLocaleDateString(undefined, { day:'numeric', month:'short', year:'numeric' });
+}
+function absTime(ts){
+  var d = new Date(ts);
+  if (isNaN(d.getTime())) return '';
+  return d.toLocaleString(undefined, { weekday:'short', day:'numeric', month:'long', year:'numeric', hour:'numeric', minute:'2-digit' });
+}
+function sentencesOf(text){
+  var t = String(text || '').replace(/\s+/g,' ').trim();
+  if (!t) return [];
+  var parts = t.split(/(?<=[.!?])\s+(?=[A-Z0-9“"])/);
+  if (parts.length === 1) {
+    parts = [];
+    var buf = t;
+    while (buf.length > 280) {
+      var cut = buf.lastIndexOf(' ', 280);
+      if (cut < 80) cut = 280;
+      parts.push(buf.slice(0, cut));
+      buf = buf.slice(cut).trim();
+    }
+    if (buf) parts.push(buf);
+  }
+  return parts.filter(Boolean).map(function(s){ return { t: s }; });
+}
+function bodyTextOf(item){
+  if (item.bodyText) return item.bodyText;
+  return stripHtml(item.html || item.standfirst || '');
+}
+function enrich(item){
+  item.bodyText = bodyTextOf(item);
+  item.sentences = sentencesOf((item.title ? item.title + '. ' : '') + item.bodyText);
+  item.words = wordsOf(item.bodyText);
+  return item;
+}
+
+function classify(title, feed){
+  var t = (title || '').toLowerCase();
+  if (/fed|ecb|bank of england|boe |fomc|central bank|rate decision|lagarde|powell|bailey|bis /.test(t)) return 'Central Banks';
+  if (/401k|isa|retire|mortgage|budget|saving|etf guide|credit card|personal finance/.test(t)) return 'Personal Finance';
+  if (/ai |chip|semiconductor|fintech|crypto|bitcoin|payments|cloud |software/.test(t)) return 'Tech & Finance';
+  if (/opinion|comment:|i think|why i/.test(t)) return 'Opinion';
+  if (/gdp|inflation|jobs report|unemployment|cpi |ppi |recession|yield curve/.test(t)) return 'Economics';
+  if (/stock|market|bond|treasury|oil |fx |forex|nasdaq|s&p|dow /.test(t)) return 'Markets';
+  return feed.section || 'Companies';
+}
+
+function childText(el, names){
+  for (var i=0;i<names.length;i++){
+    var nodes = el.getElementsByTagName(names[i]);
+    if (nodes && nodes[0] && nodes[0].textContent) return nodes[0].textContent.trim();
+  }
+  return '';
+}
+function childHtml(el, names){
+  for (var i=0;i<names.length;i++){
+    var nodes = el.getElementsByTagName(names[i]);
+    if (nodes && nodes[0]) return nodes[0].textContent || nodes[0].innerHTML || '';
+  }
+  return '';
+}
+function itemLink(el){
+  var links = el.getElementsByTagName('link');
+  if (links && links[0]) {
+    var href = links[0].getAttribute('href');
+    if (href) return href.trim();
+    if (links[0].textContent) return links[0].textContent.trim();
+  }
+  var guid = childText(el, ['guid','id']);
+  if (/^https?:/i.test(guid)) return guid;
+  return '';
+}
+function parseFeed(xml, feed){
+  var doc;
+  try { doc = new DOMParser().parseFromString(xml, 'text/xml'); }
+  catch(e){ return []; }
+  if (!doc || doc.querySelector('parsererror')) {
+    try { doc = new DOMParser().parseFromString(xml, 'text/html'); } catch(e2){ return []; }
+  }
+  var nodes = doc.getElementsByTagName('item');
+  if (!nodes.length) nodes = doc.getElementsByTagName('entry');
+  var out = [];
+  var max = Math.min(nodes.length, 18);
+  for (var i=0;i<max;i++){
+    var el = nodes[i];
+    var title = childText(el, ['title']);
+    var url = itemLink(el);
+    if (!title || !url) continue;
+    var rawFull = childHtml(el, ['content:encoded','encoded','content']);
+    var rawSum = childHtml(el, ['summary','description']);
+    var htmlSrc = rawFull && rawFull.length > (rawSum || '').length ? rawFull : (rawFull || rawSum || '');
+    var stand = stripHtml(rawSum || rawFull || '').slice(0, 280);
+    var author = childText(el, ['dc:creator','creator','author','name']);
+    var ds = childText(el, ['pubDate','published','updated','date','dc:date']);
+    var ts = Date.parse(ds);
+    if (isNaN(ts)) ts = Date.now();
+    var full = !!(rawFull && stripHtml(rawFull).length > 500);
+    var item = {
+      id: hashStr(url),
+      title: title.replace(/\s+/g,' ').trim(),
+      standfirst: stand,
+      source: feed.name,
+      author: author,
+      date: ts,
+      url: url,
+      section: classify(title, feed),
+      html: sanitize(htmlSrc),
+      full: full,
+      sample: false,
+      feedId: feed.id
+    };
+    enrich(item);
+    out.push(item);
+  }
+  return out;
+}
+
+function fetchText(url){
+  var i = 0;
+  function next(){
+    if (i >= PROXIES.length) return Promise.reject(new Error('proxies'));
+    var target = PROXIES[i++](url);
+    return fetch(target, { cache:'no-store' }).then(function(r){
+      if (!r.ok) throw new Error('bad');
+      return r.text();
+    }).then(function(t){
+      if (!t || t.length < 80) throw new Error('empty');
+      return t;
+    }).catch(function(){ return next(); });
+  }
+  return next();
+}
+
+function mergeItems(live){
+  var map = {};
+  var i, it, key;
+  for (i=0;i<live.length;i++){
+    it = live[i];
+    key = (it.url || '').split('?')[0].toLowerCase();
+    if (!key) key = it.title.toLowerCase();
+    if (!map[key] || map[key].date < it.date) map[key] = it;
+  }
+  var arr = [];
+  for (key in map) arr.push(map[key]);
+  arr.sort(function(a,b){ return b.date - a.date; });
+  return arr;
+}
+
+function refreshFeeds(){
+  if (state.refreshing) return Promise.resolve();
+  state.refreshing = true;
+  renderStatus();
+  var enabled = FEEDS.filter(function(f){ return state.disabled.indexOf(f.id) === -1; });
+  var jobs = enabled.map(function(feed){
+    return fetchText(feed.url).then(function(xml){ return parseFeed(xml, feed); }).catch(function(){ return []; });
+  });
+  return Promise.all(jobs).then(function(parts){
+    var live = [];
+    for (var i=0;i<parts.length;i++) live = live.concat(parts[i]);
+    live = mergeItems(live);
+    if (live.length) {
+      state.items = live;
+      state.liveOk = true;
+    } else {
+      state.items = SAMPLE.slice();
+      state.liveOk = false;
+    }
+    state.lastRefresh = Date.now();
+    state.refreshing = false;
+    renderHome();
+    renderStatus();
+  }, function(){
+    state.refreshing = false;
+    if (!state.items.length) state.items = SAMPLE.slice();
+    renderHome();
+    renderStatus();
+  });
+}
+
+function filtered(){
+  var list;
+  if (state.section === 'Saved') list = state.saved.slice();
+  else list = state.items.slice();
+  if (state.section !== 'Top' && state.section !== 'Saved') {
+    list = list.filter(function(it){ return it.section === state.section; });
+  }
+  var q = (state.query || '').trim().toLowerCase();
+  if (q) {
+    list = list.filter(function(it){
+      return (it.title + ' ' + (it.standfirst||'') + ' ' + (it.source||'') + ' ' + (it.author||'')).toLowerCase().indexOf(q) !== -1;
+    });
+  }
+  list.sort(function(a,b){ return b.date - a.date; });
+  return list;
+}
+
+function mostRead(){
+  var scored = state.items.map(function(it){
+    return { it: it, n: state.opens[it.id] || 0 };
+  }).filter(function(x){ return x.n > 0; });
+  scored.sort(function(a,b){ return b.n - a.n; });
+  return scored.slice(0, 5);
+}
+
+function storyHtml(it, lead){
+  return '<button class="story' + (lead ? ' lead' : '') + (isRead(it.id) ? ' read' : '') + '" data-open="' + escapeHtml(it.id) + '">'
+    + '<div class="kicker">' + escapeHtml(it.section) + '</div>'
+    + '<h2 class="hl">' + escapeHtml(it.title) + '</h2>'
+    + (it.standfirst ? '<p class="stand">' + escapeHtml(it.standfirst) + '</p>' : '')
+    + '<div class="meta"><span class="badge">' + escapeHtml(it.source) + '</span>'
+    + (it.author ? escapeHtml(it.author) + ' · ' : '')
+    + escapeHtml(relTime(it.date)) + ' · ' + escapeHtml(readMins(it))
+    + (it.sample ? ' · sample' : '')
+    + '</div></button>';
+}
+
+function renderTabs(){
+  var h = '';
+  for (var i=0;i<SECTIONS.length;i++){
+    var s = SECTIONS[i];
+    h += '<button class="tab' + (state.section === s ? ' on' : '') + '" data-sec="' + escapeHtml(s) + '">' + escapeHtml(s) + '</button>';
+  }
+  $('tabs').innerHTML = h;
+}
+function renderStatus(){
+  var el = $('status');
+  if (!el) return;
+  if (state.refreshing) el.textContent = 'Refreshing free feeds…';
+  else if (state.liveOk) el.textContent = 'Updated ' + relTime(state.lastRefresh) + ' · public RSS only · tap a headline';
+  else el.textContent = 'Showing bundled samples — live feeds will appear when a proxy answers';
+}
+function renderHome(){
+  renderTabs();
+  renderStatus();
+  var box = $('home');
+  var list = filtered();
+  if (!list.length) {
+    box.innerHTML = '<p class="empty">Nothing in this section yet. Pull to refresh, or try another tab.</p>';
+    return;
+  }
+  var h = '';
+  if (!state.liveOk && state.section === 'Top' && !state.query) {
+    h += '<div class="banner">Live journalism loads through a public CORS proxy. Until that succeeds, these sample briefings keep the page alive. Nothing here is scraped from a paywall.</div>';
+  }
+  var lead = list[0];
+  h += storyHtml(lead, true);
+  var rest = list.slice(1, 16);
+  for (var i=0;i<rest.length;i++) h += storyHtml(rest[i], false);
+  if (state.section === 'Top' && !state.query) {
+    var mr = mostRead();
+    if (mr.length) {
+      h += '<aside class="rail"><h2>Most read on this device</h2>';
+      for (var j=0;j<mr.length;j++){
+        h += '<button class="rail-item" data-open="' + escapeHtml(mr[j].it.id) + '"><span class="rail-n">' + (j+1) + '</span><span class="hl">' + escapeHtml(mr[j].it.title) + '</span></button>';
+      }
+      h += '</aside>';
+    }
+  }
+  box.innerHTML = h;
+}
+
+function renderArticle(item){
+  enrich(item);
+  $('artCrumb').textContent = item.source;
+  var src = item.full
+    ? '<p class="byline">Full text as carried by the publisher feed. © ' + escapeHtml(item.source) + '.</p>'
+    : '<div class="src-note"><strong>Summary from the publisher feed.</strong> The Ledger does not open the article behind the scenes or bypass a login.'
+      + '<br><a class="btn-src" href="' + escapeHtml(item.url) + '" target="_blank" rel="noopener">Read at source</a></div>';
+  var html = '<div class="kicker">' + escapeHtml(item.section) + '</div>'
+    + '<h1 class="hl">' + escapeHtml(item.title) + '</h1>'
+    + (item.standfirst ? '<p class="stand">' + escapeHtml(item.standfirst) + '</p>' : '')
+    + '<div class="byline">'
+    + '<span class="badge">' + escapeHtml(item.source) + '</span>'
+    + (item.author ? escapeHtml(item.author) + ' · ' : '')
+    + escapeHtml(absTime(item.date)) + ' · ' + escapeHtml(readMins(item))
+    + '</div>'
+    + '<div class="acts">'
+    + '<button class="act tap" id="listenBtn">Listen</button>'
+    + '<button class="act tap" id="copyBtn">Copy</button>'
+    + '<button class="act tap" id="shareBtn">Share</button>'
+    + '<button class="act tap' + (isSaved(item.id) ? ' on' : '') + '" id="saveBtn">' + (isSaved(item.id) ? 'Saved' : 'Save') + '</button>'
+    + '<button class="act tap" id="readBtn">' + (isRead(item.id) ? 'Read' : 'Mark read') + '</button>'
+    + '</div>'
+    + src
+    + '<div class="body">' + (item.html || '<p>' + escapeHtml(item.standfirst || '') + '</p>') + '</div>';
+  $('post').innerHTML = html;
+  $('listenBtn').onclick = function(){ startListen(item); };
+  $('copyBtn').onclick = function(){ copyArticle(item); };
+  $('shareBtn').onclick = function(){ shareArticle(item); };
+  $('saveBtn').onclick = function(){ toggleSave(item); renderArticle(item); };
+  $('readBtn').onclick = function(){ toggleRead(item.id); renderArticle(item); };
+}
+
+function showHome(){
+  state.currentId = null;
+  $('homeView').hidden = false;
+  $('artView').hidden = true;
+  $('prog').firstChild.style.width = '0';
+  window.scrollTo(0,0);
+  renderHome();
+}
+function openItem(id){
+  var item = findItem(id);
+  if (!item) return;
+  enrich(item);
+  state.currentId = id;
+  state.opens[id] = (state.opens[id] || 0) + 1;
+  if (!isRead(id)) {
+    state.read.push(id);
+    if (state.read.length > 400) state.read = state.read.slice(-400);
+  }
+  persistPrefs();
+  $('homeView').hidden = true;
+  $('artView').hidden = false;
+  window.scrollTo(0,0);
+  renderArticle(item);
+}
+
+function toggleSave(item){
+  if (isSaved(item.id)) {
+    state.saved = state.saved.filter(function(x){ return x.id !== item.id; });
+    toast('Removed from Saved');
+  } else {
+    var copy = JSON.parse(JSON.stringify(item));
+    state.saved.unshift(copy);
+    if (state.saved.length > 80) state.saved = state.saved.slice(0, 80);
+    toast('Saved on this device');
+  }
+  persistPrefs();
+}
+function toggleRead(id){
+  if (isRead(id)) state.read = state.read.filter(function(x){ return x !== id; });
+  else state.read.push(id);
+  persistPrefs();
+}
+
+function copyArticle(item){
+  enrich(item);
+  var text = item.title + '\n'
+    + item.source
+    + (item.author ? ' — ' + item.author : '') + '\n'
+    + absTime(item.date) + '\n'
+    + item.url + '\n\n'
+    + item.bodyText;
+  function ok(){ toast('Copied'); }
+  function fallback(){
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly','');
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    ta.style.top = '0';
+    document.body.appendChild(ta);
+    ta.focus(); ta.select();
+    try { document.execCommand('copy'); ok(); } catch(e){ toast('Couldn’t copy'); }
+    document.body.removeChild(ta);
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(ok, fallback);
+  } else fallback();
+}
+function shareArticle(item){
+  var payload = { title: item.title, text: item.title + ' — ' + item.source, url: item.url };
+  if (navigator.share) {
+    navigator.share(payload).catch(function(){});
+  } else copyArticle(item);
+}
+
+/* ---------- TTS / player ---------- */
+var idbApi = {
+  db: null,
+  open: function(){
+    var self = this;
+    if (!window.indexedDB) return Promise.reject();
+    if (self.db) return Promise.resolve(self.db);
+    return new Promise(function(res, rej){
+      var req = indexedDB.open('ledger-tts', 1);
+      req.onupgradeneeded = function(){ req.result.createObjectStore('audio'); };
+      req.onsuccess = function(){ self.db = req.result; res(self.db); };
+      req.onerror = function(){ rej(req.error); };
+    });
+  },
+  get: function(key){
+    return this.open().then(function(db){
+      return new Promise(function(res){
+        var r = db.transaction('audio').objectStore('audio').get(key);
+        r.onsuccess = function(){ res(r.result || null); };
+        r.onerror = function(){ res(null); };
+      });
+    }).catch(function(){ return null; });
+  },
+  set: function(key, blob){
+    return this.open().then(function(db){
+      return new Promise(function(res){
+        var r = db.transaction('audio','readwrite').objectStore('audio').put(blob, key);
+        r.onsuccess = function(){ res(); };
+        r.onerror = function(){ res(); };
+      });
+    }).catch(function(){});
+  }
+};
+
+function fmtTime(sec){
+  sec = Math.max(0, Math.floor(sec || 0));
+  var m = Math.floor(sec / 60), s = sec % 60;
+  return m + ':' + (s < 10 ? '0' : '') + s;
+}
+function icPlay(on){
+  return on
+    ? '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="6.5" y="5" width="3.6" height="14" rx="1.2"/><rect x="13.9" y="5" width="3.6" height="14" rx="1.2"/></svg>'
+    : '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.8v12.4c0 .8.9 1.3 1.6.9l9.8-6.2c.6-.4.6-1.4 0-1.8L9.6 4.9c-.7-.4-1.6.1-1.6.9z"/></svg>';
+}
+function getAudioEl(){
+  if (aiAudio) return aiAudio;
+  aiAudio = new Audio();
+  aiAudio.preload = 'auto';
+  aiAudio.addEventListener('loadedmetadata', onAiMeta);
+  aiAudio.addEventListener('timeupdate', onAiTime);
+  aiAudio.addEventListener('ended', onAiEnded);
+  return aiAudio;
+}
+function unlockAudio(){
+  if (unlocked) return;
+  unlocked = true;
+  if (synthOK) {
+    try { var u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } catch(e){}
+  }
+  try {
+    var el = getAudioEl();
+    el.src = SILENT_WAV;
+    var p = el.play();
+    if (p && p.then) p.then(function(){ el.pause(); }, function(){});
+  } catch(e){}
+}
+function stopEngines(){
+  try { if (synthOK && (speechSynthesis.speaking || speechSynthesis.pending)) speechSynthesis.cancel(); } catch(e){}
+  if (aiAudio) { try { aiAudio.pause(); } catch(e){} }
+}
+function aiActive(){ return !!(state.aiKey && String(state.aiKey).indexOf('sk-') === 0); }
+
+function aiChunksFor(art){
+  var chunks = [], s0 = 0, chars = 0;
+  for (var i=0;i<art.sentences.length;i++){
+    var L = art.sentences[i].t.length + 1;
+    if (chars > 0 && chars + L > CHUNK) { chunks.push({s0:s0, s1:i}); s0 = i; chars = 0; }
+    chars += L;
+  }
+  if (chars > 0) chunks.push({s0:s0, s1:art.sentences.length});
+  return chunks;
+}
+function aiText(art, ch){
+  var t = [];
+  for (var i=ch.s0;i<ch.s1;i++) t.push(art.sentences[i].t);
+  return t.join(' ');
+}
+function cacheKey(model, voice, text){
+  return hashStr(model + '|' + voice + '|' + text);
+}
+function aiCall(model, text){
+  var body = { model: model, voice: state.aiVoice || 'nova', input: text, response_format: 'mp3' };
+  if (model === 'gpt-4o-mini-tts') {
+    body.instructions = 'Read this financial article aloud as a calm, authoritative newsreader. Read numbers, dates and tickers the way a person would.';
+  }
+  return fetch('https://api.openai.com/v1/audio/speech', {
+    method:'POST',
+    headers:{ 'Authorization':'Bearer ' + state.aiKey, 'Content-Type':'application/json' },
+    body: JSON.stringify(body)
+  }).then(function(res){
+    if (!res.ok) throw new Error('ai-http-' + res.status);
+    return res.blob();
+  });
+}
+function aiFetch(text){
+  var voice = state.aiVoice || 'nova';
+  var kMini = cacheKey('gpt-4o-mini-tts', voice, text);
+  var kHd = cacheKey('tts-1-hd', voice, text);
+  return idbApi.get(kMini).then(function(c1){
+    if (c1) return URL.createObjectURL(c1);
+    return idbApi.get(kHd).then(function(c2){
+      if (c2) return URL.createObjectURL(c2);
+      return aiCall('gpt-4o-mini-tts', text).catch(function(err){
+        var m = (err && err.message) || '';
+        if (m === 'ai-http-400' || m === 'ai-http-404') return aiCall('tts-1-hd', text);
+        throw err;
+      }).then(function(blob){
+        idbApi.set(kMini, blob);
+        return URL.createObjectURL(blob);
+      });
+    });
+  });
+}
+function estimateCost(chars){
+  var usd = (chars / 1e6) * TTS_RATE;
+  if (usd < 0.01) return 'less than 1¢';
+  return 'about $' + usd.toFixed(2);
+}
+function warnCost(art){
+  var chars = 0;
+  for (var i=0;i<art.sentences.length;i++) chars += art.sentences[i].t.length + 1;
+  var first = aiText(art, aiChunksFor(art)[0] || {s0:0,s1:0});
+  var key = cacheKey('gpt-4o-mini-tts', state.aiVoice || 'nova', first);
+  return idbApi.get(key).then(function(hit){
+    if (!hit) toast('Using your OpenAI key — ' + estimateCost(chars) + '. This article is cached after the first listen.', 4200);
+  });
+}
+function aiEnsure(art, ci){
+  if (aiSess.urls[ci]) return Promise.resolve(aiSess.urls[ci]);
+  if (aiSess.pending[ci]) return aiSess.pending[ci];
+  var p = aiFetch(aiText(art, aiSess.chunks[ci])).then(function(url){
+    if (aiSess) { aiSess.urls[ci] = url; delete aiSess.pending[ci]; }
+    return url;
+  }, function(err){
+    if (aiSess) delete aiSess.pending[ci];
+    throw err;
+  });
+  aiSess.pending[ci] = p;
+  return p;
+}
+function aiFailMsg(err){
+  var m = (err && err.message) || '';
+  if (m === 'ai-http-401') return 'OpenAI did not accept your key';
+  if (m === 'ai-http-429') return 'OpenAI is busy or out of credit';
+  return 'Could not reach the AI voice';
+}
+function setMediaSession(art){
+  if (!('mediaSession' in navigator)) return;
+  try {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: art.title, artist: art.source, album: 'The Ledger'
+    });
+    navigator.mediaSession.setActionHandler('play', function(){ if (!state.playing) togglePlay(); });
+    navigator.mediaSession.setActionHandler('pause', function(){ if (state.playing) pausePlayback(); });
+    try { navigator.mediaSession.setActionHandler('seekbackward', function(){ skip(-15); }); } catch(e){}
+    try { navigator.mediaSession.setActionHandler('seekforward', function(){ skip(15); }); } catch(e){}
+  } catch(e){}
+}
+function updatePlayerUI(){
+  $('playBtn').innerHTML = icPlay(state.playing);
+  $('playBtn').setAttribute('aria-label', state.playing ? 'Pause' : 'Play');
+  $('rateBtn').textContent = String(state.rate).replace(/\.0$/,'') + '×';
+  var art = findItem(state.currentId);
+  $('npTitle').textContent = art ? art.title : '';
+}
+function playerTimes(){
+  if (aiSess && aiAudio && aiAudio.duration) {
+    var past = 0, tot = 0, i;
+    for (i=0;i<aiSess.chunks.length;i++){
+      var d = aiSess.durs[i];
+      if (!d) {
+        var ch = aiSess.chunks[i];
+        d = Math.max(8, aiText(findItem(state.currentId) || {sentences:[]}, ch).length / 14);
+      }
+      if (i < (aiNow ? aiNow.ci : 0)) past += d;
+      tot += d;
+    }
+    past += aiAudio.currentTime || 0;
+    return { t: past, T: tot };
+  }
+  var art = findItem(state.currentId);
+  if (!art) return { t:0, T:0 };
+  var T = Math.max(1, (art.words || 200) / WPM * 60 / state.rate);
+  var t = T * (state.idx / Math.max(1, art.sentences.length));
+  return { t:t, T:T };
+}
+function paintBar(){
+  var p = playerTimes();
+  $('npTime').textContent = fmtTime(p.t) + ' / ' + fmtTime(p.T);
+  $('pfill').style.width = (p.T ? Math.min(100, 100 * p.t / p.T) : 0) + '%';
+}
+function onAiMeta(){
+  if (!aiNow || !aiSess) return;
+  aiSess.durs[aiNow.ci] = aiAudio.duration || 0;
+  aiAudio.playbackRate = state.rate;
+  paintBar();
+  if ('mediaSession' in navigator) {
+    try {
+      navigator.mediaSession.setPositionState({
+        duration: aiAudio.duration, playbackRate: aiAudio.playbackRate, position: aiAudio.currentTime
+      });
+    } catch(e){}
+  }
+}
+function onAiTime(){
+  if (!state.playing) return;
+  var art = findItem(state.currentId);
+  if (art && aiSess && aiNow) {
+    var ch = aiSess.chunks[aiNow.ci];
+    if (aiAudio.duration) {
+      var frac = aiAudio.currentTime / aiAudio.duration;
+      var n = ch.s1 - ch.s0;
+      state.idx = ch.s0 + Math.min(n - 1, Math.floor(frac * n));
+    }
+  }
+  paintBar();
+}
+function onAiEnded(){
+  if (!aiSess || !aiNow) return;
+  var art = findItem(state.currentId);
+  if (!art) { pausePlayback(); return; }
+  aiPlayChunk(art, aiNow.g, aiNow.ci + 1);
+}
+function aiPlayChunk(art, g, ci){
+  if (g !== state.gen) return;
+  if (!aiSess || ci >= aiSess.chunks.length) { finishListen(); return; }
+  aiEnsure(art, ci).then(function(url){
+    if (g !== state.gen || !aiSess) return;
+    aiNow = { g:g, ci:ci };
+    var el = getAudioEl();
+    el.src = url;
+    el.playbackRate = state.rate;
+    var p = el.play();
+    if (p && p.then) p.then(null, function(){
+      if (g !== state.gen) return;
+      state.playing = false; updatePlayerUI();
+      toast('Tap play to start listening');
+    });
+    setMediaSession(art);
+    if (ci + 1 < aiSess.chunks.length) aiEnsure(art, ci + 1).then(null, function(){});
+  }, function(err){
+    if (g !== state.gen) return;
+    if (synthOK) {
+      toast(aiFailMsg(err) + ' — using the device voice', 4200);
+      deviceSpeakFrom(state.idx);
+    } else {
+      state.playing = false; updatePlayerUI();
+      toast(aiFailMsg(err), 4200);
+    }
+  });
+}
+function startAi(art){
+  var g = ++state.gen;
+  stopEngines();
+  state.playing = true;
+  aiSess = { chunks: aiChunksFor(art), urls: [], pending: {}, durs: [] };
+  updatePlayerUI();
+  warnCost(art);
+  toast('Preparing the AI voice…', 1600);
+  aiPlayChunk(art, g, 0);
+}
+function deviceSpeakFrom(i){
+  var art = findItem(state.currentId);
+  if (!art || !synthOK) { toast('Listening is not available on this browser'); return; }
+  stopEngines();
+  state.idx = Math.max(0, i || 0);
+  state.playing = true;
+  var g = ++state.gen;
+  updatePlayerUI();
+  function next(){
+    if (g !== state.gen) return;
+    if (state.idx >= art.sentences.length) { finishListen(); return; }
+    var u = new SpeechSynthesisUtterance(art.sentences[state.idx].t);
+    u.rate = Math.max(0.5, Math.min(2, state.rate));
+    u.onend = function(){
+      if (g !== state.gen) return;
+      state.idx += 1;
+      paintBar();
+      next();
+    };
+    u.onerror = function(){ if (g === state.gen) pausePlayback(); };
+    try { speechSynthesis.speak(u); } catch(e){ pausePlayback(); }
+    paintBar();
+  }
+  next();
+}
+function startListen(item){
+  unlockAudio();
+  state.currentId = item.id;
+  enrich(item);
+  $('player').hidden = false;
+  $('npTitle').textContent = item.title;
+  if (aiActive()) startAi(item);
+  else deviceSpeakFrom(0);
+  updatePlayerUI();
+}
+function pausePlayback(){
+  state.gen += 1;
+  state.playing = false;
+  stopEngines();
+  updatePlayerUI();
+}
+function togglePlay(){
+  var art = findItem(state.currentId);
+  if (!art) return;
+  if (state.playing) pausePlayback();
+  else {
+    unlockAudio();
+    if (aiActive() && aiSess && aiAudio && aiAudio.src && aiAudio.src.indexOf('data:') !== 0) {
+      state.playing = true;
+      var p = aiAudio.play();
+      if (p && p.then) p.then(null, function(){ startAi(art); });
+      updatePlayerUI();
+    } else if (aiActive()) startAi(art);
+    else deviceSpeakFrom(state.idx);
+  }
+}
+function finishListen(){
+  state.playing = false;
+  updatePlayerUI();
+  paintBar();
+  toast('Finished');
+}
+function skip(sec){
+  if (aiActive() && aiAudio && aiSess && aiNow) {
+    var next = (aiAudio.currentTime || 0) + sec;
+    if (next < 0) {
+      if (aiNow.ci > 0) aiPlayChunk(findItem(state.currentId), aiNow.g, aiNow.ci - 1);
+      else aiAudio.currentTime = 0;
+    } else if (aiAudio.duration && next > aiAudio.duration) {
+      aiPlayChunk(findItem(state.currentId), aiNow.g, aiNow.ci + 1);
+    } else {
+      try { aiAudio.currentTime = Math.max(0, next); } catch(e){}
+    }
+    paintBar();
+    return;
+  }
+  var art = findItem(state.currentId);
+  if (!art) return;
+  var jump = sec < 0 ? -1 : 1;
+  state.idx = Math.max(0, Math.min(art.sentences.length - 1, state.idx + jump));
+  if (state.playing) deviceSpeakFrom(state.idx);
+  else paintBar();
+}
+function cycleRate(){
+  var i = RATES.indexOf(state.rate);
+  state.rate = RATES[(i + 1) % RATES.length];
+  persistPrefs();
+  if (aiAudio) aiAudio.playbackRate = state.rate;
+  updatePlayerUI();
+}
+function seekFromEvent(ev){
+  var bar = $('pbar');
+  var r = bar.getBoundingClientRect();
+  var x = (ev.touches ? ev.touches[0].clientX : ev.clientX) - r.left;
+  var frac = Math.max(0, Math.min(1, x / r.width));
+  if (aiActive() && aiSess && aiAudio) {
+    var art = findItem(state.currentId);
+    if (!art) return;
+    var ci = Math.min(aiSess.chunks.length - 1, Math.floor(frac * aiSess.chunks.length));
+    aiPlayChunk(art, aiNow ? aiNow.g : state.gen, ci);
+  } else {
+    var art2 = findItem(state.currentId);
+    if (!art2) return;
+    state.idx = Math.floor(frac * Math.max(1, art2.sentences.length));
+    if (state.playing) deviceSpeakFrom(state.idx);
+    else paintBar();
+  }
+}
+
+/* ---------- settings ---------- */
+function openSheet(){
+  var h = '<h3>Settings</h3>';
+  h += '<div class="fRow"><div class="fLab">OpenAI API key — stays on this phone</div>';
+  h += '<input type="password" id="aiKey" placeholder="sk-…" autocomplete="off" spellcheck="false" value="' + escapeHtml(state.aiKey || '') + '">';
+  h += '<p class="hint">Used only at api.openai.com/v1/audio/speech. Never sent anywhere else. Leave blank to use the free device voice.</p></div>';
+  h += '<div class="fRow"><div class="fLab">AI voice</div><select id="aiVoiceSel">';
+  for (var i=0;i<AI_VOICES.length;i++){
+    h += '<option value="' + AI_VOICES[i][0] + '"' + (state.aiVoice === AI_VOICES[i][0] ? ' selected' : '') + '>' + AI_VOICES[i][1] + '</option>';
+  }
+  h += '</select></div>';
+  h += '<div class="fRow swRow"><span>Dark reading mode</span><button class="sw' + (state.dark ? ' on' : '') + '" id="darkSw" role="switch" aria-checked="' + !!state.dark + '"></button></div>';
+  h += '<div class="fRow"><div class="fLab">Text size</div><select id="sizeSel">';
+  [['sm','Small'],['md','Medium'],['lg','Large']].forEach(function(p){
+    h += '<option value="' + p[0] + '"' + (state.size === p[0] ? ' selected' : '') + '>' + p[1] + '</option>';
+  });
+  h += '</select></div>';
+  h += '<div class="fRow"><div class="fLab">Feeds — public RSS only</div>';
+  FEEDS.forEach(function(f){
+    var on = state.disabled.indexOf(f.id) === -1;
+    h += '<div class="feed"><span>' + escapeHtml(f.name) + ' · ' + escapeHtml(f.section) + '</span>';
+    h += '<button class="sw' + (on ? ' on' : '') + '" data-feed="' + f.id + '" role="switch" aria-checked="' + on + '"></button></div>';
+  });
+  h += '<p class="hint">Add or remove a feed by editing the FEEDS list near the top of this file. Only official public RSS/Atom URLs. Never a paywalled site.</p>';
+  h += '<button class="ghost" id="resetFeeds">Reset feeds to defaults</button></div>';
+  h += '<p class="hint">The Ledger does not use the Financial Times, WSJ, Bloomberg or The Economist, and it never bypasses a login.</p>';
+  $('sheet').innerHTML = h;
+  $('sheetWrap').hidden = false;
+  $('aiKey').addEventListener('change', function(){ state.aiKey = $('aiKey').value.trim(); persistPrefs(); });
+  $('aiVoiceSel').addEventListener('change', function(){ state.aiVoice = $('aiVoiceSel').value; persistPrefs(); });
+  $('sizeSel').addEventListener('change', function(){ state.size = $('sizeSel').value; applyChrome(); persistPrefs(); });
+  $('darkSw').onclick = function(){
+    state.dark = !state.dark; applyChrome(); persistPrefs();
+    $('darkSw').classList.toggle('on', state.dark);
+    $('darkSw').setAttribute('aria-checked', state.dark);
+  };
+  $('sheet').onclick = function(ev){
+    var b = ev.target.closest('[data-feed]');
+    if (!b) return;
+    var id = b.getAttribute('data-feed');
+    var i = state.disabled.indexOf(id);
+    if (i === -1) state.disabled.push(id);
+    else state.disabled.splice(i, 1);
+    persistPrefs();
+    b.classList.toggle('on', state.disabled.indexOf(id) === -1);
+  };
+  $('resetFeeds').onclick = function(){ state.disabled = []; persistPrefs(); openSheet(); toast('Feeds reset'); };
+}
+function closeSheet(){ $('sheetWrap').hidden = true; }
+
+/* ---------- PWA ---------- */
+function installPwa(){
+  try {
+    var icon = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180"><rect width="180" height="180" fill="#FFF1E5"/><text x="22" y="132" font-family="Georgia,serif" font-size="118" font-weight="700" fill="#0A0A0A">L</text></svg>');
+    var link = document.createElement('link');
+    link.rel = 'apple-touch-icon';
+    link.href = icon;
+    document.head.appendChild(link);
+    var fav = document.createElement('link');
+    fav.rel = 'icon';
+    fav.href = icon;
+    document.head.appendChild(fav);
+    var man = {
+      name:'The Ledger',
+      short_name:'Ledger',
+      display:'standalone',
+      start_url: location.href.split('#')[0],
+      background_color:'#FFF1E5',
+      theme_color:'#FFF1E5',
+      icons:[{ src:icon, sizes:'180x180', type:'image/svg+xml', purpose:'any' }]
+    };
+    var ml = document.createElement('link');
+    ml.rel = 'manifest';
+    if (typeof URL !== 'undefined' && typeof URL.createObjectURL === 'function') {
+      ml.href = URL.createObjectURL(new Blob([JSON.stringify(man)], { type:'application/manifest+json' }));
+    } else {
+      ml.href = 'data:application/manifest+json,' + encodeURIComponent(JSON.stringify(man));
+    }
+    document.head.appendChild(ml);
+    if (!('serviceWorker' in navigator) || typeof URL === 'undefined' || typeof URL.createObjectURL !== 'function') return;
+    var sw = "self.addEventListener('install',function(e){self.skipWaiting();e.waitUntil(caches.open('ledger-v1').then(function(c){return c.addAll([self.registration.scope]);}).catch(function(){}));});self.addEventListener('activate',function(e){e.waitUntil(self.clients.claim());});self.addEventListener('fetch',function(e){e.respondWith(caches.open('ledger-v1').then(function(c){return c.match(e.request).then(function(hit){return hit||fetch(e.request).then(function(res){if(res&&res.ok&&e.request.method==='GET'){try{c.put(e.request,res.clone());}catch(err){}}return res;}).catch(function(){return hit||c.match(self.registration.scope);});});}));});";
+    var swUrl = URL.createObjectURL(new Blob([sw], { type:'text/javascript' }));
+    navigator.serviceWorker.register(swUrl).catch(function(){});
+  } catch(e){}
+}
+
+/* ---------- wiring ---------- */
+function onHomeClick(ev){
+  var b = ev.target.closest('[data-open]');
+  if (!b) return;
+  openItem(b.getAttribute('data-open'));
+}
+function onTabClick(ev){
+  var b = ev.target.closest('[data-sec]');
+  if (!b) return;
+  state.section = b.getAttribute('data-sec');
+  renderHome();
+}
+function bindPtr(){
+  var startY = 0, pulling = false;
+  var main = $('homeView');
+  main.addEventListener('touchstart', function(e){
+    if (window.scrollY > 2 || state.refreshing) return;
+    startY = e.touches[0].clientY;
+    pulling = true;
+  }, { passive:true });
+  main.addEventListener('touchmove', function(e){
+    if (!pulling) return;
+    var dy = e.touches[0].clientY - startY;
+    if (dy > 24) $('ptr').style.height = Math.min(56, dy/2) + 'px';
+  }, { passive:true });
+  main.addEventListener('touchend', function(){
+    if (!pulling) return;
+    pulling = false;
+    var h = parseFloat($('ptr').style.height || '0');
+    $('ptr').style.height = '0';
+    if (h > 28) refreshFeeds();
+  });
+}
+function onScroll(){
+  if ($('artView').hidden) return;
+  var el = $('post');
+  var span = el.scrollHeight - window.innerHeight + 80;
+  var y = window.scrollY;
+  var pct = span > 0 ? Math.max(0, Math.min(100, 100 * y / span)) : 0;
+  $('prog').firstChild.style.width = pct + '%';
+}
+
+function init(){
+  applyChrome();
+  SAMPLE.forEach(enrich);
+  $('mastDate').textContent = new Date().toLocaleDateString(undefined, { weekday:'long', day:'numeric', month:'long' });
+  renderHome();
+  $('home').addEventListener('click', onHomeClick);
+  $('tabs').addEventListener('click', onTabClick);
+  $('searchBtn').onclick = function(){
+    state.showSearch = !state.showSearch;
+    $('searchRow').hidden = !state.showSearch;
+    if (state.showSearch) $('q').focus();
+    else { state.query = ''; $('q').value = ''; renderHome(); }
+  };
+  $('q').addEventListener('input', function(){ state.query = $('q').value; renderHome(); });
+  $('gearBtn').onclick = openSheet;
+  $('backdrop').onclick = closeSheet;
+  $('backBtn').onclick = showHome;
+  $('playBtn').onclick = togglePlay;
+  $('rateBtn').onclick = cycleRate;
+  $('back15').onclick = function(){ skip(-15); };
+  $('fwd15').onclick = function(){ skip(15); };
+  $('stopBtn').onclick = function(){ pausePlayback(); $('player').hidden = true; };
+  $('pbar').addEventListener('click', seekFromEvent);
+  window.addEventListener('scroll', onScroll, { passive:true });
+  bindPtr();
+  installPwa();
+  refreshFeeds();
+  setInterval(function(){ refreshFeeds(); }, 30 * 60 * 1000);
+}
+
+init();
+</script>
+</body>
+</html>

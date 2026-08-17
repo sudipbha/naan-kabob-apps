@@ -8,7 +8,8 @@ Live: [Sysco](https://sudipbha.github.io/naan-kabob-apps/sysco/) · [Champion](h
 > linked from inside both apps. This document is the technical contract.
 
 > The repo also hosts **[Earmark](https://sudipbha.github.io/naan-kabob-apps/earmark/)**
-> — a personal newsletter read-aloud app in `earmark/`. It is separate from the
+> — a personal newsletter read-aloud app in `earmark/` — and **[The Ledger](https://sudipbha.github.io/naan-kabob-apps/ledger/)**,
+> a free-to-read finance reader in `ledger/`. Both are separate from the
 > inventory system and not covered by this guide.
 
 Two single-file React apps, one per supplier. Same engine, different item lists.
