@@ -6,6 +6,16 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-08-17 — The Ledger now loads real stories, not just samples
+
+The first version looked right but stayed on the bundled sample briefings.
+Phones cannot read most RSS sites directly, and the public CORS proxies
+were failing, so nothing live arrived. The Ledger now ships a
+`headlines.json` file of real public stories (CNBC, BBC, NPR, the Fed,
+free blogs) next to the app, so the phone always has journalism on first
+open. It still tries to refresh live, a few feeds at a time, and keeps
+the last good set on the device.
+
 ## 2026-08-17 — The Ledger: a free finance reader next to Earmark
 
 A new app lives at `ledger/` and on the home page: **The Ledger**. It is a

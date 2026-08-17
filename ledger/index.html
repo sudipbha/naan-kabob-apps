@@ -290,41 +290,26 @@ var RATES = [0.8, 1, 1.25, 1.5, 1.75, 2];
 var WPM = 220;
 var CHUNK = 4000;
 var TTS_RATE = 12;
-var PROXIES = [
-  function(u){ return 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u); },
-  function(u){ return 'https://corsproxy.io/?' + encodeURIComponent(u); },
-  function(u){ return 'https://r.jina.ai/' + u; }
-];
-
 var FEEDS = [
-  { id:'reuters-biz', name:'Reuters', url:'https://feeds.reuters.com/reuters/businessNews', section:'Companies' },
-  { id:'reuters-mkt', name:'Reuters', url:'https://feeds.reuters.com/reuters/USMarketsNews', section:'Markets' },
   { id:'cnbc-top', name:'CNBC', url:'https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114', section:'Markets' },
   { id:'cnbc-econ', name:'CNBC', url:'https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=20910258', section:'Economics' },
   { id:'cnbc-pf', name:'CNBC', url:'https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=21324812', section:'Personal Finance' },
-  { id:'investopedia', name:'Investopedia', url:'https://www.investopedia.com/feedbuilder/feed/getfeed?feedName=rss_headline', section:'Personal Finance' },
-  { id:'morningstar', name:'Morningstar', url:'https://www.morningstar.com/rss', section:'Markets' },
+  { id:'bbc-biz', name:'BBC Business', url:'https://feeds.bbci.co.uk/news/business/rss.xml', section:'Companies' },
+  { id:'npr-biz', name:'NPR Business', url:'https://feeds.npr.org/1006/rss.xml', section:'Companies' },
   { id:'fed', name:'Federal Reserve', url:'https://www.federalreserve.gov/feeds/press_all.xml', section:'Central Banks' },
   { id:'fred', name:'FRED Blog', url:'https://fredblog.stlouisfed.org/feed/', section:'Economics' },
   { id:'ecb', name:'ECB Blog', url:'https://www.ecb.europa.eu/rss/blog.html', section:'Central Banks' },
   { id:'boe', name:'Bank of England', url:'https://www.bankofengland.co.uk/rss/news', section:'Central Banks' },
   { id:'bis', name:'BIS', url:'https://www.bis.org/doclist/all_pressrels.rss', section:'Central Banks' },
-  { id:'imf', name:'IMF Blog', url:'https://www.imf.org/en/Blogs/rss', section:'Economics' },
-  { id:'wb', name:'World Bank Blogs', url:'https://blogs.worldbank.org/en/feed', section:'Economics' },
+  { id:'sec', name:'SEC', url:'https://www.sec.gov/news/pressreleases.rss', section:'Companies' },
   { id:'conv-biz', name:'The Conversation', url:'https://theconversation.com/us/business/articles.atom', section:'Companies' },
-  { id:'conv-econ', name:'The Conversation', url:'https://theconversation.com/us/economy/articles.atom', section:'Economics' },
   { id:'cr', name:'Calculated Risk', url:'https://www.calculatedriskblog.com/feeds/posts/default?alt=rss', section:'Economics' },
   { id:'mr', name:'Marginal Revolution', url:'https://marginalrevolution.com/feed', section:'Opinion' },
   { id:'noah', name:'Noahpinion', url:'https://www.noahpinion.blog/feed', section:'Opinion' },
   { id:'apricitas', name:'Apricitas Economics', url:'https://www.apricitas.io/feed', section:'Economics' },
   { id:'klement', name:'Klement on Investing', url:'https://klementoninvesting.substack.com/feed', section:'Opinion' },
   { id:'awocs', name:'A Wealth of Common Sense', url:'https://awealthofcommonsense.com/feed/', section:'Personal Finance' },
-  { id:'bigpic', name:'The Big Picture', url:'https://ritholtz.com/feed/', section:'Opinion' },
-  { id:'vanguard', name:'Vanguard', url:'https://corporate.vanguard.com/content/corporatesite/us/en/corp/who-we-are/pressroom/press-release-rss.xml', section:'Markets' },
-  { id:'blackrock', name:'BlackRock', url:'https://www.blackrock.com/us/individual/insights/feed', section:'Markets' },
-  { id:'gs', name:'Goldman Sachs', url:'https://www.goldmansachs.com/insights/insights-feed.rss', section:'Markets' },
-  { id:'jpm', name:'J.P. Morgan', url:'https://www.jpmorgan.com/insights/rss', section:'Markets' },
-  { id:'ms', name:'Morgan Stanley', url:'https://www.morganstanley.com/ideas/rss', section:'Markets' }
+  { id:'bigpic', name:'The Big Picture', url:'https://ritholtz.com/feed/', section:'Opinion' }
 ];
 
 var SAMPLE = [
@@ -640,6 +625,25 @@ function itemLink(el){
   if (/^https?:/i.test(guid)) return guid;
   return '';
 }
+function makeItem(feed, title, url, htmlSrc, stand, author, dateVal, full){
+  var ts = Date.parse(dateVal);
+  if (isNaN(ts)) ts = Date.now();
+  var item = {
+    id: hashStr(url),
+    title: String(title || '').replace(/\s+/g,' ').trim(),
+    standfirst: (stand || '').slice(0, 280),
+    source: feed.name,
+    author: author || '',
+    date: ts,
+    url: url,
+    section: classify(title, feed),
+    html: sanitize(htmlSrc || ''),
+    full: !!full,
+    sample: false,
+    feedId: feed.id
+  };
+  return enrich(item);
+}
 function parseFeed(xml, feed){
   var doc;
   try { doc = new DOMParser().parseFromString(xml, 'text/xml'); }
@@ -659,48 +663,103 @@ function parseFeed(xml, feed){
     var rawFull = childHtml(el, ['content:encoded','encoded','content']);
     var rawSum = childHtml(el, ['summary','description']);
     var htmlSrc = rawFull && rawFull.length > (rawSum || '').length ? rawFull : (rawFull || rawSum || '');
-    var stand = stripHtml(rawSum || rawFull || '').slice(0, 280);
+    var stand = stripHtml(rawSum || rawFull || '');
     var author = childText(el, ['dc:creator','creator','author','name']);
     var ds = childText(el, ['pubDate','published','updated','date','dc:date']);
-    var ts = Date.parse(ds);
-    if (isNaN(ts)) ts = Date.now();
-    var full = !!(rawFull && stripHtml(rawFull).length > 500);
-    var item = {
-      id: hashStr(url),
-      title: title.replace(/\s+/g,' ').trim(),
-      standfirst: stand,
-      source: feed.name,
-      author: author,
-      date: ts,
-      url: url,
-      section: classify(title, feed),
-      html: sanitize(htmlSrc),
-      full: full,
-      sample: false,
-      feedId: feed.id
-    };
-    enrich(item);
-    out.push(item);
+    out.push(makeItem(feed, title, url, htmlSrc, stand, author, ds, !!(rawFull && stripHtml(rawFull).length > 500)));
   }
   return out;
 }
-
-function fetchText(url){
+function parseJsonItems(items, feed){
+  var out = [];
+  if (!items || !items.length) return out;
+  for (var i=0;i<Math.min(items.length, 18);i++){
+    var it = items[i];
+    var title = it.title;
+    var url = it.link || it.url || it.guid;
+    if (!title || !url || !/^https?:/i.test(url)) continue;
+    var htmlSrc = it.content || it.content_html || it.description || it.content_text || '';
+    var stand = stripHtml(it.description || it.content_text || htmlSrc);
+    var author = (it.author && it.author.name) ? it.author.name : (it.author || '');
+    var ds = it.pubDate || it.date_published || it.published || it.isoDate;
+    out.push(makeItem(feed, title, url, htmlSrc, stand, author, ds, stripHtml(htmlSrc).length > 500));
+  }
+  return out;
+}
+function unwrapAllorigins(text){
+  var j = JSON.parse(text);
+  var c = j.contents || '';
+  var m = /^data:[^,]*,/.exec(c);
+  if (!m) return c;
+  var payload = c.slice(m[0].length);
+  try {
+    var bin = atob(payload);
+    return decodeURIComponent(Array.prototype.map.call(bin, function(ch){
+      return '%' + ('00' + ch.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+  } catch(e){
+    try { return atob(payload); } catch(e2){ return payload; }
+  }
+}
+function fetchTimeout(url, ms){
+  var ctrl = typeof AbortController === 'function' ? new AbortController() : null;
+  var t = setTimeout(function(){ if (ctrl) try { ctrl.abort(); } catch(e){} }, ms || 8000);
+  var opts = { cache:'no-store' };
+  if (ctrl) opts.signal = ctrl.signal;
+  return fetch(url, opts).then(function(r){
+    clearTimeout(t);
+    if (!r.ok) throw new Error('http-' + r.status);
+    return r.text();
+  }, function(err){
+    clearTimeout(t);
+    throw err;
+  });
+}
+function fetchFeed(feed){
+  var tries = [
+    function(){
+      return fetchTimeout('https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(feed.url) + '&count=18', 8000)
+        .then(function(t){
+          var j = JSON.parse(t);
+          if (!j || j.status !== 'ok') throw new Error('rss2json');
+          var items = parseJsonItems(j.items || [], feed);
+          if (!items.length) throw new Error('empty');
+          return items;
+        });
+    },
+    function(){
+      return fetchTimeout('https://api.allorigins.win/raw?url=' + encodeURIComponent(feed.url), 8000)
+        .then(function(t){
+          var items = parseFeed(t, feed);
+          if (!items.length) throw new Error('empty');
+          return items;
+        });
+    },
+    function(){
+      return fetchTimeout('https://api.allorigins.win/get?url=' + encodeURIComponent(feed.url), 8000)
+        .then(function(t){
+          var items = parseFeed(unwrapAllorigins(t), feed);
+          if (!items.length) throw new Error('empty');
+          return items;
+        });
+    },
+    function(){
+      return fetchTimeout('https://feed2json.org/convert?url=' + encodeURIComponent(feed.url), 8000)
+        .then(function(t){
+          var j = JSON.parse(t);
+          var items = parseJsonItems(j.items || [], feed);
+          if (!items.length) throw new Error('empty');
+          return items;
+        });
+    }
+  ];
   var i = 0;
   function next(){
-    if (i >= PROXIES.length) return Promise.reject(new Error('proxies'));
-    var target = PROXIES[i++](url);
-    return fetch(target, { cache:'no-store' }).then(function(r){
-      if (!r.ok) throw new Error('bad');
-      return r.text();
-    }).then(function(t){
-      if (!t || t.length < 80) throw new Error('empty');
-      return t;
-    }).catch(function(){ return next(); });
+    if (i >= tries.length) return Promise.resolve([]);
+    return tries[i++]().catch(function(){ return next(); });
   }
   return next();
 }
-
 function mergeItems(live){
   var map = {};
   var i, it, key;
@@ -715,33 +774,71 @@ function mergeItems(live){
   arr.sort(function(a,b){ return b.date - a.date; });
   return arr;
 }
-
+function persistLive(){
+  if (!state.liveOk) return;
+  var slim = state.items.slice(0, 50).map(function(it){
+    return {
+      id:it.id, title:it.title, standfirst:it.standfirst, source:it.source,
+      author:it.author, date:it.date, url:it.url, section:it.section,
+      html:(it.html || '').slice(0, 8000), full:!!it.full, sample:false, feedId:it.feedId
+    };
+  });
+  store.set('ledger.liveItems', slim);
+}
+function absorbLive(items){
+  if (!items || !items.length) return;
+  var base = state.liveOk ? state.items : [];
+  state.items = mergeItems(base.concat(items));
+  state.liveOk = true;
+  state.lastRefresh = Date.now();
+  persistLive();
+  renderHome();
+}
+function mapLimit(list, n, fn){
+  return new Promise(function(resolve){
+    var i = 0, active = 0, out = new Array(list.length);
+    function kick(){
+      if (i >= list.length && active === 0) { resolve(out); return; }
+      while (active < n && i < list.length) {
+        (function(idx){
+          active++;
+          Promise.resolve(fn(list[idx])).then(function(v){ out[idx] = v; }, function(){ out[idx] = []; })
+            .then(function(){ active--; kick(); });
+        })(i++);
+      }
+    }
+    kick();
+  });
+}
+function loadPackagedHeadlines(){
+  return fetch('headlines.json', { cache:'no-store' }).then(function(r){
+    if (!r.ok) throw new Error('pack');
+    return r.json();
+  }).then(function(data){
+    if (data && data.items && data.items.length) absorbLive(data.items);
+  }).catch(function(){});
+}
 function refreshFeeds(){
   if (state.refreshing) return Promise.resolve();
   state.refreshing = true;
   renderStatus();
   var enabled = FEEDS.filter(function(f){ return state.disabled.indexOf(f.id) === -1; });
-  var jobs = enabled.map(function(feed){
-    return fetchText(feed.url).then(function(xml){ return parseFeed(xml, feed); }).catch(function(){ return []; });
-  });
-  return Promise.all(jobs).then(function(parts){
-    var live = [];
-    for (var i=0;i<parts.length;i++) live = live.concat(parts[i]);
-    live = mergeItems(live);
-    if (live.length) {
-      state.items = live;
-      state.liveOk = true;
-    } else {
-      state.items = SAMPLE.slice();
-      state.liveOk = false;
-    }
-    state.lastRefresh = Date.now();
+  return mapLimit(enabled, 3, function(feed){
+    return fetchFeed(feed).then(function(items){
+      absorbLive(items);
+      return items;
+    });
+  }).then(function(){
     state.refreshing = false;
+    if (!state.liveOk) {
+      state.items = SAMPLE.slice();
+      state.lastRefresh = Date.now();
+    }
     renderHome();
     renderStatus();
   }, function(){
     state.refreshing = false;
-    if (!state.items.length) state.items = SAMPLE.slice();
+    if (!state.liveOk && !state.items.length) state.items = SAMPLE.slice();
     renderHome();
     renderStatus();
   });
@@ -796,8 +893,8 @@ function renderStatus(){
   var el = $('status');
   if (!el) return;
   if (state.refreshing) el.textContent = 'Refreshing free feeds…';
-  else if (state.liveOk) el.textContent = 'Updated ' + relTime(state.lastRefresh) + ' · public RSS only · tap a headline';
-  else el.textContent = 'Showing bundled samples — live feeds will appear when a proxy answers';
+  else if (state.liveOk) el.textContent = state.items.length + ' stories · updated ' + relTime(state.lastRefresh) + ' · tap a headline';
+  else el.textContent = 'Showing bundled samples — still reaching live feeds…';
 }
 function renderHome(){
   renderTabs();
@@ -810,7 +907,7 @@ function renderHome(){
   }
   var h = '';
   if (!state.liveOk && state.section === 'Top' && !state.query) {
-    h += '<div class="banner">Live journalism loads through a public CORS proxy. Until that succeeds, these sample briefings keep the page alive. Nothing here is scraped from a paywall.</div>';
+    h += '<div class="banner">Still reaching the public feeds. Sample briefings hold the page until real stories arrive — nothing here is scraped from a paywall.</div>';
   }
   var lead = list[0];
   h += storyHtml(lead, true);
@@ -1447,8 +1544,14 @@ function onScroll(){
 function init(){
   applyChrome();
   SAMPLE.forEach(enrich);
+  var cached = store.get('ledger.liveItems', null);
+  if (cached && cached.length) {
+    state.items = cached;
+    state.liveOk = true;
+  }
   $('mastDate').textContent = new Date().toLocaleDateString(undefined, { weekday:'long', day:'numeric', month:'long' });
   renderHome();
+  loadPackagedHeadlines();
   $('home').addEventListener('click', onHomeClick);
   $('tabs').addEventListener('click', onTabClick);
   $('searchBtn').onclick = function(){
