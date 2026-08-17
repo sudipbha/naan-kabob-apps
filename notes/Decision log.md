@@ -6,6 +6,19 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-08-17 — The Ledger: a free finance reader next to Earmark
+
+A new app lives at `ledger/` and on the home page: **The Ledger**. It is a
+quiet, newspaper-style reader for finance, markets and economics that only
+uses public RSS feeds (Reuters, official banks, free blogs — never the FT,
+WSJ, Bloomberg or The Economist, and never a paywall). If the live feeds
+cannot load, a small set of sample briefings still fills the page.
+
+Listen works the same way as Earmark: paste your own OpenAI key once, it
+stays on the phone, and the article is read aloud. No key? The phone’s own
+voice still works. Saved stories stay on the device. This is not part of
+the inventory apps; Sysco and Champion are unchanged.
+
 ## 2026-08-14 — Ketchup packets: the real case is 1000, not 504
 
 A photo of the case on the shelf settled it: the ketchup packets are
