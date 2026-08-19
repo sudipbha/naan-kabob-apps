@@ -191,6 +191,7 @@ const ITEMS = [
   { id: "lid16", st: "drinks", name: "Smoothie lid 16oz \xB7 FLAT", code: "KP-98-FL", alt: "KGTKP98FL pending", pack: "1000/cs", use: 0.2, lt: 2, ss: 1, cu: "sleeve", cpc: 20, cpcTBD: true, bwd: 20, bwe: 35, ing: "RPET plastic (at least 25% recycled) — flat lid with straw slot", url: "https://championproducts.com/products/rpet-straw-slot-lid-for-all-sizes-1000-cs-kp-98-fl" },
   { id: "cup9", st: "drinks", name: "Smoothie cup 9oz \xB7 kids", code: "RWPEC1209", alt: "PEC1209", pack: "1000/cs", use: 0.05, lt: 1, ss: 1, cu: "sleeve", cpc: 20, cpcTBD: true, bwd: 20, bwe: 20, ing: "Clear PET plastic — for cold drinks only", url: "https://championproducts.com/products/riteware-9-oz-clear-12-series-pet-cups-pack-of-1000-rwpec1209" },
   { id: "lid9", st: "drinks", name: "Smoothie lid 9oz", code: "RWPLS12", alt: "PLS12", pack: "1000/cs", use: 0.05, lt: 1, ss: 1, cu: "sleeve", cpc: 10, cpcTBD: true, bwd: 20, bwe: 20, ing: "Clear PET plastic with straw slot — snaps onto the 9 oz cup", url: "https://championproducts.com/products/riteware-straw-slot-lids-for-12-series-pet-cup-pack-of-1000-rwpls12" },
+  { id: "straws", st: "drinks", name: "Milkshake straws", code: "ST027000 · 6 boxes × 400", alt: "027000", pack: "2400/cs", use: 0, lt: 1, ss: 1, cu: "box", cpc: 6, bwd: 1, bwe: 1.75, ing: "White wrapped milkshake straw, 8 in — sold as bio-degradable, but the maker's spec sheet lists the material as plastic (a biodegradable plastic, not paper). Individually wrapped.", url: "https://championproducts.com/products/stone-8-wrapped-milkshake-bio-degradable-white-straw-pack-of-400-box-6-boxes-cs-st027000" },
   { id: "fp3240", st: "line", name: "Half foil pan", code: "RFFP3240", alt: "FP3240", pack: "100/cs", use: 0.7, lt: 1, ss: 1, cu: "cs", bwd: 25, bwe: 35, ing: "Aluminum foil. Half-size steam-table pan (40-gauge), full curl rim, ~120 fl oz capacity.", aln: "Disposable metal pan for hot-holding/serving/transport; oven and freezer safe; not for microwave use.", url: "https://championproducts.com/products/ritefoil-half-steam-table-foil-deep-pan-100-cs-fp3240ca" },
   { id: "fp3030", st: "line", name: "Half foil lid", code: "RFFP3030", alt: "FP3030", pack: "100/cs", use: 0.7, lt: 1, ss: 1, cu: "cs", bwd: 25, bwe: 35, ing: "Aluminum foil. Flat lid sized for half-size steam-table foil pans (~9\" x 11\", 30-gauge).", aln: "Disposable foil lid; presses onto the pan's foil rim to seal in heat; pan sold separately.", url: "https://officebuggy.ca/food-trays-containers/foil-pans-lids/foil-pan-aluminum-container-half-size-lid-100-case" },
   { id: "fp4270", st: "line", name: "Full foil pan", code: "RFFP4270", alt: "FP4270", pack: "50/cs", use: 0, lt: 1, ss: 1, tag: "CATERING", cu: "cs", bwd: 15, bwe: 25, ing: "Aluminum foil. Full-size shallow steam-table pan (70-gauge), ~216 fl oz capacity.", aln: "Disposable metal pan for hot-holding/serving/transport; oven and freezer safe; not for microwave use.", url: "https://championproducts.com/products/ritefoil-19-56-x-11-68-x-2-full-steam-foil-pan-shallow-70g-50-case-fp4270" },
@@ -234,6 +235,7 @@ const CAP = {
   polygloves: 2,
   hairnet: 1,
   mophead: 12,
+  straws: 6,
   hwt: 12,
   jrt: 16
 };
@@ -364,7 +366,7 @@ const baselineOf = (it, cpc) => {
   return { bwd, bwe, ppcu, daily: (bwd * 4 + bwe * 3) / 7 / ppcu };
 };
 const capOf = (it) => CAP[it.id] != null ? CAP[it.id] : Math.max(1, Math.round(it.use * 0.75));
-const REORD = { pc200: 1.5, mophead: 3 };
+const REORD = { pc200: 1.5, mophead: 3, straws: 2 };
 const STORE_KEY = "nk-champion-tracker-v1";
 const APP_ID = "champion";
 const WEEKLY_OK = true; // weekly-Tuesday trial toggle is offered in this app
