@@ -37,6 +37,20 @@ stays on the phone, and the article is read aloud. No key? The phone’s own
 voice still works. Saved stories stay on the device. This is not part of
 the inventory apps; Sysco and Champion are unchanged.
 
+## 2026-08-15 — Milkshake straws join the Champion app
+
+The Stone straws box on the shelf turned out to be a Champion catalog
+item (ST027000: 8-inch wrapped milkshake straws, 400 to a box, 6 boxes
+to a case), so Champion now tracks it — counted in boxes, Max 6 (one
+full case), reorder at 2, under Drinks. One honesty note baked into
+its "What's in it" panel: the product is sold as "bio-degradable", but
+the maker's own spec sheet lists the material as plastic — a
+biodegradable plastic, not paper — and the card says so plainly, the
+same way the glove cards lead with what's physically true. (Champion
+does sell a paper version, ST400140, if that ever matters.) The Sysco
+app keeps its own separate straw item (the thinner 6 mm paper straws);
+the two are different products, not a backup pair.
+
 ## 2026-08-14 — Ketchup packets: the real case is 1000, not 504
 
 A photo of the case on the shelf settled it: the ketchup packets are
