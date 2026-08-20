@@ -6,6 +6,29 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-08-20 — Claude learns Earmark by itself (a "skill")
+
+The Share-with-Claude link from earlier today works, but you had to
+paste the link and re-explain it in every new chat. The fix is a
+**skill** — a small instruction card saved to your Claude profile that
+tells Claude what Earmark is, where the shared library copy lives, and
+how to read it (last article in the list = newest; "played" = already
+listened). With it installed, "summarize the latest earmark article"
+just works in Claude or Cowork, no pasting.
+
+Before shipping it we tested three real questions two ways. With the
+skill, Claude got all three right against the live library: it
+summarized the actual newest article, listed exactly the 7 unplayed
+ones, and found the right saved article even when the question never
+said "Earmark". Without the skill it went 0 for 3 — one run decided
+Earmark was an accounting website, one gave up, and one confidently
+summarized the *wrong* document it found elsewhere.
+
+The install file was sent in the chat (tap "Save skill"). A copy of
+the skill lives in the repo at `.claude/skills/earmark-library/` so
+coding sessions here know about it too. It only sees what the app
+shares, so "Share with Claude" (gear → toggle) has to stay on.
+
 ## 2026-08-20 — Order lines are numbered, and the whole message shows
 
 Two small quality-of-life fixes to the order text, both apps. First:
