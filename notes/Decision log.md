@@ -6,6 +6,21 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-08-20 — The Sysco app gets a white Sides box twin
+
+The 28 oz sides container the restaurant packs from the Champion app
+(RitePak, 8×6 combo) has a near-identical Pactiv twin — VERSAtainer
+NC868, white base with a clear lid, same 150 to a case, microwaveable
+polypropylene — and Sysco carries the Pactiv line. So the Sysco app
+now has its own **Sides box** card: counted in sleeves like the
+Champion one, Max 12, verified against Pactiv's official product page.
+The Sysco item number is still pending from an invoice (the card says
+so); the order line carries "NC868" so the rep knows the exact product
+— and the card notes that the same container comes with a black base
+(NC868B) if white is ever out of stock. Both apps track a Sides box
+for now, same as the mop heads: once a main supplier settles, flip the
+other one to Backup in Levels so it drops out of the daily count.
+
 ## 2026-08-17 — Full free articles, always with the source named
 
 If a story is free to read, The Ledger now pulls the whole piece — not
