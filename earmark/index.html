@@ -265,13 +265,13 @@
       <p class="aiHint">Get a key at platform.openai.com under “API keys”. The key is saved only on this device, and each article costs a few cents. With the AI voice on, listening continues when you minimize the app or lock the screen.</p>
     </div>
     <div class="fRow">
-      <div class="fLab">Share with Claude — cloud copy of your library</div>
+      <div class="fLab">Sync &amp; Share with Claude</div>
       <div class="swRow" style="margin-bottom:10px">
-        <span>Sync my articles to the cloud</span>
-        <button class="sw" id="syncSw" role="switch" aria-checked="false" aria-label="Sync my articles to the cloud"></button>
+        <span>Sync my articles across devices</span>
+        <button class="sw" id="syncSw" role="switch" aria-checked="false" aria-label="Sync my articles across devices"></button>
       </div>
       <button id="claudeLinkBtn" class="btn ghost">Copy the Claude link</button>
-      <p class="aiHint">Keeps a cloud copy of your 20 most recent articles (text only — never your keys or settings) so an AI assistant can read them. Paste the Claude link into a Claude chat and ask away — summaries, analysis, anything. Anyone with the link can read these articles; turning this off stops updating the copy.</p>
+      <p class="aiHint">Turn this on on each device and they all show one library: paste an article on your computer and it appears on your phone (tap ↻ or reopen the app), with your place in each article and the played checkmarks carried over. It also keeps a cloud copy of your recent articles (text only — never your keys or settings) that Claude can read: paste the Claude link into a Claude chat and ask away. Anyone with the link can read these articles; turning this off stops this device from syncing.</p>
     </div>
     <div class="fRow">
       <div class="fLab">Speed — <span id="spdLab">1.0×</span></div>
@@ -390,8 +390,10 @@ var store = (function(){
 var saveT = null;
 function persistNow(){
   if (!store.ok) return;
+  bumpRevs();
   var arts = state.articles.slice(-50).map(function(a){
-    var out = { id:a.id, title:a.title, source:a.source, sentences:a.sentences, paras:a.paras,
+    var out = { id:a.id, g:a.g, at:a.at, rev:a.rev, title:a.title, source:a.source,
+                sentences:a.sentences, paras:a.paras,
                 words:a.words, progress:a.progress, played:a.played };
     if (a.modes) {
       var mm = {}, any = false;
@@ -421,9 +423,13 @@ function persist(){
   saveT = setTimeout(persistNow, 500);
 }
 
-/* ---- Share with Claude: one-way cloud copy of the article library ----
-   Same Supabase project and table the inventory apps already use, in a row
-   of its own. Text only — keys, settings and stats never leave the device. */
+/* ---- Sync & Share with Claude: the library follows the owner across devices ----
+   Same Supabase project and table the inventory apps already use. Two rows:
+   'earmark' stays the simple text-only copy assistants read (shape frozen —
+   the earmark-library skill and the ChatGPT Action depend on it), and
+   'earmark-sync' carries the full articles so every device with sync on
+   shows one library. Every push pulls and merges first, so two devices can
+   never overwrite each other. Keys, settings and stats never leave the device. */
 var EM_SB_URL = 'https://wtocvytzakfzetxvoduj.supabase.co';
 var EM_SB_KEY = 'sb_publishable_d8MDw2wnT_uigdaztsGnuw_rKyilUlz';
 var EM_SB_REST = EM_SB_URL + '/rest/v1/app_state';
@@ -445,30 +451,152 @@ function plainText(art, doc){
   }
   return parts.join('\n\n');
 }
-var cloudT = null, cloudLast = '';
+/* every article carries a sync identity (g — a fingerprint of its content,
+   so the same article saved on two devices counts as one), a creation time
+   (at — keeps the queue in the same order everywhere) and a change time
+   (rev — when two devices disagree about progress or played, the most
+   recently changed copy wins) */
+function gFor(a){
+  var s = a.title + '|' + a.words + '|' + (a.sentences[0] ? a.sentences[0].t : '');
+  var h = 5381;
+  for (var i=0;i<s.length;i++) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0;
+  return 'g' + h.toString(36) + s.length.toString(36);
+}
+// change detection is central: instead of touching rev at every mutation
+// site, persistNow compares a cheap signature of each article against the
+// last one it saw and bumps rev only when something really changed
+var syncSig = {};
+function articleSig(a){
+  var m = 0;
+  if (a.modes) {
+    m = [];
+    for (var k in a.modes) if (a.modes[k]) m.push(k + ':' + (a.modes[k].progress||0) + ':' + (a.modes[k].played?1:0) + ':' + (a.modes[k].text||'').length);
+    m.sort();
+  }
+  return JSON.stringify([a.title, a.source, a.progress||0, a.played?1:0, a.words, a.sentences.length, m]);
+}
+function primeSig(a){ syncSig[a.g] = articleSig(a); }
+function bumpRevs(){
+  for (var i=0;i<state.articles.length;i++){
+    var a = state.articles[i];
+    if (!a.g) a.g = gFor(a);
+    var s = articleSig(a);
+    if (syncSig[a.g] !== undefined && syncSig[a.g] !== s) a.rev = Date.now();
+    syncSig[a.g] = s;
+  }
+}
+function syncCopy(a){
+  var out = { g:a.g, at:a.at||0, rev:a.rev||0, title:a.title, source:a.source,
+              sentences:a.sentences, paras:a.paras, words:a.words,
+              progress:a.progress||0, played:!!a.played };
+  if (a.modes) {
+    var mm = {}, any = false;
+    for (var k in a.modes) {
+      if (a.modes[k] && a.modes[k].text) {
+        mm[k] = { text:a.modes[k].text, progress:a.modes[k].progress||0, played:!!a.modes[k].played };
+        any = true;
+      }
+    }
+    if (any) out.modes = mm;
+  }
+  return out;
+}
+var cloudT = null, cloudLast = '', cloudBusy = false;
 function cloudPushSoon(){
   if (!state.syncOn) return;
   if (cloudT) clearTimeout(cloudT);
   cloudT = setTimeout(cloudPushNow, 4000);
 }
+function cloudFetchRemote(){
+  return fetch(EM_SB_REST + '?id=eq.earmark-sync&select=data', {
+    headers: { apikey: EM_SB_KEY }
+  }).then(function(res){
+    if (!res.ok) return null;
+    return res.json().then(function(rows){
+      var d = rows && rows[0] && rows[0].data;
+      return (d && Array.isArray(d.articles)) ? d.articles : null;
+    });
+  }).catch(function(){ return null; });
+}
+// fold the cloud library into this device's; returns how many arrived new
+function mergeRemote(remote){
+  if (!remote) return 0;
+  var byG = {}, i, added = 0, changed = false;
+  for (i=0;i<state.articles.length;i++) byG[state.articles[i].g] = state.articles[i];
+  for (i=0;i<remote.length;i++){
+    var r = remote[i];
+    if (!r || typeof r.g !== 'string' || !Array.isArray(r.sentences) || !r.sentences.length || !Array.isArray(r.paras)) continue;
+    var l = byG[r.g];
+    if (!l) {
+      var fresh = { id: uid++, g: r.g, at: r.at || Date.now(), rev: r.rev || 0,
+                    title: String(r.title || 'Untitled'), source: String(r.source || ''),
+                    sentences: r.sentences, paras: r.paras, words: r.words || 0,
+                    progress: r.progress || 0, played: !!r.played };
+      if (r.modes && typeof r.modes === 'object') fresh.modes = r.modes;
+      state.articles.push(fresh);
+      byG[r.g] = fresh;
+      primeSig(fresh);
+      added++; changed = true;
+      continue;
+    }
+    if ((r.rev || 0) <= (l.rev || 0)) continue;
+    // never reshape the article that is playing right now — the next sync gets it
+    if (state.playing && state.currentId === l.id) continue;
+    l.title = String(r.title || l.title); l.source = String(r.source || l.source);
+    l.sentences = r.sentences; l.paras = r.paras; l.words = r.words || l.words;
+    l.progress = r.progress || 0; l.played = !!r.played; l.rev = r.rev || 0;
+    if (r.at) l.at = r.at;
+    if (r.modes && typeof r.modes === 'object') l.modes = r.modes;
+    primeSig(l);
+    changed = true;
+  }
+  if (changed) {
+    state.articles.sort(function(x, y){ return (x.at || 0) - (y.at || 0); });
+    render();
+    persist();
+  }
+  return added;
+}
+// on open / refresh: bring in what other devices added, and say so
+function cloudPull(){
+  if (!state.syncOn) return Promise.resolve(0);
+  return cloudFetchRemote().then(function(remote){
+    var added = mergeRemote(remote);
+    if (added) toast(added === 1 ? 'Synced 1 article from your other device' : 'Synced ' + added + ' articles from your other device', 3600);
+    return added;
+  });
+}
 function cloudPushNow(){
   if (!state.syncOn) return;
-  var arts = state.articles.slice(-20).map(function(a){
-    return { title: a.title, source: a.source, played: !!a.played, text: plainText(a, a) };
+  if (cloudBusy) { cloudPushSoon(); return; }
+  cloudBusy = true;
+  // pull first so this push carries the union — never overwrites another device
+  cloudFetchRemote().then(function(remote){
+    mergeRemote(remote);
+  }).then(function(){
+    cloudBusy = false;
+    if (!state.syncOn) return;
+    var readable = state.articles.slice(-20).map(function(a){
+      return { title: a.title, source: a.source, played: !!a.played, text: plainText(a, a) };
+    });
+    var now = new Date().toISOString();
+    var body = JSON.stringify([
+      { id: 'earmark',
+        data: { v: 1, note: 'Earmark newsletter library — articles the owner listens to', articles: readable },
+        updated_at: now },
+      { id: 'earmark-sync',
+        data: { v: 1, articles: state.articles.slice(-50).map(syncCopy) },
+        updated_at: now }
+    ]);
+    if (body === cloudLast) return;
+    fetch(EM_SB_REST + '?on_conflict=id', {
+      method: 'POST',
+      headers: { apikey: EM_SB_KEY, 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates' },
+      body: body
+    }).then(function(res){
+      if (res.ok) cloudLast = body;
+    }, function(){});
   });
-  var body = JSON.stringify({
-    id: 'earmark',
-    data: { v: 1, note: 'Earmark newsletter library — articles the owner listens to', articles: arts },
-    updated_at: new Date().toISOString()
-  });
-  if (body === cloudLast) return;
-  fetch(EM_SB_REST + '?on_conflict=id', {
-    method: 'POST',
-    headers: { apikey: EM_SB_KEY, 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates' },
-    body: body
-  }).then(function(res){
-    if (res.ok) cloudLast = body;
-  }, function(){});
 }
 function restore(){
   var saved = store.get('earmark.v1');
@@ -498,6 +626,12 @@ function restore(){
       sentences: a.sentences, paras: a.paras, words: a.words || 0,
       progress: a.progress || 0, played: !!a.played
     };
+    // articles saved before sync existed get their sync fields here: a
+    // stable synthetic creation time (keeps their order), rev 0 (any real
+    // change on another device wins), and a content fingerprint
+    rebuilt.at = (typeof a.at === 'number' && a.at) ? a.at : (1600000000000 + i * 60000);
+    rebuilt.rev = (typeof a.rev === 'number') ? a.rev : 0;
+    rebuilt.g = (typeof a.g === 'string' && a.g) ? a.g : gFor(rebuilt);
     if (a.modes && typeof a.modes === 'object') {
       rebuilt.modes = {};
       for (var mk in a.modes) {
@@ -507,6 +641,7 @@ function restore(){
       }
     }
     state.articles.push(rebuilt);
+    primeSig(rebuilt);
     if (state.articles[state.articles.length-1].id > maxId) maxId = state.articles[state.articles.length-1].id;
   }
   uid = maxId + 1;
@@ -740,10 +875,13 @@ function buildArticle(raw, opts){
   }
   var words = 0;
   for (var k=0;k<sentences.length;k++) words += sentences[k].w;
-  return {
+  var art = {
     id: uid++, title: title.trim(), source: opts.source || 'Pasted text',
-    sentences: sentences, paras: paras, words: words, progress: 0, played: false
+    sentences: sentences, paras: paras, words: words, progress: 0, played: false,
+    at: Date.now(), rev: Date.now()
   };
+  art.g = gFor(art);
+  return art;
 }
 
 /* ---- segment generated mode text the same way articles are segmented ---- */
@@ -2265,9 +2403,9 @@ function init(){
     if (state.syncOn) {
       cloudLast = '';
       cloudPushNow();
-      toast('Your articles will sync to the cloud — copy the Claude link below and paste it into any Claude chat', 5200);
+      toast('Syncing — your library now follows you across devices, and Claude can read it via the link below', 5200);
     } else {
-      toast('Sync is off — the cloud copy will no longer update', 3200);
+      toast('Sync is off — this device keeps its own library now', 3200);
     }
   });
   $('claudeLinkBtn').addEventListener('click', function(){
@@ -2430,8 +2568,9 @@ function init(){
     persist();
   }
   if (store.ok) {
-    $('footNote').textContent = 'Your queue, progress, and settings are saved on this device. ' +
-      'The device voices only play while the app is on screen — under the gear icon at the top right you can ' +
+    $('footNote').textContent = 'Your queue, progress, and settings are saved on this device — and with sync ' +
+      'turned on under the gear icon, your articles follow you between your phone and computer. ' +
+      'The device voices only play while the app is on screen — under the same gear icon you can ' +
       'turn on a natural AI voice (a free one that runs on your phone, or the OpenAI one) that keeps reading ' +
       'when you minimize the app or lock the phone.';
   }
@@ -2439,6 +2578,11 @@ function init(){
   render();
   renderStats();
   autoGrow();
+
+  // bring in anything saved on other devices (the ↻ button reloads the
+  // page, so a refresh lands here too), then push back so this device's
+  // articles reach the others even if nothing changes here this visit
+  cloudPull().then(function(){ if (state.syncOn) cloudPushSoon(); });
 
   // ?add=<url> — auto-queue a link (used by shortcuts and shared links from email)
   try {

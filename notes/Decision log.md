@@ -6,6 +6,30 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-08-20 — Earmark articles now follow you across devices
+
+Until today each browser kept its own separate Earmark library — an
+article pasted on the desktop stayed on the desktop, and the cloud copy
+Claude reads just mirrored whichever device pushed last. Discovered the
+hard way: a desktop paste that Claude simply couldn't see.
+
+Now the sync toggle (gear → "Sync my articles across devices") does the
+full job. Turn it on on each device and they all show **one library**:
+articles added anywhere appear everywhere (reopen the app or tap ↻),
+your place in each article and the played checkmarks carry over, and
+Claude reads the combined set. Under the hood every article carries a
+content fingerprint — so the same article saved on two devices counts
+as once, never twice — and every device merges the cloud copy into its
+own before writing back, so two devices can never overwrite each other;
+if they disagree about progress, the most recent change wins. The safety
+rule stays: article text only — keys, settings and stats never leave the
+device, and anyone with the link can read the shared articles.
+
+Tested with a simulated phone and desktop sharing a mock cloud: both
+directions sync, no duplicates, played marks carry, the reading format
+Claude depends on is unchanged, and the full 12-test regression suite
+still passes.
+
 ## 2026-08-20 — Claude learns Earmark by itself (a "skill")
 
 The Share-with-Claude link from earlier today works, but you had to
