@@ -6,6 +6,21 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-08-20 — Earmark asks about sync itself (one tap, once per device)
+
+Fair question from the owner: "why do I have to click on sync?" The
+answer is that Earmark is a public web page and the cloud library is
+one shared pot — if sync switched itself on for everyone who opened the
+link, any stranger visiting the app would silently merge their pasted
+articles into the owner's library, and read the owner's. The one tap
+per device is what says "this device is mine."
+
+So instead of hiding the switch in settings, the app now asks up front:
+a small card on the home screen — "Sync this device?" — with a one-tap
+**Turn on sync** button, shown until the device either says yes or "Not
+now" (which is remembered; the switch stays under the gear for later).
+One tap, once per device, and after that everything is automatic.
+
 ## 2026-08-20 — Earmark articles now follow you across devices
 
 Until today each browser kept its own separate Earmark library — an
