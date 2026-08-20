@@ -1,0 +1,42 @@
+{
+  "skill_name": "earmark-library",
+  "evals": [
+    {
+      "id": 0,
+      "name": "summarize-latest",
+      "prompt": "Summarize the latest article in my Earmark library.",
+      "expected_output": "Fetches the cloud library, picks the LAST article in the list, and summarizes its actual text, naming its title and source.",
+      "files": [],
+      "assertions": [
+        "Actually fetched the live library: the answer names a real article title from the cloud copy, not a guess or a refusal",
+        "Picked the newest article: the article summarized is the LAST one in the library's list",
+        "Summary is grounded in the article's real text: it contains concrete details consistent with that article's content, not generic filler",
+        "No dead-end: the answer does not ask the user what Earmark is, ask for a link, or say it has no access to the library"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "unplayed-queue",
+      "prompt": "What's still unplayed in my earmark queue?",
+      "expected_output": "Fetches the library and lists exactly the articles with played:false, in order, by title.",
+      "files": [],
+      "assertions": [
+        "Lists the unplayed articles: every unplayed title in the library appears in the answer",
+        "No false positives: no played article is listed as unplayed",
+        "No dead-end: the answer does not ask the user what Earmark is, ask for a link, or say it has no access to the library"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "saved-article-question",
+      "prompt": "I saved an article about running 1,000 AI agents overnight — what did it actually say? Give me the gist.",
+      "expected_output": "Recognizes this refers to the saved reading library even though 'Earmark' isn't named, finds the matching article, and answers from its real text.",
+      "files": [],
+      "assertions": [
+        "Found the saved article: the answer identifies the matching article from the library even though 'Earmark' was never named",
+        "Gist is grounded: the answer relays concrete points consistent with that article's actual text, not generic speculation about the topic",
+        "No dead-end: the answer does not ask the user to paste the article, say it can't find it, or answer purely from general knowledge without the library"
+      ]
+    }
+  ]
+}
