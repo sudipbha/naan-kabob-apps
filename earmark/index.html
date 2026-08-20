@@ -265,6 +265,15 @@
       <p class="aiHint">Get a key at platform.openai.com under “API keys”. The key is saved only on this device, and each article costs a few cents. With the AI voice on, listening continues when you minimize the app or lock the screen.</p>
     </div>
     <div class="fRow">
+      <div class="fLab">Share with Claude — cloud copy of your library</div>
+      <div class="swRow" style="margin-bottom:10px">
+        <span>Sync my articles to the cloud</span>
+        <button class="sw" id="syncSw" role="switch" aria-checked="false" aria-label="Sync my articles to the cloud"></button>
+      </div>
+      <button id="claudeLinkBtn" class="btn ghost">Copy the Claude link</button>
+      <p class="aiHint">Keeps a cloud copy of your 20 most recent articles (text only — never your keys or settings) so an AI assistant can read them. Paste the Claude link into a Claude chat and ask away — summaries, analysis, anything. Anyone with the link can read these articles; turning this off stops updating the copy.</p>
+    </div>
+    <div class="fRow">
       <div class="fLab">Speed — <span id="spdLab">1.0×</span></div>
       <input type="range" id="spdRange" min="0.5" max="3" step="0.05" value="1">
       <div class="chips" id="spdChips"></div>
@@ -332,7 +341,8 @@ var state = {
   aiKey: null,
   aiVoice: 'nova',
   kkOn: false,
-  kkVoice: 'af_heart'
+  kkVoice: 'af_heart',
+  syncOn: false
 };
 /* listening modes: each is its own track over the current article */
 var MODES = [
@@ -397,17 +407,68 @@ function persistNow(){
   });
   var blob = { v:1, rate:state.rate, voiceURI:state.voiceURI, autoplay:state.autoplay,
                aiOn:state.aiOn, aiKey:state.aiKey, aiVoice:state.aiVoice,
-               kkOn:state.kkOn, kkVoice:state.kkVoice,
+               kkOn:state.kkOn, kkVoice:state.kkVoice, syncOn:state.syncOn,
                wordHl:state.wordHl, stats:stats, articles:arts };
   if (!store.set('earmark.v1', blob)) {
     blob.articles = arts.filter(function(a){ return !a.played; });
     store.set('earmark.v1', blob);
   }
+  cloudPushSoon();
 }
 function persist(){
   if (!store.ok) return;
   if (saveT) clearTimeout(saveT);
   saveT = setTimeout(persistNow, 500);
+}
+
+/* ---- Share with Claude: one-way cloud copy of the article library ----
+   Same Supabase project and table the inventory apps already use, in a row
+   of its own. Text only — keys, settings and stats never leave the device. */
+var EM_SB_URL = 'https://wtocvytzakfzetxvoduj.supabase.co';
+var EM_SB_KEY = 'sb_publishable_d8MDw2wnT_uigdaztsGnuw_rKyilUlz';
+var EM_SB_REST = EM_SB_URL + '/rest/v1/app_state';
+function claudeLink(){
+  return EM_SB_REST + '?id=eq.earmark&select=data,updated_at&apikey=' + EM_SB_KEY;
+}
+function plainText(art, doc){
+  // the article as displayed: paragraphs separated by blank lines, without
+  // doubling the title when the first paragraph is the title
+  var isFull = doc === art;
+  var start = 0;
+  if (isFull && doc.paras.length && doc.paras[0].heading && doc.paras[0].idxs.length === 1 &&
+      doc.sentences[doc.paras[0].idxs[0]].t.replace(/[.!]$/,'').trim() === art.title) start = 1;
+  var parts = [];
+  for (var i=start;i<doc.paras.length;i++){
+    var p = doc.paras[i], line = [];
+    for (var j=0;j<p.idxs.length;j++) line.push(doc.sentences[p.idxs[j]].t);
+    parts.push(line.join(' '));
+  }
+  return parts.join('\n\n');
+}
+var cloudT = null, cloudLast = '';
+function cloudPushSoon(){
+  if (!state.syncOn) return;
+  if (cloudT) clearTimeout(cloudT);
+  cloudT = setTimeout(cloudPushNow, 4000);
+}
+function cloudPushNow(){
+  if (!state.syncOn) return;
+  var arts = state.articles.slice(-20).map(function(a){
+    return { title: a.title, source: a.source, played: !!a.played, text: plainText(a, a) };
+  });
+  var body = JSON.stringify({
+    id: 'earmark',
+    data: { v: 1, note: 'Earmark newsletter library — articles the owner listens to', articles: arts },
+    updated_at: new Date().toISOString()
+  });
+  if (body === cloudLast) return;
+  fetch(EM_SB_REST + '?on_conflict=id', {
+    method: 'POST',
+    headers: { apikey: EM_SB_KEY, 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates' },
+    body: body
+  }).then(function(res){
+    if (res.ok) cloudLast = body;
+  }, function(){});
 }
 function restore(){
   var saved = store.get('earmark.v1');
@@ -421,6 +482,7 @@ function restore(){
   if (typeof saved.kkVoice === 'string' && saved.kkVoice) state.kkVoice = saved.kkVoice;
   state.kkOn = saved.kkOn === true;
   if (state.kkOn) state.aiOn = false;
+  state.syncOn = saved.syncOn === true;
   state.wordHl = saved.wordHl !== false;
   if (saved.stats && typeof saved.stats === 'object') {
     if (saved.stats.days && typeof saved.stats.days === 'object') stats.days = saved.stats.days;
@@ -1953,6 +2015,8 @@ function openSheet(){
   $('kkVoiceSel').innerHTML = kh;
   $('kkSw').classList.toggle('on', state.kkOn);
   $('kkSw').setAttribute('aria-checked', String(state.kkOn));
+  $('syncSw').classList.toggle('on', state.syncOn);
+  $('syncSw').setAttribute('aria-checked', String(state.syncOn));
   $('spdRange').value = state.rate;
   $('spdLab').textContent = fmtRate(state.rate);
   renderSpeedChips();
@@ -2034,19 +2098,7 @@ function init(){
   $('copyBtn').addEventListener('click', function(){
     var art = cur(), doc = curDoc();
     if (!art || !doc) { toast('Open an article first'); return; }
-    // rebuild the text as shown: paragraphs separated by blank lines, and
-    // skip the first paragraph when it is just the title shown in the h1
-    var isFull = doc === art;
-    var start = 0;
-    if (isFull && doc.paras.length && doc.paras[0].heading && doc.paras[0].idxs.length === 1 &&
-        doc.sentences[doc.paras[0].idxs[0]].t.replace(/[.!]$/,'').trim() === art.title) start = 1;
-    var parts = [];
-    for (var i=start;i<doc.paras.length;i++){
-      var p = doc.paras[i], line = [];
-      for (var j=0;j<p.idxs.length;j++) line.push(doc.sentences[p.idxs[j]].t);
-      parts.push(line.join(' '));
-    }
-    var text = art.title + '\n\n' + parts.join('\n\n');
+    var text = art.title + '\n\n' + plainText(art, doc);
     if (!(navigator.clipboard && navigator.clipboard.writeText)) {
       toast('This browser doesn’t allow copying — select the text by hand');
       return;
@@ -2204,6 +2256,27 @@ function init(){
     aiReset();
     persist();
     if (state.playing) speakFrom(state.idx);
+  });
+  $('syncSw').addEventListener('click', function(){
+    state.syncOn = !state.syncOn;
+    this.classList.toggle('on', state.syncOn);
+    this.setAttribute('aria-checked', String(state.syncOn));
+    persist();
+    if (state.syncOn) {
+      cloudLast = '';
+      cloudPushNow();
+      toast('Your articles will sync to the cloud — copy the Claude link below and paste it into any Claude chat', 5200);
+    } else {
+      toast('Sync is off — the cloud copy will no longer update', 3200);
+    }
+  });
+  $('claudeLinkBtn').addEventListener('click', function(){
+    var snippet = 'My Earmark newsletter library (JSON): ' + claudeLink() + '\n\n' +
+      'Fetch this link to read my saved articles, then help me with them — summaries, analysis, questions.';
+    if (!(navigator.clipboard && navigator.clipboard.writeText)) { toast('Copying isn’t allowed here — the link is in the settings of the app'); return; }
+    navigator.clipboard.writeText(snippet).then(function(){
+      toast(state.syncOn ? 'Claude link copied — paste it into a Claude chat' : 'Claude link copied — remember to turn sync ON above', 4200);
+    }, function(){ toast('Couldn’t copy — try again'); });
   });
   $('kkVoiceSel').addEventListener('change', function(){
     state.kkVoice = this.value || 'af_heart';
