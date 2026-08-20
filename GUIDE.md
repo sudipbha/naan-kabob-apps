@@ -317,7 +317,11 @@ estimate is never mistaken for a fresh count.
    on every change, so recounts, "to order" edits and Max changes show up
    in the text immediately, however much back-and-forth happens before
    sending. Each line carries the item's order code plus the
-   alternate/SUPC number when one is known ("Name (CODE · ALT) — N cs").
+   alternate/SUPC number when one is known, and item lines are numbered
+   so the rep can tick them off ("1. Name (CODE · ALT) — N cs"); the
+   emergency-order text numbers its lines the same way. The text box
+   sizes itself to the full message (wrapped lines included), so nothing
+   hides behind an inner scroll.
    Free text goes in the separate **"Note for the rep"** box under the
    text: whatever is typed there is appended to the end of the message as
    "Note for the rep: …" and **persists per device** (stored under

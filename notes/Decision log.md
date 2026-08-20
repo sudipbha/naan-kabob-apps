@@ -6,6 +6,18 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-08-20 — Order lines are numbered, and the whole message shows
+
+Two small quality-of-life fixes to the order text, both apps. First:
+every item line now starts with its number ("1. Water bottles … 2.
+Apple slices …"), so the rep can tick items off and nobody loses their
+place reading a 12-item order aloud — emergency orders count their
+lines the same way. Second: the text box used to size itself by
+counting line breaks only, so on a phone — where long lines wrap — the
+box came up short and the top of the message quietly hid behind an
+inner scroll. It now accounts for wrapped lines and shows the whole
+message, top to bottom.
+
 ## 2026-08-20 — The Sysco app gets a white Sides box twin
 
 The 28 oz sides container the restaurant packs from the Champion app
