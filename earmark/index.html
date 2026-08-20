@@ -197,6 +197,14 @@
       <input type="file" id="pdfInp" accept="application/pdf,.pdf" hidden>
     </div>
 
+    <div id="syncNudge" class="addCard" hidden>
+      <p style="margin:0 0 10px"><strong>Sync this device?</strong> Your articles, your place in them, and the played checkmarks will follow you between your phone and computer — and Claude can read your library. Anyone with your personal link could read the shared copy. You can turn this off any time under the gear icon.</p>
+      <div class="addRow" style="justify-content:flex-end">
+        <button id="nudgeNo" class="btn ghost">Not now</button>
+        <button id="nudgeYes" class="btn primary">Turn on sync</button>
+      </div>
+    </div>
+
     <div class="qHead"><h2>Up next</h2><span id="qMeta"></span></div>
     <div id="queue"></div>
     <p class="tip" id="emptyTip" hidden>Your queue is empty.<br>Paste a link or an article above to get started.</p>
@@ -342,7 +350,8 @@ var state = {
   aiVoice: 'nova',
   kkOn: false,
   kkVoice: 'af_heart',
-  syncOn: false
+  syncOn: false,
+  syncAsked: false
 };
 /* listening modes: each is its own track over the current article */
 var MODES = [
@@ -409,7 +418,7 @@ function persistNow(){
   });
   var blob = { v:1, rate:state.rate, voiceURI:state.voiceURI, autoplay:state.autoplay,
                aiOn:state.aiOn, aiKey:state.aiKey, aiVoice:state.aiVoice,
-               kkOn:state.kkOn, kkVoice:state.kkVoice, syncOn:state.syncOn,
+               kkOn:state.kkOn, kkVoice:state.kkVoice, syncOn:state.syncOn, syncAsked:state.syncAsked,
                wordHl:state.wordHl, stats:stats, articles:arts };
   if (!store.set('earmark.v1', blob)) {
     blob.articles = arts.filter(function(a){ return !a.played; });
@@ -598,6 +607,13 @@ function cloudPushNow(){
     }, function(){});
   });
 }
+/* the one-tap sync ask on the home screen: shown until this device either
+   turns sync on or says "Not now". Sync can't switch itself on — the app is
+   a public page, and without this tap any stranger who opened the link
+   would merge their articles into the owner's shared library. */
+function updateSyncNudge(){
+  $('syncNudge').hidden = !(store.ok && !state.syncOn && !state.syncAsked);
+}
 function restore(){
   var saved = store.get('earmark.v1');
   if (!saved || typeof saved !== 'object') return false;
@@ -611,6 +627,7 @@ function restore(){
   state.kkOn = saved.kkOn === true;
   if (state.kkOn) state.aiOn = false;
   state.syncOn = saved.syncOn === true;
+  state.syncAsked = saved.syncAsked === true;
   state.wordHl = saved.wordHl !== false;
   if (saved.stats && typeof saved.stats === 'object') {
     if (saved.stats.days && typeof saved.stats.days === 'object') stats.days = saved.stats.days;
@@ -2395,8 +2412,24 @@ function init(){
     persist();
     if (state.playing) speakFrom(state.idx);
   });
+  $('nudgeYes').addEventListener('click', function(){
+    state.syncOn = true; state.syncAsked = true;
+    updateSyncNudge();
+    persist();
+    cloudLast = '';
+    cloudPull().then(function(){ if (state.syncOn) cloudPushSoon(); });
+    toast('Syncing — your library now follows you across devices, and Claude can read it', 5200);
+  });
+  $('nudgeNo').addEventListener('click', function(){
+    state.syncAsked = true;
+    updateSyncNudge();
+    persist();
+    toast('No problem — the sync switch lives under the gear icon if you change your mind', 3600);
+  });
   $('syncSw').addEventListener('click', function(){
     state.syncOn = !state.syncOn;
+    state.syncAsked = true;
+    updateSyncNudge();
     this.classList.toggle('on', state.syncOn);
     this.setAttribute('aria-checked', String(state.syncOn));
     persist();
@@ -2578,6 +2611,7 @@ function init(){
   render();
   renderStats();
   autoGrow();
+  updateSyncNudge();
 
   // bring in anything saved on other devices (the ↻ button reloads the
   // page, so a refresh lands here too), then push back so this device's
