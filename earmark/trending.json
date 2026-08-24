@@ -1,0 +1,147 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-24T05:24:15.607Z",
+  "sourceCount": 3,
+  "items": [
+    {
+      "id": "f65c07c326de973a",
+      "title": "Multilingual Knowledge Transfer under Data Constraints via Lexical Interventions",
+      "url": "https://machinelearning.apple.com/research/multilingual-knowledge-transfer-lexical-interventions",
+      "source": "Apple Machine Learning Research",
+      "author": "",
+      "publishedAt": "2026-08-20T00:00:00.000Z",
+      "excerpt": "Cross-lingual knowledge transfer is critical for building high-performing multilingual language models for languages with insufficient training data. When target language data is scarce, the knowledge required for many downstream tasks involving scientific reasoning, commonsense inference, and world knowledge must be a",
+      "topics": [
+        "Training",
+        "Inference",
+        "Reasoning"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with training and inference signals from a curated high-signal source.",
+      "score": 68,
+      "imageUrl": null
+    },
+    {
+      "id": "1b555e620b3576f2",
+      "title": "GRPO Beyond English: A Large-Scale Study of GRPO in Non-English and Multilingual Settings",
+      "url": "https://machinelearning.apple.com/research/grpo-beyond-english",
+      "source": "Apple Machine Learning Research",
+      "author": "",
+      "publishedAt": "2026-08-18T00:00:00.000Z",
+      "excerpt": "Reinforcement Learning with Verifiable Rewards (RLVR), often optimized with Group Relative Policy Optimization (GRPO), has become a central recipe for improving the reasoning capabilities of pretrained language models but current studies remain heavily English-centric. We conduct a large-scale empirical study of multil",
+      "topics": [
+        "Research",
+        "Training",
+        "Reasoning"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
+      "score": 65,
+      "imageUrl": null
+    },
+    {
+      "id": "df8f12302a5b421a",
+      "title": "Offering Zero Data Retention for frontier models",
+      "url": "https://openai.com/index/offering-zero-data-retention-for-frontier-models",
+      "source": "OpenAI",
+      "author": "",
+      "publishedAt": "2026-08-19T19:00:00.000Z",
+      "excerpt": "OpenAI reaffirms Zero Data Retention for eligible API customers and previews Private Safety Processing for advanced AI safety without compromising data privacy.",
+      "topics": [
+        "Safety",
+        "Engineering"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with safety and engineering signals from a curated high-signal source.",
+      "score": 64,
+      "imageUrl": null
+    },
+    {
+      "id": "c6ddfc87b1f68178",
+      "title": "MindTopo reveals VLMs’ spatial reasoning abilities",
+      "url": "https://microsoft.com/en-us/research/blog/mindtopo-reveals-vlms-spatial-reasoning-abilities/",
+      "source": "Microsoft Research",
+      "author": "Yunfei Ge, Anbang Liu, Qineng Wang, Johnalbert Garnica, Zihan Wang, Reuben Tan, Jianfeng Gao, Ruohan Zhang, Yining Hong, Jiajun Wu, Manling Li",
+      "publishedAt": "2026-08-12T16:00:00.000Z",
+      "excerpt": "A path, a fence, a knot. MindTopo sets a new benchmark for testing how AI understands topological relationships and highlights new opportunities to strengthen spatial reasoning and planning.",
+      "topics": [
+        "Evaluations",
+        "Reasoning"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with evaluation and reasoning signals from a curated high-signal source.",
+      "score": 52,
+      "imageUrl": null
+    },
+    {
+      "id": "081601c279be28d3",
+      "title": "Expanding Daybreak as the Cyber Defense Window Narrows",
+      "url": "https://openai.com/index/expanding-daybreak-as-the-cyber-defense-window-narrows",
+      "source": "OpenAI",
+      "author": "",
+      "publishedAt": "2026-08-10T10:00:00.000Z",
+      "excerpt": "Meet GPT-5.6-Cyber, OpenAI’s cybersecurity-specific model available through Daybreak Red for authorized vulnerability research, exploit validation, and security testing.",
+      "topics": [
+        "Research",
+        "Security"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with research and security signals from a curated high-signal source.",
+      "score": 50,
+      "imageUrl": null
+    },
+    {
+      "id": "deec56a13e2b9b57",
+      "title": "How we built a realtime system for responsive voice AI in six months",
+      "url": "https://openai.com/index/continuous-voice-interaction-with-gpt-live",
+      "source": "OpenAI",
+      "author": "",
+      "publishedAt": "2026-08-03T07:00:00.000Z",
+      "excerpt": "GPT-Live enables continuous voice interaction with AI, using a turnless speech model and low-latency architecture for faster, more natural conversations.",
+      "topics": [
+        "Inference",
+        "Models",
+        "Multimodal"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with inference and architecture signals from a curated high-signal source.",
+      "score": 44,
+      "imageUrl": null
+    },
+    {
+      "id": "c99ec862b4e71599",
+      "title": "Third-party cyber evaluations involving OpenAI models",
+      "url": "https://openai.com/index/third-party-cyber-evaluations-involving-openai-models",
+      "source": "OpenAI",
+      "author": "",
+      "publishedAt": "2026-08-04T19:00:00.000Z",
+      "excerpt": "OpenAI explains recent third-party cybersecurity evaluation incidents and outlines new safeguards to strengthen AI model testing and evaluation.",
+      "topics": [
+        "Evaluations",
+        "Security"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with evaluation and security signals from a curated high-signal source.",
+      "score": 42,
+      "imageUrl": null
+    },
+    {
+      "id": "26cdbd7021e7b620",
+      "title": "Orchard: An open framework for scalable agentic AI",
+      "url": "https://microsoft.com/en-us/research/blog/orchard-an-open-framework-for-scalable-agentic-ai/",
+      "source": "Microsoft Research",
+      "author": "Baolin Peng, Wenlin Yao, Qianhui Wu, Hao Cheng, Jianfeng Gao",
+      "publishedAt": "2026-08-03T16:00:00.000Z",
+      "excerpt": "Orchard is an open-source framework for the research community to train and evaluate AI agents across task types. It reduces complexity while supporting strong performance from smaller models by enabling researchers to reuse the same infrastructure.",
+      "topics": [
+        "Research",
+        "Agents",
+        "Engineering"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with research and agents signals from a curated high-signal source.",
+      "score": 42,
+      "imageUrl": null
+    }
+  ]
+}

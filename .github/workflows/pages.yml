@@ -5,16 +5,16 @@ name: Deploy to GitHub Pages
 #   /          -> landing page (index.html)
 #   /sysco/    -> Sysco tracker
 #   /champion/ -> Champion tracker
+#   /earmark/  -> Earmark reading desk
 
 on:
   push:
     branches: [main]
   workflow_dispatch:
-  # Auto-merge merges PRs with GITHUB_TOKEN, which does NOT trigger the push
-  # event above. workflow_run fires after the auto-merge workflow finishes,
-  # so merged PRs still publish to Pages without a manual run.
+  # GITHUB_TOKEN commits do NOT trigger the push event above. workflow_run
+  # publishes after either auto-merge or the scheduled Earmark feed refresh.
   workflow_run:
-    workflows: ["Auto-merge phone PRs"]
+    workflows: ["Auto-merge phone PRs", "Refresh Earmark trending"]
     types: [completed]
 
 permissions:
@@ -29,6 +29,7 @@ concurrency:
 
 jobs:
   deploy:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -66,13 +67,20 @@ jobs:
       # Post-deploy smoke test: the live apps must actually serve the app code.
       - name: Smoke-test live site
         run: |
-          for app in sysco champion; do
+          smoke() {
+            app="$1"
+            marker="$2"
             for i in 1 2 3; do
               body=$(curl -fsSL "https://sudipbha.github.io/naan-kabob-apps/$app/" || true)
-              if echo "$body" | grep -q "ChampionTracker"; then
-                echo "$app OK"; continue 2
+              if echo "$body" | grep -Fq "$marker"; then
+                echo "$app OK"
+                return 0
               fi
               echo "$app not ready yet (attempt $i)"; sleep 20
             done
-            echo "SMOKE FAIL: $app did not serve the app"; exit 1
-          done
+            echo "SMOKE FAIL: $app did not serve marker: $marker"
+            return 1
+          }
+          smoke sysco "ChampionTracker"
+          smoke champion "ChampionTracker"
+          smoke earmark "Trending AI"

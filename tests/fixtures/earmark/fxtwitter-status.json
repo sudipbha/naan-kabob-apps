@@ -1,0 +1,30 @@
+{
+  "code": 200,
+  "status": {
+    "id": "2090000000000000777",
+    "text": "A long-form technical article about visual reasoning.",
+    "author": { "name": "Earmark Fixture", "screen_name": "earmark_fixture" },
+    "article": {
+      "id": "2090000000000000123",
+      "title": "Visual reasoning systems from first principles",
+      "cover_media": {
+        "media_id": "2090000000000000999",
+        "media_info": {
+          "__typename": "ApiImage",
+          "original_img_url": "https://media.example.test/x-visual-reasoning.png",
+          "original_img_width": 1200,
+          "original_img_height": 675
+        }
+      },
+      "content": {
+        "blocks": [
+          { "key": "a", "type": "header-two", "text": "Why diagrams matter", "entityRanges": [] },
+          { "key": "b", "type": "unstyled", "text": "Visual reasoning models combine encoded image features with language tokens so a system can compare spatial relationships, trace evidence, and explain what changed between two scenes.", "entityRanges": [] },
+          { "key": "c", "type": "unstyled", "text": "A reliable evaluation separates perception failures from reasoning failures and reports uncertainty instead of turning a weak visual clue into a confident conclusion.", "entityRanges": [] }
+        ],
+        "entityMap": []
+      },
+      "media_entities": []
+    }
+  }
+}

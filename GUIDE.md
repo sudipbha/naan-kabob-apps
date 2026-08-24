@@ -11,7 +11,48 @@ Live: [Sysco](https://sudipbha.github.io/naan-kabob-apps/sysco/) · [Champion](h
 > — a personal newsletter read-aloud app in `earmark/` — and **[The Ledger](https://sudipbha.github.io/naan-kabob-apps/ledger/)**,
 > a free-to-read finance reader in `ledger/` that loads public RSS feeds and,
 > where the piece is free, the full article with the publisher named. Both
-> are separate from the inventory system and not covered by this guide.
+> are separate from the inventory system. Earmark's current technical contract
+> is summarized below; the numbered inventory guide begins after it.
+
+## Earmark — rich reading, summaries and Trending AI
+
+Earmark remains a static GitHub Pages app. It has no server that can hide a
+shared AI key or fetch private content.
+
+- **Rich URL imports:** the app converts an article into text for listening and
+  keeps a bounded sidecar of safe HTTP(S) image references, captions and their
+  paragraph positions. It rejects non-web schemes, duplicate/tracking images
+  and tiny pixels. Reader images are lazy-loaded without a referrer. The source
+  still hosts them: Earmark does not copy publisher images, and they are not
+  part of the offline PWA shell.
+- **Device and cloud compatibility:** old `earmark.v1` text libraries still
+  restore. Rich media uses additive local fields and a separate versioned
+  `earmark-media-v2` sync row so an older device cannot rewrite the frozen
+  text-only row used by Claude and the ChatGPT Action. API keys and listening
+  settings never enter either shared article row.
+- **Premium summaries:** Quick summary, Explained, Key ideas and Takeaways use
+  the owner's own OpenAI API key. The owner chooses the exact GPT-5.6 Sol,
+  Terra or Luna API model; the app does not substitute a cheaper model. Each
+  generated track records its model, prompt version, article digest and time,
+  and can be regenerated. ChatGPT Plus/Pro and OpenAI API billing are separate.
+- **Trending AI:** the tab loads `earmark/trending.json`, refreshed daily from
+  curated public research, engineering and expert-newsletter RSS/Atom feeds.
+  Strict filters require explicit AI relevance plus multiple technical signals
+  and reject funding, stock, executive-gossip and promotional items. The JSON
+  stores only metadata and short feed excerpts—not article bodies. Adding an
+  item to the queue still performs the normal public URL import at that moment.
+- **Refresh failure:** the generator validates source count, item count, URL
+  safety, deduplication and metadata shape before an atomic write. A timeout,
+  malformed feed or insufficient high-quality result exits unsuccessfully and
+  leaves the last good `trending.json` untouched. The service worker uses a
+  network-first path with the cached last-good feed as its offline fallback.
+
+The deterministic regression gate is `node tests/earmark-check.js`. It blocks
+real Supabase/OpenAI/feed traffic and exercises rich import, persistence,
+model provenance/regeneration, Trending load/add and metadata-only boundaries
+with local fixtures.
+
+---
 
 Two single-file React apps, one per supplier. Same engine, different item lists.
 **Sysco** delivers dry goods & chemicals; **Champion** delivers packaging.

@@ -1,0 +1,14 @@
+{
+  "code": 200,
+  "results": [
+    {
+      "id": "2090000000000000777",
+      "url": "https://x.com/earmark_fixture/status/2090000000000000777",
+      "author": { "name": "Earmark Fixture", "screen_name": "earmark_fixture" },
+      "article": {
+        "id": "2090000000000000123",
+        "title": "Visual reasoning systems from first principles"
+      }
+    }
+  ]
+}

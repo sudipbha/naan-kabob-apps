@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "minItems": 5,
+  "maxItems": 15,
+  "minSuccessfulSources": 3,
+  "minTechnicalSignals": 2,
+  "maxAgeDays": 30,
+  "timeoutMs": 15000,
+  "sources": [
+    {
+      "id": "openai-news",
+      "name": "OpenAI",
+      "url": "https://openai.com/news/rss.xml",
+      "weight": 24,
+      "dedicatedAI": true,
+      "minTechnicalSignals": 2
+    },
+    {
+      "id": "google-research",
+      "name": "Google Research",
+      "url": "https://research.google/blog/rss/",
+      "weight": 23,
+      "dedicatedAI": true,
+      "minTechnicalSignals": 2
+    },
+    {
+      "id": "apple-ml-research",
+      "name": "Apple Machine Learning Research",
+      "url": "https://machinelearning.apple.com/rss.xml",
+      "weight": 23,
+      "dedicatedAI": true,
+      "minTechnicalSignals": 2
+    },
+    {
+      "id": "microsoft-research",
+      "name": "Microsoft Research",
+      "url": "https://www.microsoft.com/en-us/research/feed/",
+      "weight": 22,
+      "dedicatedAI": false,
+      "minTechnicalSignals": 2
+    },
+    {
+      "id": "bair-blog",
+      "name": "Berkeley AI Research",
+      "url": "https://bair.berkeley.edu/blog/feed.xml",
+      "weight": 24,
+      "dedicatedAI": true,
+      "minTechnicalSignals": 2
+    },
+    {
+      "id": "hugging-face",
+      "name": "Hugging Face",
+      "url": "https://huggingface.co/blog/feed.xml",
+      "weight": 21,
+      "dedicatedAI": true,
+      "minTechnicalSignals": 2
+    },
+    {
+      "id": "aws-ml",
+      "name": "AWS Machine Learning Blog",
+      "url": "https://aws.amazon.com/blogs/machine-learning/feed/",
+      "weight": 18,
+      "dedicatedAI": true,
+      "minTechnicalSignals": 3
+    },
+    {
+      "id": "latent-space",
+      "name": "Latent Space",
+      "url": "https://www.latent.space/feed",
+      "weight": 20,
+      "dedicatedAI": true,
+      "minTechnicalSignals": 2
+    },
+    {
+      "id": "interconnects",
+      "name": "Interconnects",
+      "url": "https://www.interconnects.ai/feed",
+      "weight": 21,
+      "dedicatedAI": true,
+      "minTechnicalSignals": 2
+    },
+    {
+      "id": "ahead-of-ai",
+      "name": "Ahead of AI",
+      "url": "https://magazine.sebastianraschka.com/feed",
+      "weight": 21,
+      "dedicatedAI": true,
+      "minTechnicalSignals": 2
+    },
+    {
+      "id": "mozilla-ai",
+      "name": "Mozilla AI",
+      "url": "https://blog.mozilla.ai/rss/",
+      "weight": 20,
+      "dedicatedAI": true,
+      "minTechnicalSignals": 2
+    }
+  ]
+}
