@@ -1,0 +1,22 @@
+{
+  "id": "resp_earmark_fixture",
+  "object": "response",
+  "created_at": 1787572800,
+  "status": "completed",
+  "model": "gpt-5.6-sol",
+  "output": [
+    {
+      "id": "msg_earmark_fixture",
+      "type": "message",
+      "role": "assistant",
+      "status": "completed",
+      "content": [
+        {
+          "type": "output_text",
+          "text": "Fixture summary: reliable memory needs ranked retrieval, conflict handling, provenance, and regression evaluations.",
+          "annotations": []
+        }
+      ]
+    }
+  ]
+}

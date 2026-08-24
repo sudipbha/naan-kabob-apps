@@ -2,7 +2,7 @@
 // index.html updates flow through automatically (network-first);
 // bump CACHE only when icons / manifest / SW logic change.
 const CACHE_PREFIX = "nk-earmark-";
-const CACHE = CACHE_PREFIX + "v1";
+const CACHE = CACHE_PREFIX + "v2";
 const PRECACHE = [
   "./",
   "./index.html",
@@ -54,6 +54,20 @@ async function cacheFirst(req) {
   return res;
 }
 
+async function trendingNetworkFirst(req) {
+  const cache = await caches.open(CACHE);
+  try {
+    const res = await fetch(req);
+    if (!res || !res.ok) throw new Error("trending fetch failed");
+    await cache.put(req, res.clone());
+    return res;
+  } catch (err) {
+    const hit = await cache.match(req, { ignoreSearch: true });
+    if (hit) return hit;
+    throw err;
+  }
+}
+
 self.addEventListener("fetch", (e) => {
   const req = e.request;
   if (req.method !== "GET") return;
@@ -61,6 +75,9 @@ self.addEventListener("fetch", (e) => {
   const isNav = req.mode === "navigate" || req.destination === "document";
   if (isNav && url.origin === location.origin) { e.respondWith(networkFirst(req)); return; }
   const scopePath = new URL("./", location.href).pathname;
+  if (url.origin === location.origin && url.pathname === scopePath + "trending.json") {
+    e.respondWith(trendingNetworkFirst(req)); return;
+  }
   if (url.origin === location.origin && url.pathname.startsWith(scopePath)) { e.respondWith(cacheFirst(req)); return; }
   // everything else (article fetching via r.jina.ai / allorigins, other cross-origin)
   // goes straight to network — never cached, so articles are always fresh

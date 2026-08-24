@@ -34,6 +34,8 @@ jobs:
         run: node tests/render-check.js
       - name: Weekly + emergency behaviour check
         run: node tests/weekly-check.js
+      - name: Earmark rich import, AI and Trending check
+        run: node tests/earmark-check.js
       # Draft PRs run the render check (evidence attaches to the PR) but are
       # never merged - marking Ready for review triggers the merge run.
       - name: Squash-merge claude PR

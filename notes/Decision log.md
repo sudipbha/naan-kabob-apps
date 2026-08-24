@@ -6,6 +6,33 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-08-24 — Earmark becomes a richer AI reading desk
+
+Three changes now work as one. First, a saved web article can keep useful
+diagrams and pictures in their original places instead of becoming text only.
+Earmark stores safe links to those pictures, not copies: the publisher still
+hosts them, they need the internet, and they may disappear if the source moves
+or blocks outside viewing. Tiny trackers and unsafe links are rejected.
+
+Second, summaries and explanations now offer an exact choice of OpenAI's Sol,
+Terra or Luna API model. This is bring-your-own-key: the key stays on that
+device, API use is billed separately from a ChatGPT subscription, and Earmark
+never quietly swaps a chosen premium model for a cheaper one. Each generated
+version says which model made it and can be regenerated.
+
+Third, **Trending AI** is a daily shortlist of technically useful AI research,
+engineering posts and expert newsletters. The automatic scan rejects market
+gossip, funding stories and thin promotion. Its published JSON contains only
+titles, source links, short feed excerpts and selection notes—not copied
+articles. If too few feeds work or too few strong items survive, the refresh
+fails and the last good list stays in place.
+
+The release gate now opens Earmark in an isolated browser with made-up article,
+image, AI and Trending responses. It checks rich import and reload, exact model
+provenance and regeneration, adding a Trending item to the queue, and the
+metadata-only feed rule before an eligible pull request can auto-merge. Pages
+also checks the live Earmark marker after deployment.
+
 ## 2026-08-20 — Earmark asks about sync itself (one tap, once per device)
 
 Fair question from the owner: "why do I have to click on sync?" The
