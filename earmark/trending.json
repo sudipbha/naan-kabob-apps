@@ -1,8 +1,26 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-24T12:28:17.647Z",
+  "generatedAt": "2026-08-25T12:28:10.841Z",
   "sourceCount": 3,
   "items": [
+    {
+      "id": "a0199333d441dca9",
+      "title": "Beyond Visual CoT: Internalized Visual Thinking for Proactive Video Reasoning",
+      "url": "https://machinelearning.apple.com/research/internalized-visual-thinking",
+      "source": "Apple Machine Learning Research",
+      "author": "",
+      "publishedAt": "2026-08-24T00:00:00.000Z",
+      "excerpt": "Multimodal large language models increasingly use visual chain-of-thought (Visual CoT) to reason about spatial, temporal, and embodied environments. By generating intermediate reasoning images, Visual CoT provides an intuitive mechanism for visual foresight but introduces substantial inference overhead, which is partic",
+      "topics": [
+        "Inference",
+        "Reasoning",
+        "Multimodal"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with inference and reasoning signals from a curated high-signal source.",
+      "score": 72,
+      "imageUrl": null
+    },
     {
       "id": "f65c07c326de973a",
       "title": "Multilingual Knowledge Transfer under Data Constraints via Lexical Interventions",
@@ -18,24 +36,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with training and inference signals from a curated high-signal source.",
-      "score": 67,
-      "imageUrl": null
-    },
-    {
-      "id": "df8f12302a5b421a",
-      "title": "Offering Zero Data Retention for frontier models",
-      "url": "https://openai.com/index/offering-zero-data-retention-for-frontier-models",
-      "source": "OpenAI",
-      "author": "",
-      "publishedAt": "2026-08-19T19:00:00.000Z",
-      "excerpt": "OpenAI reaffirms Zero Data Retention for eligible API customers and previews Private Safety Processing for advanced AI safety without compromising data privacy.",
-      "topics": [
-        "Safety",
-        "Engineering"
-      ],
-      "technicalLevel": "intermediate",
-      "whySelected": "Recent technical AI coverage with safety and engineering signals from a curated high-signal source.",
-      "score": 64,
+      "score": 66,
       "imageUrl": null
     },
     {
@@ -53,7 +54,24 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 64,
+      "score": 63,
+      "imageUrl": null
+    },
+    {
+      "id": "df8f12302a5b421a",
+      "title": "Offering Zero Data Retention for frontier models",
+      "url": "https://openai.com/index/offering-zero-data-retention-for-frontier-models",
+      "source": "OpenAI",
+      "author": "",
+      "publishedAt": "2026-08-19T19:00:00.000Z",
+      "excerpt": "OpenAI reaffirms Zero Data Retention for eligible API customers and previews Private Safety Processing for advanced AI safety without compromising data privacy.",
+      "topics": [
+        "Safety",
+        "Engineering"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with safety and engineering signals from a curated high-signal source.",
+      "score": 62,
       "imageUrl": null
     },
     {
@@ -70,7 +88,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with evaluation and reasoning signals from a curated high-signal source.",
-      "score": 51,
+      "score": 50,
       "imageUrl": null
     },
     {
@@ -87,7 +105,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and security signals from a curated high-signal source.",
-      "score": 50,
+      "score": 48,
       "imageUrl": null
     },
     {
@@ -105,24 +123,6 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and architecture signals from a curated high-signal source.",
-      "score": 43,
-      "imageUrl": null
-    },
-    {
-      "id": "26cdbd7021e7b620",
-      "title": "Orchard: An open framework for scalable agentic AI",
-      "url": "https://microsoft.com/en-us/research/blog/orchard-an-open-framework-for-scalable-agentic-ai/",
-      "source": "Microsoft Research",
-      "author": "Baolin Peng, Wenlin Yao, Qianhui Wu, Hao Cheng, Jianfeng Gao",
-      "publishedAt": "2026-08-03T16:00:00.000Z",
-      "excerpt": "Orchard is an open-source framework for the research community to train and evaluate AI agents across task types. It reduces complexity while supporting strong performance from smaller models by enabling researchers to reuse the same infrastructure.",
-      "topics": [
-        "Research",
-        "Agents",
-        "Engineering"
-      ],
-      "technicalLevel": "intermediate",
-      "whySelected": "Recent technical AI coverage with research and agents signals from a curated high-signal source.",
       "score": 42,
       "imageUrl": null
     },
@@ -140,7 +140,25 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with evaluation and security signals from a curated high-signal source.",
-      "score": 41,
+      "score": 40,
+      "imageUrl": null
+    },
+    {
+      "id": "26cdbd7021e7b620",
+      "title": "Orchard: An open framework for scalable agentic AI",
+      "url": "https://microsoft.com/en-us/research/blog/orchard-an-open-framework-for-scalable-agentic-ai/",
+      "source": "Microsoft Research",
+      "author": "Baolin Peng, Wenlin Yao, Qianhui Wu, Hao Cheng, Jianfeng Gao",
+      "publishedAt": "2026-08-03T16:00:00.000Z",
+      "excerpt": "Orchard is an open-source framework for the research community to train and evaluate AI agents across task types. It reduces complexity while supporting strong performance from smaller models by enabling researchers to reuse the same infrastructure.",
+      "topics": [
+        "Research",
+        "Agents",
+        "Engineering"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with research and agents signals from a curated high-signal source.",
+      "score": 40,
       "imageUrl": null
     }
   ]
