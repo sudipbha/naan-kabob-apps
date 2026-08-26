@@ -1,8 +1,25 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-25T12:28:10.841Z",
+  "generatedAt": "2026-08-26T12:28:26.708Z",
   "sourceCount": 3,
   "items": [
+    {
+      "id": "5ede708d3a23a257",
+      "title": "STARFlow2: Bridging Language Models and Normalizing Flows for Unified Multimodal Generation",
+      "url": "https://machinelearning.apple.com/research/starflow2-multimodal-generation",
+      "source": "Apple Machine Learning Research",
+      "author": "",
+      "publishedAt": "2026-08-25T00:00:00.000Z",
+      "excerpt": "Unified multimodal models that understand, reason over, and generate interleaved text–image sequences remain structurally fragmented: existing approaches either sacrifice visual fidelity through discrete tokenization, impose structural asymmetry by combining causal text generation with iterative diffusion-based denoisi",
+      "topics": [
+        "Models",
+        "Multimodal"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with architecture and multimodal signals from a curated high-signal source.",
+      "score": 71,
+      "imageUrl": null
+    },
     {
       "id": "a0199333d441dca9",
       "title": "Beyond Visual CoT: Internalized Visual Thinking for Proactive Video Reasoning",
@@ -18,7 +35,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and reasoning signals from a curated high-signal source.",
-      "score": 72,
+      "score": 70,
       "imageUrl": null
     },
     {
@@ -36,7 +53,24 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with training and inference signals from a curated high-signal source.",
-      "score": 66,
+      "score": 64,
+      "imageUrl": null
+    },
+    {
+      "id": "df8f12302a5b421a",
+      "title": "Offering Zero Data Retention for frontier models",
+      "url": "https://openai.com/index/offering-zero-data-retention-for-frontier-models",
+      "source": "OpenAI",
+      "author": "",
+      "publishedAt": "2026-08-19T19:00:00.000Z",
+      "excerpt": "OpenAI reaffirms Zero Data Retention for eligible API customers and previews Private Safety Processing for advanced AI safety without compromising data privacy.",
+      "topics": [
+        "Safety",
+        "Engineering"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with safety and engineering signals from a curated high-signal source.",
+      "score": 61,
       "imageUrl": null
     },
     {
@@ -54,24 +88,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 63,
-      "imageUrl": null
-    },
-    {
-      "id": "df8f12302a5b421a",
-      "title": "Offering Zero Data Retention for frontier models",
-      "url": "https://openai.com/index/offering-zero-data-retention-for-frontier-models",
-      "source": "OpenAI",
-      "author": "",
-      "publishedAt": "2026-08-19T19:00:00.000Z",
-      "excerpt": "OpenAI reaffirms Zero Data Retention for eligible API customers and previews Private Safety Processing for advanced AI safety without compromising data privacy.",
-      "topics": [
-        "Safety",
-        "Engineering"
-      ],
-      "technicalLevel": "intermediate",
-      "whySelected": "Recent technical AI coverage with safety and engineering signals from a curated high-signal source.",
-      "score": 62,
+      "score": 61,
       "imageUrl": null
     },
     {
@@ -88,7 +105,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with evaluation and reasoning signals from a curated high-signal source.",
-      "score": 50,
+      "score": 48,
       "imageUrl": null
     },
     {
@@ -105,42 +122,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and security signals from a curated high-signal source.",
-      "score": 48,
-      "imageUrl": null
-    },
-    {
-      "id": "deec56a13e2b9b57",
-      "title": "How we built a realtime system for responsive voice AI in six months",
-      "url": "https://openai.com/index/continuous-voice-interaction-with-gpt-live",
-      "source": "OpenAI",
-      "author": "",
-      "publishedAt": "2026-08-03T07:00:00.000Z",
-      "excerpt": "GPT-Live enables continuous voice interaction with AI, using a turnless speech model and low-latency architecture for faster, more natural conversations.",
-      "topics": [
-        "Inference",
-        "Models",
-        "Multimodal"
-      ],
-      "technicalLevel": "intermediate",
-      "whySelected": "Recent technical AI coverage with inference and architecture signals from a curated high-signal source.",
-      "score": 42,
-      "imageUrl": null
-    },
-    {
-      "id": "c99ec862b4e71599",
-      "title": "Third-party cyber evaluations involving OpenAI models",
-      "url": "https://openai.com/index/third-party-cyber-evaluations-involving-openai-models",
-      "source": "OpenAI",
-      "author": "",
-      "publishedAt": "2026-08-04T19:00:00.000Z",
-      "excerpt": "OpenAI explains recent third-party cybersecurity evaluation incidents and outlines new safeguards to strengthen AI model testing and evaluation.",
-      "topics": [
-        "Evaluations",
-        "Security"
-      ],
-      "technicalLevel": "intermediate",
-      "whySelected": "Recent technical AI coverage with evaluation and security signals from a curated high-signal source.",
-      "score": 40,
+      "score": 47,
       "imageUrl": null
     },
     {
@@ -158,7 +140,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and agents signals from a curated high-signal source.",
-      "score": 40,
+      "score": 39,
       "imageUrl": null
     }
   ]
