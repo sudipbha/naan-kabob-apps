@@ -1,8 +1,26 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-26T12:28:26.708Z",
+  "generatedAt": "2026-08-27T15:57:37.980Z",
   "sourceCount": 3,
   "items": [
+    {
+      "id": "ef45fbda0d5a4970",
+      "title": "IDEA Prune: An Integrated Enlarge-and-Prune Pipeline in Generative Language Model Pretraining",
+      "url": "https://machinelearning.apple.com/research/idea-prune-pipeline",
+      "source": "Apple Machine Learning Research",
+      "author": "",
+      "publishedAt": "2026-08-26T00:00:00.000Z",
+      "excerpt": "Recent advancements in large language models have intensified the need for efficient and deployable models within limited inference budgets. Structured pruning pipelines have shown promise in token efficiency compared to training target-size models from scratch. In this paper, we advocate incorporating enlarged model p",
+      "topics": [
+        "Research",
+        "Training",
+        "Inference"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
+      "score": 72,
+      "imageUrl": null
+    },
     {
       "id": "5ede708d3a23a257",
       "title": "STARFlow2: Bridging Language Models and Normalizing Flows for Unified Multimodal Generation",
@@ -17,7 +35,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with architecture and multimodal signals from a curated high-signal source.",
-      "score": 71,
+      "score": 69,
       "imageUrl": null
     },
     {
@@ -35,7 +53,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and reasoning signals from a curated high-signal source.",
-      "score": 70,
+      "score": 69,
       "imageUrl": null
     },
     {
@@ -53,7 +71,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with training and inference signals from a curated high-signal source.",
-      "score": 64,
+      "score": 63,
       "imageUrl": null
     },
     {
@@ -70,25 +88,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with safety and engineering signals from a curated high-signal source.",
-      "score": 61,
-      "imageUrl": null
-    },
-    {
-      "id": "1b555e620b3576f2",
-      "title": "GRPO Beyond English: A Large-Scale Study of GRPO in Non-English and Multilingual Settings",
-      "url": "https://machinelearning.apple.com/research/grpo-beyond-english",
-      "source": "Apple Machine Learning Research",
-      "author": "",
-      "publishedAt": "2026-08-18T00:00:00.000Z",
-      "excerpt": "Reinforcement Learning with Verifiable Rewards (RLVR), often optimized with Group Relative Policy Optimization (GRPO), has become a central recipe for improving the reasoning capabilities of pretrained language models but current studies remain heavily English-centric. We conduct a large-scale empirical study of multil",
-      "topics": [
-        "Research",
-        "Training",
-        "Reasoning"
-      ],
-      "technicalLevel": "intermediate",
-      "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 61,
+      "score": 59,
       "imageUrl": null
     },
     {
@@ -105,7 +105,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with evaluation and reasoning signals from a curated high-signal source.",
-      "score": 48,
+      "score": 47,
       "imageUrl": null
     },
     {
@@ -122,7 +122,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and security signals from a curated high-signal source.",
-      "score": 47,
+      "score": 45,
       "imageUrl": null
     },
     {
@@ -140,7 +140,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and agents signals from a curated high-signal source.",
-      "score": 39,
+      "score": 37,
       "imageUrl": null
     }
   ]
