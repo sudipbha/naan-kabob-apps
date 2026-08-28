@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-27T15:57:37.980Z",
+  "generatedAt": "2026-08-28T16:24:59.858Z",
   "sourceCount": 3,
   "items": [
     {
@@ -18,7 +18,24 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 72,
+      "score": 70,
+      "imageUrl": null
+    },
+    {
+      "id": "5c8d75ef9c12c059",
+      "title": "Better answers, broader thinking: What students gain from ChatGPT and critical-thinking training",
+      "url": "https://openai.com/index/what-students-gain-from-chatgpt-critical-thinking-training",
+      "source": "OpenAI",
+      "author": "",
+      "publishedAt": "2026-08-27T09:00:00.000Z",
+      "excerpt": "A randomized study of more than 1,000 students examines ChatGPT, critical thinking, originality, and student performance on a real-world university assignment.",
+      "topics": [
+        "Research",
+        "Training"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
+      "score": 69,
       "imageUrl": null
     },
     {
@@ -35,7 +52,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with architecture and multimodal signals from a curated high-signal source.",
-      "score": 69,
+      "score": 67,
       "imageUrl": null
     },
     {
@@ -53,7 +70,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and reasoning signals from a curated high-signal source.",
-      "score": 69,
+      "score": 67,
       "imageUrl": null
     },
     {
@@ -71,7 +88,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with training and inference signals from a curated high-signal source.",
-      "score": 63,
+      "score": 61,
       "imageUrl": null
     },
     {
@@ -88,7 +105,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with safety and engineering signals from a curated high-signal source.",
-      "score": 59,
+      "score": 58,
       "imageUrl": null
     },
     {
@@ -105,7 +122,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with evaluation and reasoning signals from a curated high-signal source.",
-      "score": 47,
+      "score": 45,
       "imageUrl": null
     },
     {
@@ -122,7 +139,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and security signals from a curated high-signal source.",
-      "score": 45,
+      "score": 44,
       "imageUrl": null
     },
     {
