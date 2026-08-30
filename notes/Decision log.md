@@ -6,6 +6,18 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-08-30 — Sysco gets a backup for the jumbo toilet roll
+
+The washroom's jumbo toilet roll comes from Champion (Snow Soft
+SUNJ700). Sysco sells a near-identical house-brand twin — Sysco Classic
+jumbo jr. bathroom tissue, 2-ply, 8 rolls × 1,000 ft to a case, same
+big-roll dispenser format — so the Sysco app now carries it as a
+**Backup** card: full identity ready to order from if Champion ever
+shorts the roll, but parked at the bottom of the count (backups don't
+join the daily walk). The Sysco item number is pending from an invoice;
+the Sysco To Go listing doesn't show numbers without a login. Champion
+stays the main source — this is insurance, not a switch.
+
 ## 2026-08-24 — Earmark becomes a richer AI reading desk
 
 Three changes now work as one. First, a saved web article can keep useful
