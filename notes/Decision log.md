@@ -6,6 +6,19 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-08-30 — The leftover box's Sysco card gets a real identity
+
+The Sysco app's "FOH / leftover box" backup card used to just say
+"Same as Champion PP-188" — with a link to Champion's website, which is
+no use at all to a Sysco rep. The real Sysco equivalent is now on the
+card: **Sysco Earth Plus MFPP hinged container, 9 × 6, white** — same
+mineral-filled polypropylene, same microwave-safe hinged design as the
+Champion Leftovers box, sold as 2 packs of 135 (270 a case instead of
+Champion's 200). The Sysco item number **#7064473** comes from a Sysco
+reseller listing that has matched real SUPCs before, so the card says
+"verify" until an invoice confirms it. Still a Backup card — Champion
+stays the main source for this box.
+
 ## 2026-08-30 — Sysco gets a backup for the jumbo toilet roll
 
 The washroom's jumbo toilet roll comes from Champion (Snow Soft
