@@ -42,6 +42,11 @@ function syntaxAndStaticContracts() {
   has(/loading=["']lazy["']/i, html, 'remote article media is lazy-loaded');
   has(/referrerpolicy=["']no-referrer["']/i, html, 'remote article media suppresses referrers');
   has(/https?:[\\/]{2}/i, html, 'URL handling remains explicit');
+  // untrusted article bodies (cloud sync row + localStorage) must be
+  // shape-validated before rendering, or a bad paras[].idxs crashes the app
+  has(/function sanitizeArticleBody\b/, html, 'article-body sanitizer is defined');
+  ck((html.match(/sanitizeArticleBody\(/g) || []).length >= 3,
+    'sanitizer guards the merge and restore trust boundaries');
   has(/\/v1\/responses\b/i, html, 'summaries use the OpenAI Responses API');
   for (const model of ['gpt-5.6-sol', 'gpt-5.6-terra', 'gpt-5.6-luna']) {
     ck(html.includes(model), 'model selector includes ' + model);

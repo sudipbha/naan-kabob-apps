@@ -6,6 +6,31 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-09-01 — Security pass on Earmark: a poisoned sync row can't brick the app
+
+A security review of Earmark turned up one real weakness worth fixing.
+The cloud copy that lets your library follow you between devices lives in
+a row anyone can write to (that's the price of no login — the key is
+public, as we've always known). The app trusted the *shape* of whatever
+came back: it took the article's sentences and paragraphs exactly as
+given. A paragraph says "read sentences 1, 2, 3"; if a bad or garbled row
+said "read sentence 999" when only three existed, the app would reach for
+a sentence that isn't there and throw an error — and because that happens
+while drawing the screen, every device that synced would show a **blank
+page**. It didn't need an attacker either; a half-finished write or a
+bug on one device could do it by accident.
+
+The fix: before Earmark trusts any article — from the cloud, or even from
+this device's own saved copy — it now checks the body is well-formed,
+keeps only paragraph references that point at a real sentence, quietly
+repairs or drops the rest, and skips anything with nothing left to show.
+Titles were already shown as plain text (so a title can't smuggle in
+code) and web links were already restricted to http/https; those held up.
+Net effect: bad data can no longer crash the app, and no normal article
+looks any different. Covered by a new test that feeds the app a
+deliberately hostile sync row and confirms it stays up; the full Earmark
+test suite still passes.
+
 ## 2026-08-30 — The leftover box's Sysco card gets a real identity
 
 The Sysco app's "FOH / leftover box" backup card used to just say
