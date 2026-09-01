@@ -559,6 +559,69 @@ function gFor(a){
   for (var i=0;i<s.length;i++) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0;
   return 'g' + h.toString(36) + s.length.toString(36);
 }
+/* Deep-validate an article's body before it is trusted for rendering.
+   The reader and plainText() index sentences by numbers that come from
+   paras[].idxs; if those come from a hostile or merely corrupt source (the
+   cloud sync row is writable with the public key, and localStorage can be
+   tampered or half-written), an out-of-range index makes sentences[si]
+   undefined and .t throws inside render() — a blank screen on every synced
+   device. So coerce every sentence to {t:String, w:int}, keep only idxs that
+   point at a real sentence, drop empty paragraphs, and rebuild a covering
+   paragraph if none survive. Returns {sentences,paras,words} or null when
+   there is nothing renderable. Never throws. */
+function sanitizeArticleBody(a){
+  if (!a || !Array.isArray(a.sentences) || !Array.isArray(a.paras)) return null;
+  var sentences = [];
+  for (var i=0;i<a.sentences.length;i++){
+    var s = a.sentences[i];
+    var t = (s && s.t != null) ? String(s.t) : (typeof s === 'string' ? s : '');
+    var w = s && Number(s.w) > 0 ? Math.floor(Number(s.w)) : (t.trim() ? t.trim().split(/\s+/).length : 0);
+    sentences.push({ t: t, w: w });
+  }
+  if (!sentences.length) return null;
+  var paras = [];
+  for (var p=0;p<a.paras.length;p++){
+    var par = a.paras[p];
+    if (!par || !Array.isArray(par.idxs)) continue;
+    var idxs = [];
+    for (var j=0;j<par.idxs.length;j++){
+      var si = Number(par.idxs[j]);
+      if (Number.isInteger(si) && si >= 0 && si < sentences.length) idxs.push(si);
+    }
+    if (idxs.length) paras.push({ heading: !!par.heading, idxs: idxs });
+  }
+  // no paragraph survived (or none was valid) — fall back to one flat paragraph
+  if (!paras.length){
+    var all = [];
+    for (var k=0;k<sentences.length;k++) all.push(k);
+    paras = [{ heading: false, idxs: all }];
+  }
+  var words = 0;
+  for (var m=0;m<sentences.length;m++) words += sentences[m].w;
+  return { sentences: sentences, paras: paras, words: words };
+}
+/* Coerce a mode map (also cloud-synced) so a bad entry can't crash buildDoc:
+   keep only modes whose text is a non-empty string. */
+function clampProgress(v, n){
+  var p = Number(v);
+  if (!Number.isFinite(p) || p < 0) return 0;
+  return Math.min(Math.floor(p), n);
+}
+function sanitizeModes(modes){
+  if (!modes || typeof modes !== 'object') return null;
+  var out = {}, any = false;
+  for (var k in modes){
+    var mm = modes[k];
+    if (mm && typeof mm.text === 'string' && mm.text.trim()){
+      out[k] = { text: mm.text, progress: Number(mm.progress) > 0 ? Math.floor(Number(mm.progress)) : 0,
+                 played: !!mm.played };
+      if (mm.model) out[k].model = String(mm.model);
+      if (Number(mm.coverage) > 0) out[k].coverage = Number(mm.coverage);
+      any = true;
+    }
+  }
+  return any ? out : null;
+}
 // change detection is central: instead of touching rev at every mutation
 // site, persistNow compares a cheap signature of each article against the
 // last one it saw and bumps rev only when something really changed
@@ -657,14 +720,19 @@ function mergeRemote(remote){
   for (i=0;i<state.articles.length;i++) byG[state.articles[i].g] = state.articles[i];
   for (i=0;i<remote.length;i++){
     var r = remote[i];
-    if (!r || typeof r.g !== 'string' || !Array.isArray(r.sentences) || !r.sentences.length || !Array.isArray(r.paras)) continue;
+    if (!r || typeof r.g !== 'string') continue;
+    // the remote row is writable with the public key — validate its shape
+    // deeply before trusting it, or a bad/hostile entry crashes rendering
+    var body = sanitizeArticleBody(r);
+    if (!body) continue;
+    var rmodes = sanitizeModes(r.modes);
     var l = byG[r.g];
     if (!l) {
       var fresh = { id: uid++, g: r.g, at: r.at || Date.now(), rev: r.rev || 0,
                     title: String(r.title || 'Untitled'), source: String(r.source || ''),
-                    sentences: r.sentences, paras: r.paras, words: r.words || 0,
-                    progress: r.progress || 0, played: !!r.played };
-      if (r.modes && typeof r.modes === 'object') fresh.modes = r.modes;
+                    sentences: body.sentences, paras: body.paras, words: body.words,
+                    progress: clampProgress(r.progress, body.sentences.length), played: !!r.played };
+      if (rmodes) fresh.modes = rmodes;
       state.articles.push(fresh);
       byG[r.g] = fresh;
       primeSig(fresh);
@@ -675,10 +743,10 @@ function mergeRemote(remote){
     // never reshape the article that is playing right now — the next sync gets it
     if (state.playing && state.currentId === l.id) continue;
     l.title = String(r.title || l.title); l.source = String(r.source || l.source);
-    l.sentences = r.sentences; l.paras = r.paras; l.words = r.words || l.words;
-    l.progress = r.progress || 0; l.played = !!r.played; l.rev = r.rev || 0;
+    l.sentences = body.sentences; l.paras = body.paras; l.words = body.words;
+    l.progress = clampProgress(r.progress, body.sentences.length); l.played = !!r.played; l.rev = r.rev || 0;
     if (r.at) l.at = r.at;
-    if (r.modes && typeof r.modes === 'object') l.modes = r.modes;
+    if (rmodes) l.modes = rmodes; else delete l.modes;
     primeSig(l);
     changed = true;
   }
@@ -766,11 +834,15 @@ function restore(){
   var maxId = 0;
   for (var i=0;i<arts.length;i++){
     var a = arts[i];
-    if (!a || !Array.isArray(a.sentences) || !a.sentences.length || !Array.isArray(a.paras)) continue;
+    // localStorage can be corrupted, half-written, or tampered — validate the
+    // body deeply (same guard as the cloud merge) so a bad blob can't brick
+    // the app on load; skip anything with nothing renderable left.
+    var body = sanitizeArticleBody(a);
+    if (!body) continue;
     var rebuilt = {
       id: a.id || (maxId + 1), title: String(a.title || 'Untitled'), source: String(a.source || ''),
-      sentences: a.sentences, paras: a.paras, words: a.words || 0,
-      progress: a.progress || 0, played: !!a.played
+      sentences: body.sentences, paras: body.paras, words: body.words,
+      progress: clampProgress(a.progress, body.sentences.length), played: !!a.played
     };
     rebuilt.url = safeHttpUrl(a.url) || '';
     rebuilt.media = normalizeMediaList(a.media||[], rebuilt.url);
@@ -780,14 +852,8 @@ function restore(){
     rebuilt.at = (typeof a.at === 'number' && a.at) ? a.at : (1600000000000 + i * 60000);
     rebuilt.rev = (typeof a.rev === 'number') ? a.rev : 0;
     rebuilt.g = (typeof a.g === 'string' && a.g) ? a.g : gFor(rebuilt);
-    if (a.modes && typeof a.modes === 'object') {
-      rebuilt.modes = {};
-      for (var mk in a.modes) {
-        if (a.modes[mk] && typeof a.modes[mk].text === 'string' && a.modes[mk].text) {
-          rebuilt.modes[mk] = modeCopy(a.modes[mk]);
-        }
-      }
-    }
+    var rmodes = sanitizeModes(a.modes);
+    if (rmodes) rebuilt.modes = rmodes;
     state.articles.push(rebuilt);
     primeSig(rebuilt);
     if (state.articles[state.articles.length-1].id > maxId) maxId = state.articles[state.articles.length-1].id;
