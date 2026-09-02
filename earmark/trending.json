@@ -1,8 +1,25 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-01T12:36:58.828Z",
+  "generatedAt": "2026-09-02T16:34:45.298Z",
   "sourceCount": 3,
   "items": [
+    {
+      "id": "5c8d75ef9c12c059",
+      "title": "Better answers, broader thinking: What students gain from ChatGPT and critical-thinking training",
+      "url": "https://openai.com/index/what-students-gain-from-chatgpt-critical-thinking-training",
+      "source": "OpenAI",
+      "author": "",
+      "publishedAt": "2026-08-27T09:00:00.000Z",
+      "excerpt": "A randomized study of more than 1,000 students examines ChatGPT, critical thinking, originality, and student performance on a real-world university assignment.",
+      "topics": [
+        "Research",
+        "Training"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
+      "score": 62,
+      "imageUrl": null
+    },
     {
       "id": "ef45fbda0d5a4970",
       "title": "IDEA Prune: An Integrated Enlarge-and-Prune Pipeline in Generative Language Model Pretraining",
@@ -18,24 +35,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 64,
-      "imageUrl": null
-    },
-    {
-      "id": "5c8d75ef9c12c059",
-      "title": "Better answers, broader thinking: What students gain from ChatGPT and critical-thinking training",
-      "url": "https://openai.com/index/what-students-gain-from-chatgpt-critical-thinking-training",
-      "source": "OpenAI",
-      "author": "",
-      "publishedAt": "2026-08-27T09:00:00.000Z",
-      "excerpt": "A randomized study of more than 1,000 students examines ChatGPT, critical thinking, originality, and student performance on a real-world university assignment.",
-      "topics": [
-        "Research",
-        "Training"
-      ],
-      "technicalLevel": "intermediate",
-      "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 63,
+      "score": 62,
       "imageUrl": null
     },
     {
@@ -52,7 +52,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with architecture and multimodal signals from a curated high-signal source.",
-      "score": 62,
+      "score": 60,
       "imageUrl": null
     },
     {
@@ -70,7 +70,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and reasoning signals from a curated high-signal source.",
-      "score": 61,
+      "score": 59,
       "imageUrl": null
     },
     {
@@ -88,7 +88,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with training and inference signals from a curated high-signal source.",
-      "score": 55,
+      "score": 53,
       "imageUrl": null
     },
     {
@@ -105,7 +105,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with safety and engineering signals from a curated high-signal source.",
-      "score": 52,
+      "score": 50,
       "imageUrl": null
     },
     {
@@ -122,24 +122,6 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with evaluation and reasoning signals from a curated high-signal source.",
-      "score": 39,
-      "imageUrl": null
-    },
-    {
-      "id": "26cdbd7021e7b620",
-      "title": "Orchard: An open framework for scalable agentic AI",
-      "url": "https://microsoft.com/en-us/research/blog/orchard-an-open-framework-for-scalable-agentic-ai/",
-      "source": "Microsoft Research",
-      "author": "Baolin Peng, Wenlin Yao, Qianhui Wu, Hao Cheng, Jianfeng Gao",
-      "publishedAt": "2026-08-03T16:00:00.000Z",
-      "excerpt": "Orchard is an open-source framework for the research community to train and evaluate AI agents across task types. It reduces complexity while supporting strong performance from smaller models by enabling researchers to reuse the same infrastructure.",
-      "topics": [
-        "Research",
-        "Agents",
-        "Engineering"
-      ],
-      "technicalLevel": "intermediate",
-      "whySelected": "Recent technical AI coverage with research and agents signals from a curated high-signal source.",
       "score": 37,
       "imageUrl": null
     }
