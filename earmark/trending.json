@@ -1,23 +1,24 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-02T16:34:45.298Z",
-  "sourceCount": 3,
+  "generatedAt": "2026-09-03T12:38:03.968Z",
+  "sourceCount": 4,
   "items": [
     {
-      "id": "5c8d75ef9c12c059",
-      "title": "Better answers, broader thinking: What students gain from ChatGPT and critical-thinking training",
-      "url": "https://openai.com/index/what-students-gain-from-chatgpt-critical-thinking-training",
-      "source": "OpenAI",
-      "author": "",
-      "publishedAt": "2026-08-27T09:00:00.000Z",
-      "excerpt": "A randomized study of more than 1,000 students examines ChatGPT, critical thinking, originality, and student performance on a real-world university assignment.",
+      "id": "679c29f8bd96fa58",
+      "title": "Trinity: Agentic AI-powered transition planning for students with disabilities",
+      "url": "https://aws.amazon.com/blogs/machine-learning/trinity-agentic-ai-powered-transition-planning-for-students-with-disabilities/",
+      "source": "AWS Machine Learning Blog",
+      "author": "Sadia Ahmed",
+      "publishedAt": "2026-09-02T18:14:17.000Z",
+      "excerpt": "Learn how University Startups and its AWS partner g/d/n/a scaled Trinity, a conversational AI solution for students with disabilities, into a serverless multi-agent architecture on Amazon Bedrock that produces IDEA-aligned transition plans for school districts across the US.",
       "topics": [
-        "Research",
-        "Training"
+        "Models",
+        "Agents",
+        "Reasoning"
       ],
       "technicalLevel": "intermediate",
-      "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 62,
+      "whySelected": "Recent technical AI coverage with architecture and agents signals from a curated high-signal source.",
+      "score": 68,
       "imageUrl": null
     },
     {
@@ -35,7 +36,24 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 62,
+      "score": 61,
+      "imageUrl": null
+    },
+    {
+      "id": "5c8d75ef9c12c059",
+      "title": "Better answers, broader thinking: What students gain from ChatGPT and critical-thinking training",
+      "url": "https://openai.com/index/what-students-gain-from-chatgpt-critical-thinking-training",
+      "source": "OpenAI",
+      "author": "",
+      "publishedAt": "2026-08-27T09:00:00.000Z",
+      "excerpt": "A randomized study of more than 1,000 students examines ChatGPT, critical thinking, originality, and student performance on a real-world university assignment.",
+      "topics": [
+        "Research",
+        "Training"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
+      "score": 60,
       "imageUrl": null
     },
     {
@@ -52,7 +70,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with architecture and multimodal signals from a curated high-signal source.",
-      "score": 60,
+      "score": 59,
       "imageUrl": null
     },
     {
@@ -70,7 +88,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and reasoning signals from a curated high-signal source.",
-      "score": 59,
+      "score": 58,
       "imageUrl": null
     },
     {
@@ -88,7 +106,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with training and inference signals from a curated high-signal source.",
-      "score": 53,
+      "score": 52,
       "imageUrl": null
     },
     {
@@ -105,7 +123,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with safety and engineering signals from a curated high-signal source.",
-      "score": 50,
+      "score": 49,
       "imageUrl": null
     },
     {
@@ -122,7 +140,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with evaluation and reasoning signals from a curated high-signal source.",
-      "score": 37,
+      "score": 36,
       "imageUrl": null
     }
   ]
