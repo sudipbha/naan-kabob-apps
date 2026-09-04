@@ -1,8 +1,25 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-03T12:38:03.968Z",
+  "generatedAt": "2026-09-04T12:36:58.618Z",
   "sourceCount": 4,
   "items": [
+    {
+      "id": "39210f987919e80e",
+      "title": "Safety overview: GPT-6 Astra",
+      "url": "https://openai.com/index/safety-overview-gpt-6-astra",
+      "source": "OpenAI",
+      "author": "",
+      "publishedAt": "2026-09-03T00:00:00.000Z",
+      "excerpt": "GPT-6 Astra is our most capable broadly deployed model and our first to reach the Critical level of cybersecurity capability under our Preparedness Framework.",
+      "topics": [
+        "Engineering",
+        "Security"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with engineering and security signals from a curated high-signal source.",
+      "score": 69,
+      "imageUrl": null
+    },
     {
       "id": "679c29f8bd96fa58",
       "title": "Trinity: Agentic AI-powered transition planning for students with disabilities",
@@ -18,7 +35,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with architecture and agents signals from a curated high-signal source.",
-      "score": 68,
+      "score": 66,
       "imageUrl": null
     },
     {
@@ -36,7 +53,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 61,
+      "score": 60,
       "imageUrl": null
     },
     {
@@ -53,7 +70,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 60,
+      "score": 59,
       "imageUrl": null
     },
     {
@@ -70,7 +87,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with architecture and multimodal signals from a curated high-signal source.",
-      "score": 59,
+      "score": 57,
       "imageUrl": null
     },
     {
@@ -88,7 +105,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and reasoning signals from a curated high-signal source.",
-      "score": 58,
+      "score": 57,
       "imageUrl": null
     },
     {
@@ -106,7 +123,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with training and inference signals from a curated high-signal source.",
-      "score": 52,
+      "score": 51,
       "imageUrl": null
     },
     {
@@ -123,7 +140,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with safety and engineering signals from a curated high-signal source.",
-      "score": 49,
+      "score": 47,
       "imageUrl": null
     },
     {
@@ -140,7 +157,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with evaluation and reasoning signals from a curated high-signal source.",
-      "score": 36,
+      "score": 35,
       "imageUrl": null
     }
   ]
