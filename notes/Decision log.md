@@ -6,6 +6,25 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-09-05 — Burger bags move to Champion; Sysco becomes the backup
+
+A Sysco order for the McNairn foil burger bags (item 321701) was never
+filled — and the research explains why: **Sysco doesn't sell that bag,
+or any foil hamburger bag.** The "#321701" on the Sysco card was
+McNairn's own catalogue number, not a Sysco item number, so the rep had
+nothing to match it to. McNairn still makes the bag, and **Champion**
+stocks the McNairn foil-bag line (their listed size is the 321601,
+6 × 0.75 × 6.75 in; the large 321701 is the one to ask for).
+
+So the cards swap roles. Champion now carries **Burger bags** as a
+regular item under Packing / Expo — counted in packs, Max 8, reorder at
+2, Champion SKU pending until it shows on an invoice. The Sysco card
+stays as a **Backup** with an honest identity: Sysco's nearest product
+is a 6.75-inch *square* fold-over foil sandwich bag (#5990955, verify),
+not a gusseted burger bag — good enough in a pinch, and the card says
+so. Counts already logged under the Sysco card carry over untouched.
+See [[Incidents and lessons]] for the rule this leaves behind.
+
 ## 2026-09-01 — Security pass on Earmark: a poisoned sync row can't brick the app
 
 A security review of Earmark turned up one real weakness worth fixing.

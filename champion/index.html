@@ -182,6 +182,7 @@ const ITEMS = [
   { id: "napkin", st: "pack", name: "Dinner napkin", code: "RTND210 · 20 packs × 120", alt: "ND210", pack: "2400/cs", use: 1.4, lt: 1, ss: 1, cu: "pack", cpc: 20, bwd: 600, bwe: 800, ing: "Paper (2-ply tissue), made from recycled/recyclable paper fiber", url: "https://championproducts.com/products/ritetissue-17-x-16-5-2-ply-premium-dinner-napkin-2400-cs-nd210" },
   { id: "pc200", st: "pack", name: "Sauce cup 2oz", code: "RPPC200", alt: "PC200", pack: "2500/cs", use: 0.7, lt: 1, ss: 1, cu: "cs", bwd: 200, bwe: 400, ing: "Polypropylene (PP) plastic, clear", aln: "Food-safe, BPA-free, heat-resistant/microwaveable, fully recyclable; matching lid is RPPL200.", url: "https://championproducts.com/products/ritepak-2-oz-clear-plastic-portion-cups-2500-cs-pc200" },
   { id: "pl200", st: "pack", name: "Sauce cup lid", code: "RPPL200", alt: "PL200", pack: "2500/cs", use: 0.3, lt: 1, ss: 1, cu: "cs", bwd: 200, bwe: 400, ing: "Clear plastic (BPA-free), polypropylene — same resin as its matching cup", aln: "Snap-on lid for the 2 oz portion cup", url: "https://championproducts.com/products/ritepak-2-oz-clear-plastic-portion-cup-lid-2500-cs-pl200" },
+  { id: "burgerbags", st: "pack", name: "Burger bags", code: "McNairn 321701 large foil bag · 6×1.5×8 in · 1000/cs", alt: "Champion SKU pending", pack: "1000/cs", use: 0, lt: 1, ss: 1, cu: "pack", cpc: 4, cpcTBD: true, tag: "TBC", bwd: 0.2, bwe: 0.35, ing: "Foil-laminated paper bag - aluminum foil bonded to paper (not solid foil). Plain, unprinted.", aln: "Grease- and moisture-resistant, keeps burgers hot; good deadfold. Champion stocks the McNairn foil-bag line (their listed size is 321601, 6×0.75×6.75 in) - ask for 321701, the large one, or take 321601 if that's all they carry. Sysco does NOT list this bag.", url: "https://championproducts.com/collections/foil-bags" },
   { id: "fc1612", st: "kraft", name: "Kraft cup 12oz", code: "REFC1612K", alt: "FC1612K", pack: "500/cs", use: 0.3, lt: 1, ss: 1, cu: "sleeve", cpc: 20, cpcTBD: true, bwd: 30, bwe: 50, ing: "Kraft paper (paperboard) food container", aln: "Eco-friendly kraft paper for salads through hot entrees; the maker doesn’t say whether there’s a plastic lining", url: "https://championproducts.com/products/riteearth-12-oz-kraft-paper-1600-series-food-container-500-cs-fc1612k" },
   { id: "fc1616", st: "kraft", name: "Kraft cup 16oz", code: "REFC1616K", alt: "FC1616K", pack: "500/cs", use: 0.1, lt: 1, ss: 1, cu: "sleeve", cpc: 20, cpcTBD: true, bwd: 15, bwe: 15, ing: "Kraft paper (paperboard) food container", aln: "Eco-friendly kraft paper for salads through hot entrees; the maker doesn’t say whether there’s a plastic lining", url: "https://championproducts.com/products/riteearth-16-oz-kraft-paper-1600-series-food-container-500-cs-fc1616k" },
   { id: "pp160", st: "kraft", name: "Kraft-cup lid", code: "PP160K", alt: "", pack: "500/cs", use: 0.4, lt: 1, ss: 1, cu: "sleeve", cpc: 10, cpcTBD: true, bwd: 45, bwe: 65, ing: "Polypropylene (PP) plastic, clear", url: "https://championproducts.com/products/riteearth-clear-pp-lid-for-1600-series-paper-food-container-500-cs-pp160" },
@@ -210,6 +211,7 @@ const CAP = {
   ph188: 8,
   friesbox: 24,
   sides: 12,
+  burgerbags: 8,
   ad12: 40,
   cutlery: 2,
   bag: 2,
@@ -366,7 +368,7 @@ const baselineOf = (it, cpc) => {
   return { bwd, bwe, ppcu, daily: (bwd * 4 + bwe * 3) / 7 / ppcu };
 };
 const capOf = (it) => CAP[it.id] != null ? CAP[it.id] : Math.max(1, Math.round(it.use * 0.75));
-const REORD = { pc200: 1.5, mophead: 3, straws: 2 };
+const REORD = { pc200: 1.5, mophead: 3, straws: 2, burgerbags: 2 };
 const STORE_KEY = "nk-champion-tracker-v1";
 const APP_ID = "champion";
 const WEEKLY_OK = true; // weekly-Tuesday trial toggle is offered in this app
