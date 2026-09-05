@@ -4,6 +4,29 @@ The things that went wrong, and the rules they left behind. Newest first.
 
 ---
 
+## The burger bags that never came — a maker's number dressed as a Sysco number
+
+**What happened:** the Sysco app's "Burger bags" card carried the number
+#321701 as if it were a Sysco item number. It was McNairn's own catalogue
+number — the manufacturer's, not the supplier's — and Sysco doesn't list
+that bag at all. The order went out reading "Burger bags (McNairn large
+foil bags · 1000/cs · #321701)", the rep had nothing to match it to, and
+the case simply never arrived. Nobody flagged it; the shelf just ran
+down. (Discovered 2026-09-05.)
+
+**The lesson:** a number on a card is only useful if it is the number
+*that supplier* uses. A manufacturer code, a UPC, or the other
+supplier's SKU can look official and still order nothing.
+
+**The rule it left behind:** every item number on a card must say whose
+it is. Supplier numbers (a Sysco SUPC, a Champion SKU) go in the item
+number slot; a manufacturer's number goes in the description with the
+maker's name next to it ("McNairn 321701"), and when the supplier's own
+number isn't known yet the card says "SUPC pending" / "Champion SKU
+pending" rather than borrowing a look-alike. And before a product is
+put on a supplier's card at all, check that the supplier actually
+carries it.
+
 ## The BarChart3 incident — a blank screen that passed the checks
 
 **What happened:** early in the project (before July 2026), a change
