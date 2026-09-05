@@ -1,8 +1,62 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-04T12:36:58.618Z",
+  "generatedAt": "2026-09-05T12:31:43.987Z",
   "sourceCount": 4,
   "items": [
+    {
+      "id": "7f92fe65bc862084",
+      "title": "Run agent-driven Amazon SageMaker HyperPod operations with InstantStart",
+      "url": "https://aws.amazon.com/blogs/machine-learning/run-agent-driven-amazon-sagemaker-hyperpod-operations-with-instantstart/",
+      "source": "AWS Machine Learning Blog",
+      "author": "Hao Zheng",
+      "publishedAt": "2026-09-04T16:12:17.000Z",
+      "excerpt": "HyperPod InstantStart is an open source control plane that composes Amazon EKS orchestration with the managed capabilities of Amazon SageMaker HyperPod. It drives the same guarded operations through both a web interface and an AI agent, turning cluster bootstrap, capacity, training, inference, and storage into dependab",
+      "topics": [
+        "Training",
+        "Inference",
+        "Agents",
+        "Engineering"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with training and inference signals from a curated high-signal source.",
+      "score": 72,
+      "imageUrl": null
+    },
+    {
+      "id": "538d1cb28481919c",
+      "title": "Build a Physical AI model factory with NVIDIA Cosmos 3 on SageMaker HyperPod",
+      "url": "https://aws.amazon.com/blogs/machine-learning/build-a-physical-ai-model-factory-with-nvidia-cosmos-3-on-sagemaker-hyperpod/",
+      "source": "AWS Machine Learning Blog",
+      "author": "Nathan Arnold",
+      "publishedAt": "2026-09-04T16:16:00.000Z",
+      "excerpt": "Building a Physical AI system takes a continuous pipeline, not a single training job. This post shows how to run that model factory (synthetic data generation, post-training, and closed-loop evaluation with NVIDIA Cosmos 3) on a persistent, resilient Amazon SageMaker HyperPod cluster on Amazon EKS, with GPU goodput as ",
+      "topics": [
+        "Evaluations",
+        "Training",
+        "Data"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with evaluation and training signals from a curated high-signal source.",
+      "score": 68,
+      "imageUrl": null
+    },
+    {
+      "id": "039a4975e102cb53",
+      "title": "GPT-6 Astra: A new generation of intelligence",
+      "url": "https://openai.com/index/gpt-6-astra",
+      "source": "OpenAI",
+      "author": "",
+      "publishedAt": "2026-09-03T11:00:00.000Z",
+      "excerpt": "Introducing GPT-6 Astra, our most intelligent and aligned model yet, with state-of-the-art capabilities across computer use, coding, cybersecurity, and science.",
+      "topics": [
+        "Agents",
+        "Security"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with agents and security signals from a curated high-signal source.",
+      "score": 68,
+      "imageUrl": null
+    },
     {
       "id": "39210f987919e80e",
       "title": "Safety overview: GPT-6 Astra",
@@ -17,7 +71,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with engineering and security signals from a curated high-signal source.",
-      "score": 69,
+      "score": 67,
       "imageUrl": null
     },
     {
@@ -35,7 +89,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with architecture and agents signals from a curated high-signal source.",
-      "score": 66,
+      "score": 65,
       "imageUrl": null
     },
     {
@@ -53,7 +107,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 60,
+      "score": 58,
       "imageUrl": null
     },
     {
@@ -70,7 +124,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 59,
+      "score": 57,
       "imageUrl": null
     },
     {
@@ -87,7 +141,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with architecture and multimodal signals from a curated high-signal source.",
-      "score": 57,
+      "score": 56,
       "imageUrl": null
     },
     {
@@ -105,7 +159,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and reasoning signals from a curated high-signal source.",
-      "score": 57,
+      "score": 55,
       "imageUrl": null
     },
     {
@@ -123,7 +177,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with training and inference signals from a curated high-signal source.",
-      "score": 51,
+      "score": 49,
       "imageUrl": null
     },
     {
@@ -140,7 +194,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with safety and engineering signals from a curated high-signal source.",
-      "score": 47,
+      "score": 46,
       "imageUrl": null
     },
     {
@@ -157,7 +211,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with evaluation and reasoning signals from a curated high-signal source.",
-      "score": 35,
+      "score": 33,
       "imageUrl": null
     }
   ]
