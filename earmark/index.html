@@ -634,7 +634,7 @@ function articleSig(a){
     m.sort();
   }
   var ms = (a.media||[]).map(function(x){ return [x.url,x.caption||'',x.afterPara]; });
-  return JSON.stringify([a.title, a.source, a.url||'', a.progress||0, a.played?1:0, a.words, a.sentences.length, ms, m]);
+  return JSON.stringify([a.title, a.source, a.url||'', a.at||0, a.progress||0, a.played?1:0, a.words, a.sentences.length, ms, m]);
 }
 function primeSig(a){ syncSig[a.g] = articleSig(a); }
 function bumpRevs(){
@@ -1834,7 +1834,8 @@ function aiPrefetchFirst(){
   var art = cur();
   if (art && art.played) art = null;
   if (!art) {
-    for (var i=0;i<state.articles.length;i++) if (!state.articles[i].played) { art = state.articles[i]; break; }
+    // warm up the top of the list — the newest unplayed article
+    for (var i=state.articles.length-1;i>=0;i--) if (!state.articles[i].played) { art = state.articles[i]; break; }
   }
   if (!art || !art.sentences || !art.sentences.length) return;
   aiSess = { key: art.id + ':full', voice: genVoiceKey(), chunks: aiChunksFor(art), urls: [], pending: {} };
@@ -1961,13 +1962,18 @@ function onAiEnded(){
   aiPlayChunk(doc, aiNow.g, aiNow.ci + 1, ch.s1);
 }
 
-function nextArticle(){
-  var art = cur(); if (!art) return;
+// the article to play after this one: the next unplayed one BELOW it in the
+// list — the next older one, since the list shows newest first
+function nextUnplayedId(art){
   var pos = -1;
   for (var i=0;i<state.articles.length;i++) if (state.articles[i].id === art.id) { pos = i; break; }
-  for (var j=pos+1;j<state.articles.length;j++){
-    if (!state.articles[j].played) { playArticle(state.articles[j].id, false); return; }
-  }
+  for (var j=pos-1;j>=0;j--) if (!state.articles[j].played) return state.articles[j].id;
+  return null;
+}
+function nextArticle(){
+  var art = cur(); if (!art) return;
+  var nid = nextUnplayedId(art);
+  if (nid != null) playArticle(nid, false);
 }
 function setMediaSession(art){
   if (!('mediaSession' in navigator)) return;
@@ -2286,7 +2292,8 @@ function togglePlay(){
   var art = cur();
   if (state.playing) { pausePlayback(); return; }
   if (!art) {
-    if (state.articles.length) { playArticle(state.articles[0].id, false); }
+    // nothing selected: start at the top of the list (the newest article)
+    if (state.articles.length) { playArticle(state.articles[state.articles.length-1].id, false); }
     else toast('Add an article first');
     return;
   }
@@ -2311,11 +2318,8 @@ function onTrackEnd(doc){
   renderStats();
   updatePlayerUI(); renderQueue(); persist();
   if (state.mode === 'full' && state.autoplay && art) {
-    var pos = -1;
-    for (var i=0;i<state.articles.length;i++) if (state.articles[i].id === art.id) { pos = i; break; }
-    for (var j=pos+1;j<state.articles.length;j++){
-      if (!state.articles[j].played) { playArticle(state.articles[j].id, false); return; }
-    }
+    var nid = nextUnplayedId(art);
+    if (nid != null) { playArticle(nid, false); return; }
   }
   toast(state.mode === 'full' ? 'Finished — queue is done' : 'Finished — tap Full read to hear the whole article', 3200);
   document.title = 'Earmark — your AI reading desk';
@@ -2428,7 +2432,9 @@ function renderQueue(){
   var q = $('queue');
   var html = '';
   var totalWords = 0;
-  for (var i=0;i<state.articles.length;i++){
+  // newest on top: the array stays oldest-first (cloud sync and the Claude
+  // feed rely on that order), only the display is reversed
+  for (var i=state.articles.length-1;i>=0;i--){
     var a = state.articles[i];
     totalWords += a.words;
     var now = a.id === state.currentId;
@@ -2449,7 +2455,7 @@ function renderQueue(){
       +     '</span>'
       +   '</button>'
       +   '<div class="cBtns" style="position:absolute;top:8px;right:6px;flex-direction:row">'
-      +     (i > 0 ? '<button class="iconS" data-act="up" data-id="' + a.id + '" aria-label="Move up">' + ic('up') + '</button>' : '')
+      +     (i < state.articles.length-1 ? '<button class="iconS" data-act="up" data-id="' + a.id + '" aria-label="Move up">' + ic('up') + '</button>' : '')
       +     '<button class="iconS" data-act="del" data-id="' + a.id + '" aria-label="Remove">' + ic('x') + '</button>'
       +   '</div>'
       +   '<div class="cProg"><i id="qfill-' + a.id + '" style="width:' + pct + '%"></i></div>'
@@ -2855,11 +2861,15 @@ function init(){
       }
       render(); persist();
     } else if (act === 'up') {
-      for (var j=1;j<state.articles.length;j++){
+      // "up" = toward the top of the list = toward newest = the next array
+      // slot. Swap the two creation times as well, so the new order survives
+      // the sync sort (which orders by creation time) and reaches other devices.
+      for (var j=0;j<state.articles.length-1;j++){
         if (state.articles[j].id === id) {
-          var tmp = state.articles[j-1];
-          state.articles[j-1] = state.articles[j];
-          state.articles[j] = tmp;
+          var lo = state.articles[j], hi = state.articles[j+1];
+          var t = lo.at; lo.at = hi.at; hi.at = t;
+          if (!(lo.at > hi.at)) lo.at = (hi.at || Date.now()) + 1; // equal/legacy stamps
+          state.articles[j+1] = lo; state.articles[j] = hi;
           break;
         }
       }

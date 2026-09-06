@@ -6,6 +6,30 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-09-06 — Earmark's queue shows the newest article on top
+
+The owner's ask, verbatim: "the new articles should be in the top, not
+the other way around." Until now a freshly pasted article landed at the
+bottom of "Up next", under everything older — with a dozen articles that
+meant scrolling to find what you just added.
+
+The list now shows newest first. Under the hood nothing about the data
+changed — articles are still stored oldest-first, which the cross-device
+sync and the Claude/ChatGPT feed ("last one is the newest") depend on —
+only the display is flipped. Three things follow the list so it all
+stays consistent: **Move up** moves an article toward the top (newest),
+the big play button with nothing selected starts at the top, and when an
+article finishes, autoplay continues to the next unplayed one *below* it,
+the way you'd read the list. The AI voice warm-up now pre-fetches the
+top article too.
+
+One bug fixed on the way: "Move up" used to swap only the list slots,
+so the sync (which orders by creation time) would silently put things
+back the next time it ran. Moving an article now swaps the two creation
+times as well, so a manual order sticks and travels to your other
+devices. Covered by a new test (display order, move-up surviving a
+re-sort, next-article direction); the full Earmark suite passes.
+
 ## 2026-09-05 — Burger bags move to Champion; Sysco becomes the backup
 
 A Sysco order for the McNairn foil burger bags (item 321701) was never
