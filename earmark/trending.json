@@ -1,8 +1,98 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-08T12:37:17.856Z",
+  "generatedAt": "2026-09-09T12:37:09.685Z",
   "sourceCount": 4,
   "items": [
+    {
+      "id": "4ef1fa7cd0579165",
+      "title": "GPT-6 Astra, Looped Transformers, and Hidden Reasoning",
+      "url": "https://magazine.sebastianraschka.com/p/gpt-6-astra-looped-transformers-and",
+      "source": "Ahead of AI",
+      "author": "Sebastian Raschka, PhD",
+      "publishedAt": "2026-09-09T11:14:25.000Z",
+      "excerpt": "A Look at Recurrent Depth, Hidden Chains of Thought, and Recent Research on Looping Transformer Blocks",
+      "topics": [
+        "Research",
+        "Models",
+        "Reasoning"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with research and architecture signals from a curated high-signal source.",
+      "score": 75,
+      "imageUrl": "https://substack-post-media.s3.amazonaws.com/public/images/3d2ac2ec-ab80-43a8-aa93-a33a846dda43_1564x874.png"
+    },
+    {
+      "id": "278717cc87215917",
+      "title": "Pathway’s brain-inspired architecture development on Amazon SageMaker HyperPod",
+      "url": "https://aws.amazon.com/blogs/machine-learning/pathways-brain-inspired-architecture-development-on-amazon-sagemaker-hyperpod/",
+      "source": "AWS Machine Learning Blog",
+      "author": "Paulo Aragão",
+      "publishedAt": "2026-09-08T19:12:51.000Z",
+      "excerpt": "Pathway's Baby Dragon Hatchling (BDH) is a brain-inspired, post-transformer architecture that reasons in latent space instead of emitting chain-of-thought tokens. See how Pathway develops and scales BDH on Amazon SageMaker HyperPod, and how BDH-CQ set a new cost-efficiency mark on the ARC-AGI-1 benchmark.",
+      "topics": [
+        "Evaluations",
+        "Models",
+        "Reasoning"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with evaluation and architecture signals from a curated high-signal source.",
+      "score": 68,
+      "imageUrl": null
+    },
+    {
+      "id": "267f06dd2d6029d1",
+      "title": "Govern models with MLflow and Amazon SageMaker AI Model Registry sync: Part 1",
+      "url": "https://aws.amazon.com/blogs/machine-learning/govern-models-with-mlflow-and-amazon-sagemaker-ai-model-registry-sync-part-1/",
+      "source": "AWS Machine Learning Blog",
+      "author": "Paolo Di Francesco",
+      "publishedAt": "2026-09-08T17:03:20.000Z",
+      "excerpt": "Managed MLflow on Amazon SageMaker AI now syncs richer model metadata (training metrics, evaluation results, inference specs, and lineage) into the SageMaker AI Model Registry, with lifecycle stage promotion. Part 1 shows how to govern candidate models in a single account using IAM guardrails.",
+      "topics": [
+        "Evaluations",
+        "Training",
+        "Inference"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with evaluation and training signals from a curated high-signal source.",
+      "score": 68,
+      "imageUrl": null
+    },
+    {
+      "id": "550284f58c316a04",
+      "title": "Automated agent evaluation with Amazon Bedrock AgentCore and GitHub Actions",
+      "url": "https://aws.amazon.com/blogs/machine-learning/automated-agent-evaluation-with-amazon-bedrock-agentcore-and-github-actions/",
+      "source": "AWS Machine Learning Blog",
+      "author": "Mahsa Paknezhad",
+      "publishedAt": "2026-09-08T16:23:21.000Z",
+      "excerpt": "Wire Amazon Bedrock AgentCore Evaluations into a GitHub Actions pipeline: deploy an AI agent and an OAuth-protected MCP server to AgentCore runtime, invoke the agent with test prompts, score the responses, and automatically block pull requests when agent behavior regresses.",
+      "topics": [
+        "Evaluations",
+        "Agents",
+        "Engineering"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with evaluation and agents signals from a curated high-signal source.",
+      "score": 68,
+      "imageUrl": null
+    },
+    {
+      "id": "482f99062b1b58cf",
+      "title": "Benchmarking small LLM inference on SageMaker AI: G7 vs G5 and G6",
+      "url": "https://aws.amazon.com/blogs/machine-learning/benchmarking-small-llm-inference-on-sagemaker-ai-g7-vs-g5-and-g6/",
+      "source": "AWS Machine Learning Blog",
+      "author": "Mona Mona",
+      "publishedAt": "2026-09-08T16:21:57.000Z",
+      "excerpt": "Benchmark two 30B Mixture-of-Experts models, Qwen3-Coder-30B and NVIDIA Nemotron-3-Nano-30B, across G5, G6, G6e, and G7 GPU instances on Amazon SageMaker AI. Compare throughput, latency, and cost-per-token, and see how G7's NVIDIA Blackwell GPUs deliver measurable price-performance gains for real-time LLM inference.",
+      "topics": [
+        "Evaluations",
+        "Inference",
+        "Models"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with evaluation and inference signals from a curated high-signal source.",
+      "score": 68,
+      "imageUrl": null
+    },
     {
       "id": "7f92fe65bc862084",
       "title": "Run agent-driven Amazon SageMaker HyperPod operations with InstantStart",
@@ -19,7 +109,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with training and inference signals from a curated high-signal source.",
-      "score": 67,
+      "score": 66,
       "imageUrl": null
     },
     {
@@ -37,7 +127,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with evaluation and training signals from a curated high-signal source.",
-      "score": 63,
+      "score": 62,
       "imageUrl": null
     },
     {
@@ -54,7 +144,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with agents and security signals from a curated high-signal source.",
-      "score": 63,
+      "score": 62,
       "imageUrl": null
     },
     {
@@ -71,25 +161,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with engineering and security signals from a curated high-signal source.",
-      "score": 63,
-      "imageUrl": null
-    },
-    {
-      "id": "679c29f8bd96fa58",
-      "title": "Trinity: Agentic AI-powered transition planning for students with disabilities",
-      "url": "https://aws.amazon.com/blogs/machine-learning/trinity-agentic-ai-powered-transition-planning-for-students-with-disabilities/",
-      "source": "AWS Machine Learning Blog",
-      "author": "Sadia Ahmed",
-      "publishedAt": "2026-09-02T18:14:17.000Z",
-      "excerpt": "Learn how University Startups and its AWS partner g/d/n/a scaled Trinity, a conversational AI solution for students with disabilities, into a serverless multi-agent architecture on Amazon Bedrock that produces IDEA-aligned transition plans for school districts across the US.",
-      "topics": [
-        "Models",
-        "Agents",
-        "Reasoning"
-      ],
-      "technicalLevel": "intermediate",
-      "whySelected": "Recent technical AI coverage with architecture and agents signals from a curated high-signal source.",
-      "score": 60,
+      "score": 61,
       "imageUrl": null
     },
     {
@@ -107,7 +179,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 54,
+      "score": 52,
       "imageUrl": null
     },
     {
@@ -124,7 +196,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 53,
+      "score": 51,
       "imageUrl": null
     },
     {
@@ -141,7 +213,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with architecture and multimodal signals from a curated high-signal source.",
-      "score": 51,
+      "score": 50,
       "imageUrl": null
     },
     {
@@ -159,7 +231,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and reasoning signals from a curated high-signal source.",
-      "score": 51,
+      "score": 49,
       "imageUrl": null
     },
     {
@@ -177,7 +249,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with training and inference signals from a curated high-signal source.",
-      "score": 45,
+      "score": 43,
       "imageUrl": null
     },
     {
@@ -194,24 +266,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with safety and engineering signals from a curated high-signal source.",
-      "score": 41,
-      "imageUrl": null
-    },
-    {
-      "id": "c6ddfc87b1f68178",
-      "title": "MindTopo reveals VLMs’ spatial reasoning abilities",
-      "url": "https://microsoft.com/en-us/research/blog/mindtopo-reveals-vlms-spatial-reasoning-abilities/",
-      "source": "Microsoft Research",
-      "author": "Yunfei Ge, Anbang Liu, Qineng Wang, Johnalbert Garnica, Zihan Wang, Reuben Tan, Jianfeng Gao, Ruohan Zhang, Yining Hong, Jiajun Wu, Manling Li",
-      "publishedAt": "2026-08-12T16:00:00.000Z",
-      "excerpt": "A path, a fence, a knot. MindTopo sets a new benchmark for testing how AI understands topological relationships and highlights new opportunities to strengthen spatial reasoning and planning.",
-      "topics": [
-        "Evaluations",
-        "Reasoning"
-      ],
-      "technicalLevel": "intermediate",
-      "whySelected": "Recent technical AI coverage with evaluation and reasoning signals from a curated high-signal source.",
-      "score": 33,
+      "score": 40,
       "imageUrl": null
     }
   ]
