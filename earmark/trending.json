@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-10T12:36:59.711Z",
-  "sourceCount": 4,
+  "generatedAt": "2026-09-11T12:36:25.165Z",
+  "sourceCount": 5,
   "items": [
     {
       "id": "4ef1fa7cd0579165",
@@ -18,7 +18,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and architecture signals from a curated high-signal source.",
-      "score": 73,
+      "score": 72,
       "imageUrl": "https://substack-post-media.s3.amazonaws.com/public/images/3d2ac2ec-ab80-43a8-aa93-a33a846dda43_1564x874.png"
     },
     {
@@ -36,7 +36,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and engineering signals from a curated high-signal source.",
-      "score": 71,
+      "score": 69,
       "imageUrl": null
     },
     {
@@ -53,13 +53,13 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with agents and reasoning signals from a curated high-signal source.",
-      "score": 69,
+      "score": 68,
       "imageUrl": null
     },
     {
-      "id": "278717cc87215917",
+      "id": "77e408ef665eb643",
       "title": "Pathway’s brain-inspired architecture development on Amazon SageMaker HyperPod",
-      "url": "https://aws.amazon.com/blogs/machine-learning/pathways-brain-inspired-architecture-development-on-amazon-sagemaker-hyperpod/",
+      "url": "https://aws.amazon.com/blogs/machine-learning/pathway-s-brain-inspired-architecture-development-on-amazon-sagemaker-hyperpod/",
       "source": "AWS Machine Learning Blog",
       "author": "Paulo Aragão",
       "publishedAt": "2026-09-08T19:12:51.000Z",
@@ -71,7 +71,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with evaluation and architecture signals from a curated high-signal source.",
-      "score": 66,
+      "score": 65,
       "imageUrl": null
     },
     {
@@ -89,7 +89,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with evaluation and training signals from a curated high-signal source.",
-      "score": 66,
+      "score": 65,
       "imageUrl": null
     },
     {
@@ -107,7 +107,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with evaluation and agents signals from a curated high-signal source.",
-      "score": 66,
+      "score": 65,
       "imageUrl": null
     },
     {
@@ -125,44 +125,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with evaluation and inference signals from a curated high-signal source.",
-      "score": 66,
-      "imageUrl": null
-    },
-    {
-      "id": "7f92fe65bc862084",
-      "title": "Run agent-driven Amazon SageMaker HyperPod operations with InstantStart",
-      "url": "https://aws.amazon.com/blogs/machine-learning/run-agent-driven-amazon-sagemaker-hyperpod-operations-with-instantstart/",
-      "source": "AWS Machine Learning Blog",
-      "author": "Hao Zheng",
-      "publishedAt": "2026-09-04T16:12:17.000Z",
-      "excerpt": "HyperPod InstantStart is an open source control plane that composes Amazon EKS orchestration with the managed capabilities of Amazon SageMaker HyperPod. It drives the same guarded operations through both a web interface and an AI agent, turning cluster bootstrap, capacity, training, inference, and storage into dependab",
-      "topics": [
-        "Training",
-        "Inference",
-        "Agents",
-        "Engineering"
-      ],
-      "technicalLevel": "intermediate",
-      "whySelected": "Recent technical AI coverage with training and inference signals from a curated high-signal source.",
-      "score": 64,
-      "imageUrl": null
-    },
-    {
-      "id": "538d1cb28481919c",
-      "title": "Build a Physical AI model factory with NVIDIA Cosmos 3 on SageMaker HyperPod",
-      "url": "https://aws.amazon.com/blogs/machine-learning/build-a-physical-ai-model-factory-with-nvidia-cosmos-3-on-sagemaker-hyperpod/",
-      "source": "AWS Machine Learning Blog",
-      "author": "Nathan Arnold",
-      "publishedAt": "2026-09-04T16:16:00.000Z",
-      "excerpt": "Building a Physical AI system takes a continuous pipeline, not a single training job. This post shows how to run that model factory (synthetic data generation, post-training, and closed-loop evaluation with NVIDIA Cosmos 3) on a persistent, resilient Amazon SageMaker HyperPod cluster on Amazon EKS, with GPU goodput as ",
-      "topics": [
-        "Evaluations",
-        "Training",
-        "Data"
-      ],
-      "technicalLevel": "intermediate",
-      "whySelected": "Recent technical AI coverage with evaluation and training signals from a curated high-signal source.",
-      "score": 60,
+      "score": 65,
       "imageUrl": null
     },
     {
@@ -179,7 +142,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with agents and security signals from a curated high-signal source.",
-      "score": 60,
+      "score": 59,
       "imageUrl": null
     },
     {
@@ -196,7 +159,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with engineering and security signals from a curated high-signal source.",
-      "score": 60,
+      "score": 58,
       "imageUrl": null
     },
     {
@@ -214,7 +177,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 51,
+      "score": 49,
       "imageUrl": null
     },
     {
@@ -231,7 +194,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 50,
+      "score": 48,
       "imageUrl": null
     },
     {
@@ -248,7 +211,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with architecture and multimodal signals from a curated high-signal source.",
-      "score": 48,
+      "score": 47,
       "imageUrl": null
     },
     {
@@ -266,7 +229,42 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and reasoning signals from a curated high-signal source.",
-      "score": 48,
+      "score": 46,
+      "imageUrl": null
+    },
+    {
+      "id": "f65c07c326de973a",
+      "title": "Multilingual Knowledge Transfer under Data Constraints via Lexical Interventions",
+      "url": "https://machinelearning.apple.com/research/multilingual-knowledge-transfer-lexical-interventions",
+      "source": "Apple Machine Learning Research",
+      "author": "",
+      "publishedAt": "2026-08-20T00:00:00.000Z",
+      "excerpt": "Cross-lingual knowledge transfer is critical for building high-performing multilingual language models for languages with insufficient training data. When target language data is scarce, the knowledge required for many downstream tasks involving scientific reasoning, commonsense inference, and world knowledge must be a",
+      "topics": [
+        "Training",
+        "Inference",
+        "Reasoning"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with training and inference signals from a curated high-signal source.",
+      "score": 40,
+      "imageUrl": null
+    },
+    {
+      "id": "c6ddfc87b1f68178",
+      "title": "MindTopo reveals VLMs’ spatial reasoning abilities",
+      "url": "https://microsoft.com/en-us/research/blog/mindtopo-reveals-vlms-spatial-reasoning-abilities/",
+      "source": "Microsoft Research",
+      "author": "Yunfei Ge, Anbang Liu, Qineng Wang, Johnalbert Garnica, Zihan Wang, Reuben Tan, Jianfeng Gao, Ruohan Zhang, Yining Hong, Jiajun Wu, Manling Li",
+      "publishedAt": "2026-08-12T16:00:00.000Z",
+      "excerpt": "A path, a fence, a knot. MindTopo sets a new benchmark for testing how AI understands topological relationships and highlights new opportunities to strengthen spatial reasoning and planning.",
+      "topics": [
+        "Evaluations",
+        "Reasoning"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with evaluation and reasoning signals from a curated high-signal source.",
+      "score": 33,
       "imageUrl": null
     }
   ]
