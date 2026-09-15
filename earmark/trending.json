@@ -1,8 +1,26 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-14T12:38:02.545Z",
+  "generatedAt": "2026-09-15T12:36:53.758Z",
   "sourceCount": 4,
   "items": [
+    {
+      "id": "e3e67d4a9ffc0836",
+      "title": "The generative AI customization spectrum: From prompt engineering to custom models on AWS",
+      "url": "https://aws.amazon.com/blogs/machine-learning/the-generative-ai-customization-spectrum-from-prompt-engineering-to-custom-models-on-aws/",
+      "source": "AWS Machine Learning Blog",
+      "author": "Bhavya Sruthi Sode",
+      "publishedAt": "2026-09-14T15:47:12.000Z",
+      "excerpt": "Pick the right generative AI customization approach on AWS with an 8-step decision framework, from prompt engineering and RAG to fine-tuning, continued pre-training, and Amazon Nova Forge. Start simple and escalate only when you must.",
+      "topics": [
+        "Training",
+        "Data",
+        "Engineering"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with training and data signals from a curated high-signal source.",
+      "score": 68,
+      "imageUrl": null
+    },
     {
       "id": "4ef1fa7cd0579165",
       "title": "GPT-6 Astra, Looped Transformers, and Hidden Reasoning",
@@ -18,7 +36,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and architecture signals from a curated high-signal source.",
-      "score": 67,
+      "score": 66,
       "imageUrl": "https://substack-post-media.s3.amazonaws.com/public/images/3d2ac2ec-ab80-43a8-aa93-a33a846dda43_1564x874.png"
     },
     {
@@ -36,7 +54,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and engineering signals from a curated high-signal source.",
-      "score": 65,
+      "score": 63,
       "imageUrl": null
     },
     {
@@ -53,25 +71,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with agents and reasoning signals from a curated high-signal source.",
-      "score": 63,
-      "imageUrl": null
-    },
-    {
-      "id": "77e408ef665eb643",
-      "title": "Pathway’s brain-inspired architecture development on Amazon SageMaker HyperPod",
-      "url": "https://aws.amazon.com/blogs/machine-learning/pathway-s-brain-inspired-architecture-development-on-amazon-sagemaker-hyperpod/",
-      "source": "AWS Machine Learning Blog",
-      "author": "Paulo Aragão",
-      "publishedAt": "2026-09-08T19:12:51.000Z",
-      "excerpt": "Pathway's Baby Dragon Hatchling (BDH) is a brain-inspired, post-transformer architecture that reasons in latent space instead of emitting chain-of-thought tokens. See how Pathway develops and scales BDH on Amazon SageMaker HyperPod, and how BDH-CQ set a new cost-efficiency mark on the ARC-AGI-1 benchmark.",
-      "topics": [
-        "Evaluations",
-        "Models",
-        "Reasoning"
-      ],
-      "technicalLevel": "intermediate",
-      "whySelected": "Recent technical AI coverage with evaluation and architecture signals from a curated high-signal source.",
-      "score": 60,
+      "score": 62,
       "imageUrl": null
     },
     {
@@ -88,7 +88,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with agents and security signals from a curated high-signal source.",
-      "score": 54,
+      "score": 53,
       "imageUrl": null
     },
     {
@@ -105,7 +105,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with engineering and security signals from a curated high-signal source.",
-      "score": 54,
+      "score": 52,
       "imageUrl": null
     },
     {
@@ -123,7 +123,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 45,
+      "score": 43,
       "imageUrl": null
     },
     {
@@ -140,7 +140,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 44,
+      "score": 42,
       "imageUrl": null
     }
   ]
