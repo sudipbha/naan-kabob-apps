@@ -6,6 +6,27 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-09-15 — A second bowl size: 24 oz joins Champion
+
+The 32 oz bagasse bowl is a big portion, and the owner wanted a smaller
+one. The honest constraint turned out to be the **lid**: RiteEarth's
+low-dome lid (BL85LD) fits only the "8500 series" bowls, which is the
+24, 32 and 40 oz. The 8 oz and 12/16 oz bowls Champion also sells are a
+different mould in a different series — no lid listed for them at all —
+so the 8 oz was out on two counts: too small, and it would have meant
+serving open or hunting for a second lid.
+
+So Champion now tracks **Bagasse bowl 24oz** (BC8524) next to the 32 oz,
+under Bowls. Counted in sleeves, 4 sleeves of 75 to a case — that split
+is confirmed on Champion's own listing this time, so no "verify /case"
+guess. Max starts at 4 sleeves (one case) because it is an unproven
+size; raise it in Levels once the real pace is clear. One deliberate
+gap: the card carries **no usage baseline**, because nobody knows yet
+how the two sizes will split. Until two counts exist the app won't
+guess a run-out date — it simply puts the bowl on the order when the
+count hits the reorder point, then learns the real rate from the
+counts. The 32 oz card is untouched, and the existing lid covers both.
+
 ## 2026-09-06 — Earmark's queue shows the newest article on top
 
 The owner's ask, verbatim: "the new articles should be in the top, not
