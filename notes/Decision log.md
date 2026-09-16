@@ -6,6 +6,31 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-09-16 — The prep-tray day labels are now on the Sysco list
+
+The Monday/Tuesday/Wednesday labels on the prep trays were never in
+either app. They come from **Sysco** — Champion has nothing like them
+(their label range is retail price stickers: "SPECIAL OF THE WEEK",
+"GROUND TODAY AT"). A photo of the rolls confirmed the type: trilingual
+English/French/Spanish, colour-coded, with "Removable" printed on the
+face.
+
+The thing that shaped how this got built: **Sysco sells the days one at
+a time.** There is no single "week of labels" item in their catalogue —
+Monday is its own item number, Tuesday is another, and so on. So the app
+now has **seven cards**, one per day, each with its real Sysco number,
+counted in rolls (one roll of 500 per case), Max 2 rolls, reordering at
+1. One card for "labels" would have been tidier to count but useless to
+order from: it could never tell the rep *which* day ran out — the same
+trap that lost a case of burger bags last month.
+
+A 7-day starter kit does exist — one roll per day plus wall-mount
+dispensers — but it is not in Sysco's online catalogue, only on reseller
+sites, so the Monday card carries a note to ask the rep for it on the
+first order and reorder single days here afterwards. Also noted on every
+card: these are **removable, not dissolvable**, so they must be peeled
+before the tray is washed.
+
 ## 2026-09-15 — A second bowl size: 24 oz joins Champion
 
 The 32 oz bagasse bowl is a big portion, and the owner wanted a smaller
