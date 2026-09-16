@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-15T12:36:53.758Z",
+  "generatedAt": "2026-09-16T12:37:39.992Z",
   "sourceCount": 4,
   "items": [
     {
@@ -18,7 +18,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with training and data signals from a curated high-signal source.",
-      "score": 68,
+      "score": 66,
       "imageUrl": null
     },
     {
@@ -36,26 +36,8 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and architecture signals from a curated high-signal source.",
-      "score": 66,
+      "score": 64,
       "imageUrl": "https://substack-post-media.s3.amazonaws.com/public/images/3d2ac2ec-ab80-43a8-aa93-a33a846dda43_1564x874.png"
-    },
-    {
-      "id": "595f5a162f6b9ef3",
-      "title": "Simplify and support your TorchServe workloads using Ray Serve Deep Learning Containers",
-      "url": "https://aws.amazon.com/blogs/machine-learning/simplify-and-support-your-torchserve-workloads-using-ray-serve-deep-learning-containers/",
-      "source": "AWS Machine Learning Blog",
-      "author": "Ananth Raghavendra",
-      "publishedAt": "2026-09-09T15:51:29.000Z",
-      "excerpt": "TorchServe is no longer maintained, leaving teams to own the entire GPU inference stack. The AWS Ray Serve Deep Learning Container is a supported, pre-tested container with the framework, GPU drivers, and serving layer already assembled. This post walks through deploying a vision-language model on Amazon EKS using the ",
-      "topics": [
-        "Inference",
-        "Engineering",
-        "Multimodal"
-      ],
-      "technicalLevel": "intermediate",
-      "whySelected": "Recent technical AI coverage with inference and engineering signals from a curated high-signal source.",
-      "score": 63,
-      "imageUrl": null
     },
     {
       "id": "333ccaae81484d3a",
@@ -71,7 +53,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with agents and reasoning signals from a curated high-signal source.",
-      "score": 62,
+      "score": 60,
       "imageUrl": null
     },
     {
@@ -88,7 +70,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with agents and security signals from a curated high-signal source.",
-      "score": 53,
+      "score": 51,
       "imageUrl": null
     },
     {
@@ -105,7 +87,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with engineering and security signals from a curated high-signal source.",
-      "score": 52,
+      "score": 51,
       "imageUrl": null
     },
     {
@@ -123,7 +105,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 43,
+      "score": 42,
       "imageUrl": null
     },
     {
@@ -140,7 +122,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 42,
+      "score": 41,
       "imageUrl": null
     }
   ]
