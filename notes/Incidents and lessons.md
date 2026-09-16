@@ -4,6 +4,30 @@ The things that went wrong, and the rules they left behind. Newest first.
 
 ---
 
+## The day labels that were the wrong size — a real number for the wrong thing
+
+**What happened:** on 2026-09-16 seven Sysco day-label cards went live
+with genuine Sysco item numbers that had been checked against Sysco's
+own listing. What had *not* been checked was the product behind the
+numbers: its size, its count per roll, its design. The owner looked at
+the cards the same day and said the labels they use are small, with just
+the day's name in three languages — and the items on the cards could not
+be shown to be that. They were replaced the same day with the verified
+1-inch removable line before anything was ordered. A near miss, not a
+lost case.
+
+**The lesson:** the burger-bag rule below says every number must belong
+to the right supplier. This adds the other half: the number must also
+belong to the right *product*. A valid item number for the wrong size,
+count or style orders the wrong thing just as surely as a number nobody
+recognises.
+
+**The rule it left behind:** before a card goes live, confirm the thing,
+not just the number — size, count per pack, and (for anything the owner
+has shown a photo of) that the design matches. When the product can't be
+seen — no picture, no spec — the card says so and asks the owner to
+check the first delivery, rather than presenting the number as settled.
+
 ## The burger bags that never came — a maker's number dressed as a Sysco number
 
 **What happened:** the Sysco app's "Burger bags" card carried the number
