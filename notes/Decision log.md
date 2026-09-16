@@ -6,7 +6,40 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-09-16 — Day labels, second look: the small 1-inch ones, with the right numbers
+
+The morning's seven label cards pointed at the wrong Sysco line. The
+numbers on them (79738xx, "Food Safety Labels", 500 to a roll) were real
+Sysco item numbers, but nothing ever confirmed what those labels *looked
+like* — and 500 to a roll is the count of Sysco's bigger write-on labels
+and of its dissolvable dots, not of the little square in the photo. The
+owner's ask was specific: no big labels crowded with fields to fill in,
+just a small label with the day's name in English, French and Spanish.
+
+That is Sysco's **"Sysco Classic Label Daily [Day] Removable"** line: a
+1-inch square, semi-gloss, removable, colour-coded by day, sold as 3
+rolls of 1,000 per case — the same style as the rolls in the photo. All
+seven days were traced to their own Sysco item numbers (Monday #6069821,
+Tuesday #6069858, Wednesday #6069879, Thursday #6069924, Friday #6069965,
+Saturday #6070060, Sunday #6069799), and the 7-day starter kit with wall
+dispensers is #6069787.
+
+The seven cards were re-pointed in place — same internal ids, so nothing
+counted is lost. Because a case is now 3 rolls, **Max is one case (3
+rolls)** and the app reorders when a day is down to its last roll. The
+numbers were read from Sysco's own-brand listings at a reseller, not from
+a Sysco invoice, so every card says "verify" until the first delivery
+slip confirms them.
+
+The lesson, folded into [[Incidents and lessons]]: a real item number is
+not the same as the right product. Size, count and design have to be
+confirmed before a card goes live — the number alone can be right and
+still order the wrong thing.
+
 ## 2026-09-16 — The prep-tray day labels are now on the Sysco list
+
+*(Superseded later the same day — the numbers below pointed at the wrong
+Sysco label line; see the entry above.)*
 
 The Monday/Tuesday/Wednesday labels on the prep trays were never in
 either app. They come from **Sysco** — Champion has nothing like them
