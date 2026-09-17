@@ -6,6 +6,19 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-09-17 — Day-label numbers confirmed off the dispenser; "verify" removed
+
+The LabeLocker dispenser on the prep line turned out to carry Sysco's
+own replacement-label sticker: "Removable replacement labels — Monday /
+Lundi 6069821, Tuesday / Mardi 6069858, Wednesday / Mercredi 6069879,
+Thursday / Jeudi 6069924, Friday / Vendredi 6069965, Saturday / Samedi
+6070060, Sunday / Dimanche 6069799", prepared for Sysco Corporation,
+Toronto. Every number matches the card it sits on, so the "verify" flag
+came off all seven and each note now says where the number was read
+from. The labels in the same photo are the small trilingual squares
+(THURSDAY · Jeudi · Jueves, "Removable" on the face) — the product
+is confirmed as well as the number.
+
 ## 2026-09-16 — Day labels, second look: the small 1-inch ones, with the right numbers
 
 The morning's seven label cards pointed at the wrong Sysco line. The
