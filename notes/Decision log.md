@@ -17,7 +17,10 @@ Toronto. Every number matches the card it sits on, so the "verify" flag
 came off all seven and each note now says where the number was read
 from. The labels in the same photo are the small trilingual squares
 (THURSDAY · Jeudi · Jueves, "Removable" on the face) — the product
-is confirmed as well as the number.
+is confirmed as well as the number. The dispenser itself is already on
+the prep line, so the 7-day starter kit (#6069787) the Monday card used
+to suggest is not needed — that suggestion is gone; only the single-day
+rolls get ordered.
 
 ## 2026-09-16 — Day labels, second look: the small 1-inch ones, with the right numbers
 
