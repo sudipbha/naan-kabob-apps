@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-18T12:35:41.836Z",
+  "generatedAt": "2026-09-19T12:32:53.277Z",
   "sourceCount": 4,
   "items": [
     {
@@ -18,7 +18,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with evaluation and engineering signals from a curated high-signal source.",
-      "score": 66,
+      "score": 65,
       "imageUrl": null
     },
     {
@@ -35,25 +35,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with training and architecture signals from a curated high-signal source.",
-      "score": 66,
-      "imageUrl": null
-    },
-    {
-      "id": "e3e67d4a9ffc0836",
-      "title": "The generative AI customization spectrum: From prompt engineering to custom models on AWS",
-      "url": "https://aws.amazon.com/blogs/machine-learning/the-generative-ai-customization-spectrum-from-prompt-engineering-to-custom-models-on-aws/",
-      "source": "AWS Machine Learning Blog",
-      "author": "Bhavya Sruthi Sode",
-      "publishedAt": "2026-09-14T15:47:12.000Z",
-      "excerpt": "Pick the right generative AI customization approach on AWS with an 8-step decision framework, from prompt engineering and RAG to fine-tuning, continued pre-training, and Amazon Nova Forge. Start simple and escalate only when you must.",
-      "topics": [
-        "Training",
-        "Data",
-        "Engineering"
-      ],
-      "technicalLevel": "intermediate",
-      "whySelected": "Recent technical AI coverage with training and data signals from a curated high-signal source.",
-      "score": 63,
+      "score": 65,
       "imageUrl": null
     },
     {
@@ -71,7 +53,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and architecture signals from a curated high-signal source.",
-      "score": 61,
+      "score": 60,
       "imageUrl": "https://substack-post-media.s3.amazonaws.com/public/images/3d2ac2ec-ab80-43a8-aa93-a33a846dda43_1564x874.png"
     },
     {
@@ -88,7 +70,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with agents and reasoning signals from a curated high-signal source.",
-      "score": 57,
+      "score": 56,
       "imageUrl": null
     },
     {
@@ -105,7 +87,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with agents and security signals from a curated high-signal source.",
-      "score": 48,
+      "score": 47,
       "imageUrl": null
     },
     {
@@ -122,7 +104,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with engineering and security signals from a curated high-signal source.",
-      "score": 48,
+      "score": 46,
       "imageUrl": null
     }
   ]
