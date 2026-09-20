@@ -6,6 +6,32 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-09-20 — Sriracha for the burger sauce: one bottle, not a case
+
+The owner wants plain sriracha (the Huy Fong "rooster" bottle) to mix
+into mayo for the burgers — and only **one bottle**, not Sysco's usual
+case of 12 × 740 mL. Two things came out of that.
+
+**The card.** A Sysco card under Food, counted in bottles, Max 1. It
+says plainly on the order line "ONE 740 mL bottle, not the 12-case", and
+the note tells the rep it is a split-case single. The item number is
+still "SUPC pending": Sysco's US catalogue lists this bottle as #2451417,
+but the Canadian number may differ and the rule from the burger-bag
+incident is that a look-alike number is worse than none. The rep
+confirms it, the invoice proves it, then it goes on the card.
+
+**The engine.** Until now every order line ended in "cs" (case), or
+"bg"/"bx"/"bn" for a few items. A single bottle printed as "1 cs" would
+have been read by the rep as one *case* — twelve bottles. So both apps
+now understand a `btl` purchase unit: the Count card says "counted in
+btl" and the order line says "— 1 btl". Tiny change, but it is the
+difference between one bottle and a shelf of them.
+
+Sysco Canada's ready-made spicy mayos were looked at as well
+(Hellmann's Spicy Mayonnaise 2 × 3.78 L #5462896; Sysco Classic Chipotle
+Mayo 2 × 3.78 L #5345323) and left off the list: the owner chose to mix
+their own.
+
 ## 2026-09-17 — Day-label numbers confirmed off the dispenser; "verify" removed
 
 The LabeLocker dispenser on the prep line turned out to carry Sysco's

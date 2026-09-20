@@ -184,7 +184,8 @@ at a time** — receive or cancel it before placing another.
   hasn't typed over. The arrival-overflow warning projects stock at the
   chosen date, not the regular truck.
 - The text is headed `EMERGENCY CHAMPION ORDER` with the requested date and
-  reason, in **purchase units** (cs/bn/bx/bg per item). Mark as ordered
+  reason, in **purchase units** (cs/bn/bx/bg/btl per item; `btl` is a single
+  bottle, for the rare item bought one bottle at a time). Mark as ordered
   confirms, then logs `{ kind: "emergency", expect, reason, items,
   coverTo }`.
 - While pending: a banner on Order and Receive, "+N arriving" chips, and
