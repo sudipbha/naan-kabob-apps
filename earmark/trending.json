@@ -1,8 +1,27 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-21T12:35:43.813Z",
+  "generatedAt": "2026-09-22T12:36:43.719Z",
   "sourceCount": 4,
   "items": [
+    {
+      "id": "80e68252491f34b6",
+      "title": "xAI’s Grok 4.6 is now available in Amazon Bedrock",
+      "url": "https://aws.amazon.com/blogs/machine-learning/xais-grok-4-6-is-now-available-in-amazon-bedrock/",
+      "source": "AWS Machine Learning Blog",
+      "author": "Suheel Farooq",
+      "publishedAt": "2026-09-21T18:30:34.000Z",
+      "excerpt": "xAI's Grok 4.6 is now available in Amazon Bedrock: a frontier model for long-running agents, coding, and knowledge work, with a 500K token context window and four reasoning effort levels. It runs on both the bedrock-mantle and bedrock-runtime endpoints, with Converse API and cross-Region inference support.",
+      "topics": [
+        "Inference",
+        "Models",
+        "Engineering",
+        "Reasoning"
+      ],
+      "technicalLevel": "advanced",
+      "whySelected": "Recent technical AI coverage with inference and architecture signals from a curated high-signal source.",
+      "score": 69,
+      "imageUrl": null
+    },
     {
       "id": "a14a5d6b9521936c",
       "title": "Improving HCLS AI reasoning with open-source agent skills",
@@ -18,7 +37,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with evaluation and engineering signals from a curated high-signal source.",
-      "score": 62,
+      "score": 60,
       "imageUrl": null
     },
     {
@@ -35,7 +54,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with training and architecture signals from a curated high-signal source.",
-      "score": 62,
+      "score": 60,
       "imageUrl": null
     },
     {
@@ -53,7 +72,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and architecture signals from a curated high-signal source.",
-      "score": 57,
+      "score": 55,
       "imageUrl": "https://substack-post-media.s3.amazonaws.com/public/images/3d2ac2ec-ab80-43a8-aa93-a33a846dda43_1564x874.png"
     },
     {
@@ -70,41 +89,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with agents and reasoning signals from a curated high-signal source.",
-      "score": 53,
-      "imageUrl": null
-    },
-    {
-      "id": "039a4975e102cb53",
-      "title": "GPT-6 Astra: A new generation of intelligence",
-      "url": "https://openai.com/index/gpt-6-astra",
-      "source": "OpenAI",
-      "author": "",
-      "publishedAt": "2026-09-03T11:00:00.000Z",
-      "excerpt": "Introducing GPT-6 Astra, our most intelligent and aligned model yet, with state-of-the-art capabilities across computer use, coding, cybersecurity, and science.",
-      "topics": [
-        "Agents",
-        "Security"
-      ],
-      "technicalLevel": "intermediate",
-      "whySelected": "Recent technical AI coverage with agents and security signals from a curated high-signal source.",
-      "score": 44,
-      "imageUrl": null
-    },
-    {
-      "id": "39210f987919e80e",
-      "title": "Safety overview: GPT-6 Astra",
-      "url": "https://openai.com/index/safety-overview-gpt-6-astra",
-      "source": "OpenAI",
-      "author": "",
-      "publishedAt": "2026-09-03T00:00:00.000Z",
-      "excerpt": "GPT-6 Astra is our most capable broadly deployed model and our first to reach the Critical level of cybersecurity capability under our Preparedness Framework.",
-      "topics": [
-        "Engineering",
-        "Security"
-      ],
-      "technicalLevel": "intermediate",
-      "whySelected": "Recent technical AI coverage with engineering and security signals from a curated high-signal source.",
-      "score": 43,
+      "score": 51,
       "imageUrl": null
     }
   ]
