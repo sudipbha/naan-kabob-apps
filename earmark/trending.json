@@ -1,8 +1,25 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-22T12:36:43.719Z",
+  "generatedAt": "2026-09-24T12:38:27.880Z",
   "sourceCount": 4,
   "items": [
+    {
+      "id": "bf21d00c6281a233",
+      "title": "How to Guide Your Language Flow",
+      "url": "https://machinelearning.apple.com/research/guide-language-flow",
+      "source": "Apple Machine Learning Research",
+      "author": "",
+      "publishedAt": "2026-09-23T00:00:00.000Z",
+      "excerpt": "We introduce a new method to guide flow matching models. Our approach, which we call probe guidance, uses the frozen internal states of an existing diffusion model to construct a guidance signal. This works using a similar principle as autoguidance, but eliminates the need for an additional forward pass at inference ti",
+      "topics": [
+        "Inference",
+        "Models"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with inference and architecture signals from a curated high-signal source.",
+      "score": 68,
+      "imageUrl": null
+    },
     {
       "id": "80e68252491f34b6",
       "title": "xAI’s Grok 4.6 is now available in Amazon Bedrock",
@@ -19,25 +36,7 @@
       ],
       "technicalLevel": "advanced",
       "whySelected": "Recent technical AI coverage with inference and architecture signals from a curated high-signal source.",
-      "score": 69,
-      "imageUrl": null
-    },
-    {
-      "id": "a14a5d6b9521936c",
-      "title": "Improving HCLS AI reasoning with open-source agent skills",
-      "url": "https://aws.amazon.com/blogs/machine-learning/improving-hcls-ai-reasoning-with-open-source-agent-skills/",
-      "source": "AWS Machine Learning Blog",
-      "author": "Michael Hsieh",
-      "publishedAt": "2026-09-16T19:00:00.000Z",
-      "excerpt": "AI agents on foundation models often misapply healthcare and life sciences decision frameworks, citing the right guideline but applying it incorrectly. This post shares 38 open-source agent skills across 11 HCLS domains that close this gap, with installation steps, three worked use cases, and a 410-prompt evaluation sh",
-      "topics": [
-        "Evaluations",
-        "Engineering",
-        "Reasoning"
-      ],
-      "technicalLevel": "intermediate",
-      "whySelected": "Recent technical AI coverage with evaluation and engineering signals from a curated high-signal source.",
-      "score": 60,
+      "score": 66,
       "imageUrl": null
     },
     {
@@ -54,7 +53,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with training and architecture signals from a curated high-signal source.",
-      "score": 60,
+      "score": 57,
       "imageUrl": null
     },
     {
@@ -72,7 +71,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and architecture signals from a curated high-signal source.",
-      "score": 55,
+      "score": 52,
       "imageUrl": "https://substack-post-media.s3.amazonaws.com/public/images/3d2ac2ec-ab80-43a8-aa93-a33a846dda43_1564x874.png"
     },
     {
@@ -89,7 +88,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with agents and reasoning signals from a curated high-signal source.",
-      "score": 51,
+      "score": 48,
       "imageUrl": null
     }
   ]
