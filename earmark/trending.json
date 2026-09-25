@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-24T12:38:27.880Z",
+  "generatedAt": "2026-09-25T12:37:57.811Z",
   "sourceCount": 4,
   "items": [
     {
@@ -17,7 +17,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and architecture signals from a curated high-signal source.",
-      "score": 68,
+      "score": 66,
       "imageUrl": null
     },
     {
@@ -36,7 +36,7 @@
       ],
       "technicalLevel": "advanced",
       "whySelected": "Recent technical AI coverage with inference and architecture signals from a curated high-signal source.",
-      "score": 66,
+      "score": 64,
       "imageUrl": null
     },
     {
@@ -53,7 +53,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with training and architecture signals from a curated high-signal source.",
-      "score": 57,
+      "score": 56,
       "imageUrl": null
     },
     {
@@ -71,7 +71,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and architecture signals from a curated high-signal source.",
-      "score": 52,
+      "score": 51,
       "imageUrl": "https://substack-post-media.s3.amazonaws.com/public/images/3d2ac2ec-ab80-43a8-aa93-a33a846dda43_1564x874.png"
     },
     {
@@ -88,7 +88,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with agents and reasoning signals from a curated high-signal source.",
-      "score": 48,
+      "score": 47,
       "imageUrl": null
     }
   ]
