@@ -1,8 +1,45 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-25T12:37:57.811Z",
-  "sourceCount": 4,
+  "generatedAt": "2026-09-26T12:34:01.779Z",
+  "sourceCount": 3,
   "items": [
+    {
+      "id": "c619830bcd214545",
+      "title": "Multi-Region training with Amazon SageMaker HyperPod and Qumulo",
+      "url": "https://aws.amazon.com/blogs/machine-learning/multi-region-training-with-amazon-sagemaker-hyperpod-and-qumulo/",
+      "source": "AWS Machine Learning Blog",
+      "author": "Bryan Berezdivin",
+      "publishedAt": "2026-09-25T15:49:44.000Z",
+      "excerpt": "Amazon SageMaker HyperPod and Cloud Native Qumulo let you place training compute in one AWS Region while keeping your dataset in another. This post shares the architecture and validation results from a cross-Region training run, where a remote cluster matched a co-located cluster's throughput after a brief NeuralCache ",
+      "topics": [
+        "Training",
+        "Inference",
+        "Models",
+        "Data"
+      ],
+      "technicalLevel": "advanced",
+      "whySelected": "Recent technical AI coverage with training and inference signals from a curated high-signal source.",
+      "score": 69,
+      "imageUrl": null
+    },
+    {
+      "id": "c6142acfdf6a0f70",
+      "title": "Accelerate multimodal RL training with SkyRL on Amazon SageMaker HyperPod",
+      "url": "https://aws.amazon.com/blogs/machine-learning/accelerate-multimodal-rl-training-with-skyrl-on-amazon-sagemaker-hyperpod/",
+      "source": "AWS Machine Learning Blog",
+      "author": "Nilesh PS",
+      "publishedAt": "2026-09-25T16:18:07.000Z",
+      "excerpt": "Learn how to run SkyRL, an open-source reinforcement learning framework, on Amazon SageMaker HyperPod to post-train a Qwen3-VL-8B vision-language model with GRPO. This walkthrough covers building the container image, launching a Ray cluster from SageMaker Studio, submitting and monitoring the job, and hosting the train",
+      "topics": [
+        "Training",
+        "Engineering",
+        "Multimodal"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with training and engineering signals from a curated high-signal source.",
+      "score": 68,
+      "imageUrl": null
+    },
     {
       "id": "bf21d00c6281a233",
       "title": "How to Guide Your Language Flow",
@@ -17,26 +54,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and architecture signals from a curated high-signal source.",
-      "score": 66,
-      "imageUrl": null
-    },
-    {
-      "id": "80e68252491f34b6",
-      "title": "xAI’s Grok 4.6 is now available in Amazon Bedrock",
-      "url": "https://aws.amazon.com/blogs/machine-learning/xais-grok-4-6-is-now-available-in-amazon-bedrock/",
-      "source": "AWS Machine Learning Blog",
-      "author": "Suheel Farooq",
-      "publishedAt": "2026-09-21T18:30:34.000Z",
-      "excerpt": "xAI's Grok 4.6 is now available in Amazon Bedrock: a frontier model for long-running agents, coding, and knowledge work, with a 500K token context window and four reasoning effort levels. It runs on both the bedrock-mantle and bedrock-runtime endpoints, with Converse API and cross-Region inference support.",
-      "topics": [
-        "Inference",
-        "Models",
-        "Engineering",
-        "Reasoning"
-      ],
-      "technicalLevel": "advanced",
-      "whySelected": "Recent technical AI coverage with inference and architecture signals from a curated high-signal source.",
-      "score": 64,
+      "score": 65,
       "imageUrl": null
     },
     {
@@ -53,7 +71,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with training and architecture signals from a curated high-signal source.",
-      "score": 56,
+      "score": 54,
       "imageUrl": null
     },
     {
@@ -71,25 +89,8 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and architecture signals from a curated high-signal source.",
-      "score": 51,
+      "score": 49,
       "imageUrl": "https://substack-post-media.s3.amazonaws.com/public/images/3d2ac2ec-ab80-43a8-aa93-a33a846dda43_1564x874.png"
-    },
-    {
-      "id": "333ccaae81484d3a",
-      "title": "GPT-6 Astra: The next generation in intelligence for work",
-      "url": "https://openai.com/index/gpt-6-astra-next-generation-work",
-      "source": "OpenAI",
-      "author": "",
-      "publishedAt": "2026-09-09T11:00:00.000Z",
-      "excerpt": "Meet GPT-6 Astra, OpenAI’s most capable model for business, with advanced reasoning, computer use, and stronger writing and design judgment.",
-      "topics": [
-        "Agents",
-        "Reasoning"
-      ],
-      "technicalLevel": "intermediate",
-      "whySelected": "Recent technical AI coverage with agents and reasoning signals from a curated high-signal source.",
-      "score": 47,
-      "imageUrl": null
     }
   ]
 }
