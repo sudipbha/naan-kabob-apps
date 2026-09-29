@@ -1,8 +1,26 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-28T12:43:12.915Z",
+  "generatedAt": "2026-09-29T12:41:45.057Z",
   "sourceCount": 3,
   "items": [
+    {
+      "id": "bbf506f2762571d0",
+      "title": "Faster Rates for Federated Variational Inequalities",
+      "url": "https://machinelearning.apple.com/research/federated-variational-inequalities",
+      "source": "Apple Machine Learning Research",
+      "author": "",
+      "publishedAt": "2026-09-28T00:00:00.000Z",
+      "excerpt": "In this paper, we study federated optimization for solving stochastic variational inequalities (VIs), a problem that has attracted growing attention in recent years. Despite substantial progress, a significant gap remains between existing convergence rates and the state-of-the-art bounds known for federated convex opti",
+      "topics": [
+        "Research",
+        "Training",
+        "Models"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
+      "score": 69,
+      "imageUrl": null
+    },
     {
       "id": "c619830bcd214545",
       "title": "Multi-Region training with Amazon SageMaker HyperPod and Qumulo",
@@ -19,7 +37,7 @@
       ],
       "technicalLevel": "advanced",
       "whySelected": "Recent technical AI coverage with training and inference signals from a curated high-signal source.",
-      "score": 66,
+      "score": 64,
       "imageUrl": null
     },
     {
@@ -37,7 +55,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with training and engineering signals from a curated high-signal source.",
-      "score": 65,
+      "score": 63,
       "imageUrl": null
     },
     {
@@ -54,7 +72,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and architecture signals from a curated high-signal source.",
-      "score": 62,
+      "score": 60,
       "imageUrl": null
     },
     {
@@ -71,7 +89,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with training and architecture signals from a curated high-signal source.",
-      "score": 51,
+      "score": 50,
       "imageUrl": null
     },
     {
@@ -89,7 +107,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and architecture signals from a curated high-signal source.",
-      "score": 46,
+      "score": 45,
       "imageUrl": "https://substack-post-media.s3.amazonaws.com/public/images/3d2ac2ec-ab80-43a8-aa93-a33a846dda43_1564x874.png"
     }
   ]
