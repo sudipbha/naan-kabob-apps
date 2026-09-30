@@ -1,8 +1,25 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-29T12:41:45.057Z",
+  "generatedAt": "2026-09-30T12:44:00.455Z",
   "sourceCount": 3,
   "items": [
+    {
+      "id": "e1da41ea41831abe",
+      "title": "The Communication Bottleneck: A Round-Trip Study of Tree-Structured Expression Serialization in Language Models",
+      "url": "https://machinelearning.apple.com/research/communication-bottleneck-serialization",
+      "source": "Apple Machine Learning Research",
+      "author": "",
+      "publishedAt": "2026-09-29T00:00:00.000Z",
+      "excerpt": "When language models reason in chain-of-thought or exchange free-text intermediates, they serialize structured information into natural language. How much tree-structured compositional content survives this bottleneck? We propose a round-trip protocol that answers this question empirically for tree-structured expressio",
+      "topics": [
+        "Research",
+        "Reasoning"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with research and reasoning signals from a curated high-signal source.",
+      "score": 68,
+      "imageUrl": null
+    },
     {
       "id": "bbf506f2762571d0",
       "title": "Faster Rates for Federated Variational Inequalities",
@@ -18,7 +35,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 69,
+      "score": 67,
       "imageUrl": null
     },
     {
@@ -37,7 +54,7 @@
       ],
       "technicalLevel": "advanced",
       "whySelected": "Recent technical AI coverage with training and inference signals from a curated high-signal source.",
-      "score": 64,
+      "score": 63,
       "imageUrl": null
     },
     {
@@ -55,7 +72,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with training and engineering signals from a curated high-signal source.",
-      "score": 63,
+      "score": 62,
       "imageUrl": null
     },
     {
@@ -72,7 +89,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and architecture signals from a curated high-signal source.",
-      "score": 60,
+      "score": 59,
       "imageUrl": null
     },
     {
@@ -89,7 +106,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with training and architecture signals from a curated high-signal source.",
-      "score": 50,
+      "score": 48,
       "imageUrl": null
     },
     {
@@ -107,7 +124,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and architecture signals from a curated high-signal source.",
-      "score": 45,
+      "score": 43,
       "imageUrl": "https://substack-post-media.s3.amazonaws.com/public/images/3d2ac2ec-ab80-43a8-aa93-a33a846dda43_1564x874.png"
     }
   ]
