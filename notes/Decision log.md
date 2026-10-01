@@ -6,6 +6,21 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-10-01 — Sriracha gets its Sysco Shop code: 7236015
+
+A message from the Sysco side — "anyone needs sriracha sauce? Sysco shop
+code: 7236015, just code and sriracha sauce" — gave the number the card
+had been waiting for, so it is on the card and the order line now reads
+"Sriracha (Sriracha hot chili sauce · ONE bottle, not a case ·
+#7236015) — 1 btl".
+
+What the message did *not* say: the brand, or whether 7236015 is a
+single bottle or the case of 12. The card therefore keeps its "TBC"
+badge and no longer claims the brand in the order line (it used to say
+Huy Fong); the note asks the owner to tell me if the first delivery is a
+case or a different bottle. Same rule as the day labels: a number is
+confirmed when the thing arrives and matches, not when it is quoted.
+
 ## 2026-09-20 — Sriracha for the burger sauce: one bottle, not a case
 
 The owner wants plain sriracha (the Huy Fong "rooster" bottle) to mix
