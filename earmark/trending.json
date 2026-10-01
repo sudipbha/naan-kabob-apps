@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-30T12:44:00.455Z",
+  "generatedAt": "2026-10-01T12:41:10.286Z",
   "sourceCount": 3,
   "items": [
     {
@@ -17,7 +17,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and reasoning signals from a curated high-signal source.",
-      "score": 68,
+      "score": 66,
       "imageUrl": null
     },
     {
@@ -35,26 +35,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 67,
-      "imageUrl": null
-    },
-    {
-      "id": "c619830bcd214545",
-      "title": "Multi-Region training with Amazon SageMaker HyperPod and Qumulo",
-      "url": "https://aws.amazon.com/blogs/machine-learning/multi-region-training-with-amazon-sagemaker-hyperpod-and-qumulo/",
-      "source": "AWS Machine Learning Blog",
-      "author": "Bryan Berezdivin",
-      "publishedAt": "2026-09-25T15:49:44.000Z",
-      "excerpt": "Amazon SageMaker HyperPod and Cloud Native Qumulo let you place training compute in one AWS Region while keeping your dataset in another. This post shares the architecture and validation results from a cross-Region training run, where a remote cluster matched a co-located cluster's throughput after a brief NeuralCache ",
-      "topics": [
-        "Training",
-        "Inference",
-        "Models",
-        "Data"
-      ],
-      "technicalLevel": "advanced",
-      "whySelected": "Recent technical AI coverage with training and inference signals from a curated high-signal source.",
-      "score": 63,
+      "score": 66,
       "imageUrl": null
     },
     {
@@ -72,7 +53,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with training and engineering signals from a curated high-signal source.",
-      "score": 62,
+      "score": 60,
       "imageUrl": null
     },
     {
@@ -89,24 +70,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and architecture signals from a curated high-signal source.",
-      "score": 59,
-      "imageUrl": null
-    },
-    {
-      "id": "c66ed5d68a420ac4",
-      "title": "DACA-GRPO: Denoising-Aware Credit Assignment for Reinforcement Learning in Diffusion Language Models",
-      "url": "https://machinelearning.apple.com/research/denoising-aware-credit-assignment",
-      "source": "Apple Machine Learning Research",
-      "author": "",
-      "publishedAt": "2026-09-16T00:00:00.000Z",
-      "excerpt": "Diffusion large language models are a compelling alternative to autoregressive models, yet existing RL methods for diffusion treat all denoising steps as equally important and rely on biased, high-variance likelihood estimates. We identify two fundamental weaknesses: the absence of temporal credit assignment across the",
-      "topics": [
-        "Training",
-        "Models"
-      ],
-      "technicalLevel": "intermediate",
-      "whySelected": "Recent technical AI coverage with training and architecture signals from a curated high-signal source.",
-      "score": 48,
+      "score": 57,
       "imageUrl": null
     },
     {
@@ -124,7 +88,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and architecture signals from a curated high-signal source.",
-      "score": 43,
+      "score": 42,
       "imageUrl": "https://substack-post-media.s3.amazonaws.com/public/images/3d2ac2ec-ab80-43a8-aa93-a33a846dda43_1564x874.png"
     }
   ]
