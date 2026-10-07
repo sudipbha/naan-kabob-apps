@@ -1,8 +1,44 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-01T12:41:10.286Z",
+  "generatedAt": "2026-10-07T12:42:16.436Z",
   "sourceCount": 3,
   "items": [
+    {
+      "id": "9855b0d96c10185b",
+      "title": "RISED: Rubrics for Agentic Multi-Environment Selection and Self-Distillation",
+      "url": "https://machinelearning.apple.com/research/rised-multi-environment-selection",
+      "source": "Apple Machine Learning Research",
+      "author": "",
+      "publishedAt": "2026-10-06T00:00:00.000Z",
+      "excerpt": "Training a single LLM agent jointly across diverse interactive environments has attracted increasing attention as a route to generalist agents. Existing curriculum and data-selection strategies often allocate training at the environment level or prioritize local reward-based signals, without explicitly considering rela",
+      "topics": [
+        "Training",
+        "Models",
+        "Agents"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with training and architecture signals from a curated high-signal source.",
+      "score": 72,
+      "imageUrl": null
+    },
+    {
+      "id": "043f1ee35a103263",
+      "title": "New agent skill: Amazon SageMaker optimized generative AI inference for your coding agent",
+      "url": "https://aws.amazon.com/blogs/machine-learning/new-agent-skill-amazon-sagemaker-optimized-generative-ai-inference-for-your-coding-agent/",
+      "source": "AWS Machine Learning Blog",
+      "author": "Mona Mona",
+      "publishedAt": "2026-10-05T17:23:19.000Z",
+      "excerpt": "Amazon SageMaker optimized generative AI inference introduces the aws-ai-ml skill through the Agent Toolkit for AWS, giving coding agents like Kiro, Claude Code, and Codex deep expertise in inference optimization and benchmarking. Describe what you want, and your agent generates executable SageMaker Python SDK v3 code ",
+      "topics": [
+        "Training",
+        "Inference",
+        "Engineering"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with training and inference signals from a curated high-signal source.",
+      "score": 69,
+      "imageUrl": null
+    },
     {
       "id": "e1da41ea41831abe",
       "title": "The Communication Bottleneck: A Round-Trip Study of Tree-Structured Expression Serialization in Language Models",
@@ -17,7 +53,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and reasoning signals from a curated high-signal source.",
-      "score": 66,
+      "score": 57,
       "imageUrl": null
     },
     {
@@ -35,41 +71,6 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 66,
-      "imageUrl": null
-    },
-    {
-      "id": "c6142acfdf6a0f70",
-      "title": "Accelerate multimodal RL training with SkyRL on Amazon SageMaker HyperPod",
-      "url": "https://aws.amazon.com/blogs/machine-learning/accelerate-multimodal-rl-training-with-skyrl-on-amazon-sagemaker-hyperpod/",
-      "source": "AWS Machine Learning Blog",
-      "author": "Nilesh PS",
-      "publishedAt": "2026-09-25T16:18:07.000Z",
-      "excerpt": "Learn how to run SkyRL, an open-source reinforcement learning framework, on Amazon SageMaker HyperPod to post-train a Qwen3-VL-8B vision-language model with GRPO. This walkthrough covers building the container image, launching a Ray cluster from SageMaker Studio, submitting and monitoring the job, and hosting the train",
-      "topics": [
-        "Training",
-        "Engineering",
-        "Multimodal"
-      ],
-      "technicalLevel": "intermediate",
-      "whySelected": "Recent technical AI coverage with training and engineering signals from a curated high-signal source.",
-      "score": 60,
-      "imageUrl": null
-    },
-    {
-      "id": "bf21d00c6281a233",
-      "title": "How to Guide Your Language Flow",
-      "url": "https://machinelearning.apple.com/research/guide-language-flow",
-      "source": "Apple Machine Learning Research",
-      "author": "",
-      "publishedAt": "2026-09-23T00:00:00.000Z",
-      "excerpt": "We introduce a new method to guide flow matching models. Our approach, which we call probe guidance, uses the frozen internal states of an existing diffusion model to construct a guidance signal. This works using a similar principle as autoguidance, but eliminates the need for an additional forward pass at inference ti",
-      "topics": [
-        "Inference",
-        "Models"
-      ],
-      "technicalLevel": "intermediate",
-      "whySelected": "Recent technical AI coverage with inference and architecture signals from a curated high-signal source.",
       "score": 57,
       "imageUrl": null
     },
@@ -88,7 +89,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and architecture signals from a curated high-signal source.",
-      "score": 42,
+      "score": 39,
       "imageUrl": "https://substack-post-media.s3.amazonaws.com/public/images/3d2ac2ec-ab80-43a8-aa93-a33a846dda43_1564x874.png"
     }
   ]
