@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-07T12:42:16.436Z",
+  "generatedAt": "2026-10-08T12:42:09.355Z",
   "sourceCount": 3,
   "items": [
     {
@@ -18,7 +18,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with training and architecture signals from a curated high-signal source.",
-      "score": 72,
+      "score": 70,
       "imageUrl": null
     },
     {
@@ -36,7 +36,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with training and inference signals from a curated high-signal source.",
-      "score": 69,
+      "score": 68,
       "imageUrl": null
     },
     {
@@ -53,7 +53,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and reasoning signals from a curated high-signal source.",
-      "score": 57,
+      "score": 56,
       "imageUrl": null
     },
     {
@@ -71,7 +71,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 57,
+      "score": 55,
       "imageUrl": null
     },
     {
