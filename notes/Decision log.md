@@ -6,6 +6,30 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-10-15 — Dinner napkins get a Sysco backup
+
+Napkins come from **Champion** (RiteTissue dinner napkin, 2-ply, 2,400 per
+case); the Sysco app never had a napkin card. The owner asked for a Sysco
+backup in case Champion can't supply.
+
+Sysco's closest match is its own-brand **Sysco Classic dinner napkin,
+#5758271**: white, 2-ply, 1/8 fold, 15.8 × 16.8 in, 12 packs of 200 — the
+same 2,400 per case, a slightly smaller sheet than Champion's 17 × 16.5 in.
+Two others were passed over: a "cloth-like" Sysco napkin sold only 500 to a
+case at a much higher price, and several from Sysco's US site whose numbers
+aren't confirmed for Canada.
+
+How it's set up, so the burger-bag mistake can't repeat:
+- The Sysco napkin is a **Backup card in the Sysco app** (Packaging, after
+  the spoons). It is listed but never ordered unless switched on in Levels,
+  and if it ever is, it lands on the *Sysco* order where its number belongs.
+- Champion's own napkin card only gets a **note** naming the Sysco backup.
+  The note shows in the card's details, never in the order text, so the
+  Champion rep never sees a Sysco number.
+- The number came from Sysco's own-brand listing at a Canadian reseller (the
+  same kind of source that gave the right day-label numbers), so the card
+  says "verify" until a Sysco invoice shows it.
+
 ## 2026-10-01 — Sriracha gets its Sysco Shop code: 7236015
 
 A message from the Sysco side — "anyone needs sriracha sauce? Sysco shop
