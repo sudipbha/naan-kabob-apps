@@ -328,6 +328,18 @@ estimate is never mistaken for a fresh count.
    Receiving an item that has never been counted **sets** its on-hand number
    (blank counts as 0) — the toast says how many were counted for the first
    time. Adds to on-hand and records a receipt.
+   Under **Recent deliveries**, a **"Did the orders arrive in full?"**
+   report matches each regular order with the deliveries logged after it,
+   up to the next regular order (any quantity a delivery credited to an
+   emergency order doesn't count). It shows the share of ordered lines that
+   arrived in full across the orders checked so far, the last six orders one
+   by one with every short line ("got X of Y", or "none came", in counting
+   units), and any item **short more than once**. An order with no delivery
+   logged in its window reads "no delivery logged — not counted" rather than
+   blaming the supplier, and the newest order reads "waiting for the truck"
+   for 7 days. A late truck logged after the next order was placed counts
+   against the newer order. Emergency orders are tracked separately (§4) and
+   aren't scored here.
 3. **Variance** — expected vs. actual usage between the last two counts, in
    each item's counting unit (labeled on every row). Expected usage comes
    from count periods *before* the one being judged (or from baselines), so
@@ -412,6 +424,11 @@ whenever the app goes to the background).
 - `stocks` etc. are keyed by item `id` and denominated in **counting units**.
 - `orders[].items` and `receipts[].items` quantities are **counting units**;
   only the human-readable order *text* is in cases.
+- History kept, on the phone and in the cloud: the last 12 counts, 104
+  deliveries and 52 orders — about a year at two orders a week, which is
+  what the delivery report reads. A phone still running an older version
+  trims that back to 50 deliveries and 20 orders the next time it saves, so
+  refresh every phone after an update.
 - `orders[]` entries carry `sched` ("weekly-tue" / "tue-fri") and `coverTo`;
   emergency orders add `kind: "emergency"`, `expect` (requested delivery,
   YYYY-MM-DD), `reason`, and `closed` once received or cancelled. Open
