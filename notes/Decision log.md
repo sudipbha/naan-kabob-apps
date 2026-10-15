@@ -6,6 +6,23 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-10-15 — 4-cup drink carriers join Champion
+
+The owner sent the item page from Champion's ordering app: "M510032 4 CUP
+CARRIER TRAY PACTIV 300/CS", Champion item **550210**, $32.50 a case on
+that day. It wasn't in either app.
+
+It is Pactiv's EarthChoice 4-cup carrier (maker number M510032): molded
+fiber from 100% recycled paper, PFAS-free, holding four 8–32 oz cups plus
+a centre food tray — so it takes both smoothie cups. 300 per case.
+
+The card sits in Champion's **Drinks** section after the milkshake straws,
+counted in cases (part cases are fine, e.g. 0.5). The order line reads
+"4-cup drink carrier (550210 · 300/cs · Pactiv M510032)": Champion's own
+number first, the maker's number labelled with the maker's name, as the
+burger-bag lesson requires. Max is one case; with no usage history yet it
+reorders at half a case until two counts show the real pace.
+
 ## 2026-10-15 — "Did the orders arrive in full?": a supplier report in Receive
 
 First of the new features from the trends plan. The owner's worst supply
