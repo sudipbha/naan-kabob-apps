@@ -6,6 +6,31 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-10-15 — "Did the orders arrive in full?": a supplier report in Receive
+
+First of the new features from the trends plan. The owner's worst supply
+problems this year were things that never came, or came wrong: a case of
+burger bags that never arrived, a full case of sriracha instead of one
+bottle. The app already knew what was ordered and what was received; it
+just never put the two side by side.
+
+Now the Receive tab does. Under "Recent deliveries" it shows, for the last
+six orders, whether every line arrived in full, which lines came short
+("got 1 of 2") or not at all ("none came"), an overall percentage, and any
+item that has been short **more than once** — the pattern worth raising
+with the rep.
+
+Two rules keep it fair to the supplier:
+- If nothing at all was logged for an order, it says "no delivery logged —
+  not counted" instead of marking every line missing. Forgetting to check a
+  truck in shouldn't look like the supplier failing.
+- The newest order says "waiting for the truck" for a week.
+
+To give the report a year of history, the app now keeps the last 104
+deliveries and 52 orders (it used to keep 50 and 20). Phones should be
+refreshed after this update; an old version trims the history back when it
+saves.
+
 ## 2026-10-15 — Dinner napkins get a Sysco backup
 
 Napkins come from **Champion** (RiteTissue dinner napkin, 2-ply, 2,400 per
