@@ -1,96 +1,111 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-08T12:42:09.355Z",
+  "generatedAt": "2026-10-16T12:38:04.959Z",
   "sourceCount": 3,
   "items": [
     {
-      "id": "9855b0d96c10185b",
-      "title": "RISED: Rubrics for Agentic Multi-Environment Selection and Self-Distillation",
-      "url": "https://machinelearning.apple.com/research/rised-multi-environment-selection",
+      "id": "a80ac8068cf5aba1",
+      "title": "Local and Distributed Large LLM Inference with MLX and RDMA on Mac Studio",
+      "url": "https://machinelearning.apple.com/research/mlx-distributed-inference",
       "source": "Apple Machine Learning Research",
       "author": "",
-      "publishedAt": "2026-10-06T00:00:00.000Z",
-      "excerpt": "Training a single LLM agent jointly across diverse interactive environments has attracted increasing attention as a route to generalist agents. Existing curriculum and data-selection strategies often allocate training at the environment level or prioritize local reward-based signals, without explicitly considering rela",
+      "publishedAt": "2026-10-15T00:00:00.000Z",
+      "excerpt": "MLX on Mac with Apple silicon lets AI researchers and developers experiment locally with the latest models and methods in a private environment. The open-source array framework leverages the unified memory architecture of Apple silicon, enabling anyone to run new inference and fine-tuning methods on their own hardware ",
       "topics": [
-        "Training",
-        "Models",
-        "Agents"
-      ],
-      "technicalLevel": "intermediate",
-      "whySelected": "Recent technical AI coverage with training and architecture signals from a curated high-signal source.",
-      "score": 70,
-      "imageUrl": null
-    },
-    {
-      "id": "043f1ee35a103263",
-      "title": "New agent skill: Amazon SageMaker optimized generative AI inference for your coding agent",
-      "url": "https://aws.amazon.com/blogs/machine-learning/new-agent-skill-amazon-sagemaker-optimized-generative-ai-inference-for-your-coding-agent/",
-      "source": "AWS Machine Learning Blog",
-      "author": "Mona Mona",
-      "publishedAt": "2026-10-05T17:23:19.000Z",
-      "excerpt": "Amazon SageMaker optimized generative AI inference introduces the aws-ai-ml skill through the Agent Toolkit for AWS, giving coding agents like Kiro, Claude Code, and Codex deep expertise in inference optimization and benchmarking. Describe what you want, and your agent generates executable SageMaker Python SDK v3 code ",
-      "topics": [
-        "Training",
         "Inference",
+        "Models",
         "Engineering"
       ],
       "technicalLevel": "intermediate",
-      "whySelected": "Recent technical AI coverage with training and inference signals from a curated high-signal source.",
-      "score": 68,
+      "whySelected": "Recent technical AI coverage with inference and architecture signals from a curated high-signal source.",
+      "score": 72,
       "imageUrl": null
     },
     {
-      "id": "e1da41ea41831abe",
-      "title": "The Communication Bottleneck: A Round-Trip Study of Tree-Structured Expression Serialization in Language Models",
-      "url": "https://machinelearning.apple.com/research/communication-bottleneck-serialization",
+      "id": "08cebc8f97d4c11c",
+      "title": "Selection-Based Structured Reasoning: Toward Efficient Multimodal Search Agents",
+      "url": "https://machinelearning.apple.com/research/selection-structured-reasoning",
       "source": "Apple Machine Learning Research",
       "author": "",
-      "publishedAt": "2026-09-29T00:00:00.000Z",
-      "excerpt": "When language models reason in chain-of-thought or exchange free-text intermediates, they serialize structured information into natural language. How much tree-structured compositional content survives this bottleneck? We propose a round-trip protocol that answers this question empirically for tree-structured expressio",
+      "publishedAt": "2026-10-15T00:00:00.000Z",
+      "excerpt": "Multimodal agents commonly generate freeform reasoning before each action. For small models, limited model capacity can result in lengthy reasoning that provides little useful guidance for action generation while incurring substantial inference cost. To address this challenge, we introduce Selection-based Structured Re",
+      "topics": [
+        "Inference",
+        "Reasoning",
+        "Multimodal"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with inference and reasoning signals from a curated high-signal source.",
+      "score": 69,
+      "imageUrl": null
+    },
+    {
+      "id": "8fc272f28c8a0129",
+      "title": "Plan or Retrieve First? A Scale Study of Tool Discovery Architectures",
+      "url": "https://machinelearning.apple.com/research/plan-retrieve-tool-discovery",
+      "source": "Apple Machine Learning Research",
+      "author": "",
+      "publishedAt": "2026-10-15T00:00:00.000Z",
+      "excerpt": "Tool-augmented LLM agents discover relevant APIs from large registries before planning execution, yet finite context windows prohibit injecting all tool definitions into a single prompt. The dominant approach, which we term Retrieve-then-Plan (RtP), embeds the user query and retrieves similar tools via approximate near",
       "topics": [
         "Research",
         "Reasoning"
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and reasoning signals from a curated high-signal source.",
-      "score": 56,
+      "score": 68,
       "imageUrl": null
     },
     {
-      "id": "bbf506f2762571d0",
-      "title": "Faster Rates for Federated Variational Inequalities",
-      "url": "https://machinelearning.apple.com/research/federated-variational-inequalities",
-      "source": "Apple Machine Learning Research",
+      "id": "a8b8c31de898145e",
+      "title": "How Third Moment Research runs 10,000 agents for 36+ hours",
+      "url": "https://openai.com/index/third-moment-research",
+      "source": "OpenAI",
       "author": "",
-      "publishedAt": "2026-09-28T00:00:00.000Z",
-      "excerpt": "In this paper, we study federated optimization for solving stochastic variational inequalities (VIs), a problem that has attracted growing attention in recent years. Despite substantial progress, a significant gap remains between existing convergence rates and the state-of-the-art bounds known for federated convex opti",
+      "publishedAt": "2026-10-14T07:00:00.000Z",
+      "excerpt": "With GPT-6 Astra and GPT-6.1 Sol, Codex, and Daybreak for cybersecurity, this AI lab builds agents that focus for days and improve with use.",
       "topics": [
         "Research",
-        "Training",
-        "Models"
+        "Security"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with research and security signals from a curated high-signal source.",
+      "score": 68,
+      "imageUrl": null
+    },
+    {
+      "id": "8f8c726fbdb30a61",
+      "title": "Code-Switching Detection via Language-Selective Dimensions in Speech Foundation Models",
+      "url": "https://machinelearning.apple.com/research/code-switching-detection",
+      "source": "Apple Machine Learning Research",
+      "author": "",
+      "publishedAt": "2026-10-14T00:00:00.000Z",
+      "excerpt": "Code-switching (CS), the alternation between languages within an utterance, is common in multilingual speech but underrepresented in pretraining corpora. Increasing CS coverage requires finding relevant utterances in large speech collections so that they can be included in training data. One way to find such utterances",
+      "topics": [
+        "Research",
+        "Training"
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 55,
+      "score": 66,
       "imageUrl": null
     },
     {
-      "id": "4ef1fa7cd0579165",
-      "title": "GPT-6 Astra, Looped Transformers, and Hidden Reasoning",
-      "url": "https://magazine.sebastianraschka.com/p/gpt-6-astra-looped-transformers-and",
-      "source": "Ahead of AI",
-      "author": "Sebastian Raschka, PhD",
-      "publishedAt": "2026-09-09T11:14:25.000Z",
-      "excerpt": "A Look at Recurrent Depth, Hidden Chains of Thought, and Recent Research on Looping Transformer Blocks",
+      "id": "8d18f7bd40bdbc30",
+      "title": "Mistral Large 4 is live in Otari",
+      "url": "https://blog.mozilla.ai/mistral-large-4-is-live-in-otari/",
+      "source": "Mozilla AI",
+      "author": "Mus Himdi",
+      "publishedAt": "2026-10-08T15:10:31.000Z",
+      "excerpt": "Mistral Large 4 is live in Otari from day one. Route to Mistral's 1T-parameter MoE model with one string change, and keep the policies, traces and cost tracking you already run in Otari, Mozilla AI's open-source gateway and policy layer.",
       "topics": [
-        "Research",
         "Models",
-        "Reasoning"
+        "Engineering"
       ],
       "technicalLevel": "intermediate",
-      "whySelected": "Recent technical AI coverage with research and architecture signals from a curated high-signal source.",
-      "score": 39,
-      "imageUrl": "https://substack-post-media.s3.amazonaws.com/public/images/3d2ac2ec-ab80-43a8-aa93-a33a846dda43_1564x874.png"
+      "whySelected": "Recent technical AI coverage with architecture and engineering signals from a curated high-signal source.",
+      "score": 55,
+      "imageUrl": "https://storage.ghost.io/c/68/76/6876f0af-8955-4de4-a637-a5e7cc399136/content/images/2026/10/Blog-header-1-.jpg"
     }
   ]
 }
