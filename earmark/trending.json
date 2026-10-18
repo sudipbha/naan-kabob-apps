@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-17T12:32:28.152Z",
+  "generatedAt": "2026-10-18T12:33:10.778Z",
   "sourceCount": 3,
   "items": [
     {
@@ -18,7 +18,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and architecture signals from a curated high-signal source.",
-      "score": 70,
+      "score": 69,
       "imageUrl": null
     },
     {
@@ -36,7 +36,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and reasoning signals from a curated high-signal source.",
-      "score": 67,
+      "score": 66,
       "imageUrl": null
     },
     {
@@ -53,7 +53,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and reasoning signals from a curated high-signal source.",
-      "score": 66,
+      "score": 65,
       "imageUrl": null
     },
     {
@@ -70,7 +70,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and security signals from a curated high-signal source.",
-      "score": 66,
+      "score": 65,
       "imageUrl": null
     },
     {
@@ -87,7 +87,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 65,
+      "score": 63,
       "imageUrl": null
     },
     {
@@ -104,7 +104,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with architecture and engineering signals from a curated high-signal source.",
-      "score": 54,
+      "score": 52,
       "imageUrl": "https://storage.ghost.io/c/68/76/6876f0af-8955-4de4-a637-a5e7cc399136/content/images/2026/10/Blog-header-1-.jpg"
     }
   ]
