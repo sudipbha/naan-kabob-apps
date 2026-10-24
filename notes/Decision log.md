@@ -6,6 +6,26 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-10-24 — Smoothie lids: the order now asks Champion for the batch that fits
+
+The 98 mm flat lids for the 16 oz smoothie cup (Champion KP-98-FL) all
+arrive with the **same Krystalite label and barcode** (KGTKP98FL), but they
+come from different factories underneath. The small factory label inside
+each box tells them apart:
+- Carton CIP02-00000423235, Cristal Plastic, UAE, made 20 Jan 2026 — the
+  lids **don't snap** onto our cups.
+- Carton KIP01-00000195286, made 27 Jul 2025 — they **click on** (a little
+  looser than the original lids, but they hold).
+
+Because ordering by code alone can bring either batch, the owner asked for
+the warning to travel with every order. The lid card's order text now
+reads "KP-98-FL · Krystalite KGTKP98FL · please send batch KIP01, made
+Jul 2025 — batch CIP02 from Cristal Plastic, made Jan 2026, does not snap
+on our cups", so the Champion rep sees it on each order. The card's
+details also tell whoever checks in the truck to read the inner label and
+test one lid on a cup before shelving the box. The Krystalite barcode,
+seen on both boxes, is no longer marked "pending".
+
 ## 2026-10-15 — 4-cup drink carriers join Champion
 
 The owner sent the item page from Champion's ordering app: "M510032 4 CUP
