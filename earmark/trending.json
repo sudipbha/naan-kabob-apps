@@ -1,8 +1,27 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-23T12:36:50.581Z",
-  "sourceCount": 4,
+  "generatedAt": "2026-10-24T12:33:13.275Z",
+  "sourceCount": 5,
   "items": [
+    {
+      "id": "da8785cc5779f5c9",
+      "title": "Build Your Own Reasoning Model: A Full Video Course",
+      "url": "https://magazine.sebastianraschka.com/p/building-reasoning-models",
+      "source": "Ahead of AI",
+      "author": "Sebastian Raschka, PhD",
+      "publishedAt": "2026-10-24T11:14:32.000Z",
+      "excerpt": "Over 11 hours of coding videos on evaluation, inference-time scaling, reinforcement learning, and distillation, with Python and PyTorch.",
+      "topics": [
+        "Evaluations",
+        "Training",
+        "Inference",
+        "Reasoning"
+      ],
+      "technicalLevel": "advanced",
+      "whySelected": "Recent technical AI coverage with evaluation and training signals from a curated high-signal source.",
+      "score": 73,
+      "imageUrl": "https://substack-post-media.s3.amazonaws.com/public/images/519db120-1320-411b-adec-a88865345f2c_4083x2916.jpeg"
+    },
     {
       "id": "1a543055a02f9816",
       "title": "OpenAI and Poland’s NASK partner to advance AI safety and security",
@@ -17,7 +36,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and safety signals from a curated high-signal source.",
-      "score": 70,
+      "score": 69,
       "imageUrl": null
     },
     {
@@ -35,25 +54,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with training and inference signals from a curated high-signal source.",
-      "score": 65,
-      "imageUrl": null
-    },
-    {
-      "id": "96a2e7fa34b207c9",
-      "title": "Fine-tuning GPT-OSS-20B for multilingual reasoning on Amazon SageMaker HyperPod",
-      "url": "https://aws.amazon.com/blogs/machine-learning/fine-tuning-gpt-oss-20b-for-multilingual-reasoning-on-amazon-sagemaker-hyperpod/",
-      "source": "AWS Machine Learning Blog",
-      "author": "Mijanur Palash",
-      "publishedAt": "2026-10-20T17:48:27.000Z",
-      "excerpt": "Learn how we fine-tuned GPT-OSS-20B for multilingual reasoning on Amazon SageMaker HyperPod, and how to decide between supervised fine-tuning (SFT) and reinforcement learning with GRPO. SFT took reasoning-language accuracy from 22% to 100%, and GRPO added measurable gains where headroom existed.",
-      "topics": [
-        "Evaluations",
-        "Training",
-        "Reasoning"
-      ],
-      "technicalLevel": "intermediate",
-      "whySelected": "Recent technical AI coverage with evaluation and training signals from a curated high-signal source.",
-      "score": 65,
+      "score": 64,
       "imageUrl": null
     },
     {
@@ -71,7 +72,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and architecture signals from a curated high-signal source.",
-      "score": 61,
+      "score": 60,
       "imageUrl": null
     },
     {
@@ -89,7 +90,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and reasoning signals from a curated high-signal source.",
-      "score": 58,
+      "score": 57,
       "imageUrl": null
     },
     {
@@ -106,7 +107,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and reasoning signals from a curated high-signal source.",
-      "score": 57,
+      "score": 56,
       "imageUrl": null
     },
     {
@@ -123,7 +124,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and security signals from a curated high-signal source.",
-      "score": 57,
+      "score": 56,
       "imageUrl": null
     },
     {
@@ -140,7 +141,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 56,
+      "score": 54,
       "imageUrl": null
     },
     {
@@ -157,7 +158,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with architecture and engineering signals from a curated high-signal source.",
-      "score": 45,
+      "score": 43,
       "imageUrl": "https://storage.ghost.io/c/68/76/6876f0af-8955-4de4-a637-a5e7cc399136/content/images/2026/10/Blog-header-1-.jpg"
     }
   ]
