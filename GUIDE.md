@@ -100,6 +100,7 @@ is the reorder point either way).
 | `COUNT` | not counted yet (no on-hand number) |
 | `OK` / `LOW` / `ORDER` | vs. the item's Reorder-at and Max |
 | `BACKUP` | tracked & ordered from the *other* supplier; this entry is a manual fallback only — no counting, no auto-reorder, no warnings |
+| `MONTHLY` | a set amount ordered once a month (e.g. the Sysco clamshell agreement) — not counted in this app; see §4 "Monthly items" |
 
 Small chips: `over Max N` (stocked above Max — either fine or the Max is stale),
 `ordered Nd ago` (an order was logged in the last 14 days and not yet
@@ -247,6 +248,36 @@ dates, and buckets the days it covers with `isBusyDay` (§3):
   Max. Before a holiday week, Max may need raising on fast movers (or the order
   box overridden by hand); the app cannot invent shelf space.
 
+### Monthly items (a set amount once a month)
+
+Some items are bought on a fixed monthly arrangement rather than from a
+count. The only one today is the **rice clamshell (Genpak CLX200-CL) in the
+Sysco app**: under the owner's agreement with Sysco, **1 case goes on the
+first Sysco order of every month**. Champion still supplies the rest and
+the shelf is counted in the Champion app, so the Sysco card is **not
+counted** — counting the same shelf in both apps would double it.
+
+- An item marked `mo: N` (N cases a month) shows a `MONTHLY` badge and sits
+  in its own **"Monthly — ordered once a month, not counted"** group in Walk,
+  after the stations and before Backup. Its card has no on-shelf box and no
+  Max/Reorder-at — just the "to order" box and a line saying what happens.
+- **It goes on every order until a regular order logged this calendar month
+  carries it.** After Mark as ordered it drops off and the card reads
+  "ordered ‹date› · next in ‹next month›"; on the 1st of the next month it
+  comes back by itself. Emergency orders don't count toward it.
+- The amount is N cases (in the order text, e.g. "— 1 cs"). Typing in the
+  "to order" box changes it for that one order; **typing 0 leaves it off
+  that one order** (card reads "due — left off this order"), and since it
+  hasn't gone out this month it is back on the next order.
+- Switching the card to **Backup** turns the monthly order off.
+- Receiving it is recorded for the "Did the orders arrive in full?" report,
+  but it creates **no shelf count** in the app that doesn't count it. The
+  Champion card's note asks for its 2 sleeves to be typed into Champion's
+  Receive too, so Champion's count and usage stay right.
+- The Sysco card carries the maker's number (Genpak CLX200-CL) marked
+  "SUPC pending" until Sysco's own item number is confirmed; Champion's
+  SKU (2353099) never appears on the Sysco order.
+
 ## 5. Stock aging (auto-deduction)
 
 Every on-hand number remembers **when it was set** (typing a count, tapping ±,
@@ -260,7 +291,7 @@ estimate is never mistaken for a fresh count.
 - Deliveries add onto the *estimate* (not the stale anchored number) and
   re-anchor the timestamp.
 - Backup items and numbers that were set before this feature existed (no
-  timestamp yet) do not age.
+  timestamp yet) do not age. Monthly items (§4) have no shelf number at all.
 - For reviewers: `stocks` in storage holds the anchored raw values;
   `stockAt[id]` holds the anchor timestamps; the displayed/effective value is
   derived at render time.
@@ -273,7 +304,9 @@ estimate is never mistaken for a fresh count.
    to each item's usage rate). **Backup items always sink to the bottom**:
    Walk collects them into a final grey "Backup — ordered from ‹other
    supplier›" group after the stations, Frequent sorts them last, and Status
-   already ranked them last. Type or ±
+   already ranked them last. Monthly items (§4) get their own "Monthly"
+   group in Walk, between the stations and Backup, and are left out of the
+   "N to count" tally. Type or ±
    what's on the shelf, in counting units. "Levels" on each card edits Max,
    Reorder-at, pack config, and the Backup toggle, and — for items that carry
    an optional `url` field — ends with a **"Product details ↗"** link to the
@@ -327,7 +360,8 @@ estimate is never mistaken for a fresh count.
    tracks progress against the logged order.
    Receiving an item that has never been counted **sets** its on-hand number
    (blank counts as 0) — the toast says how many were counted for the first
-   time. Adds to on-hand and records a receipt.
+   time. Adds to on-hand and records a receipt. A monthly item (§4) is
+   recorded on the receipt but changes no shelf number.
    Under **Recent deliveries**, a **"Did the orders arrive in full?"**
    report matches each regular order with the deliveries logged after it,
    up to the next regular order (any quantity a delivery credited to an
@@ -351,7 +385,9 @@ estimate is never mistaken for a fresh count.
 4. **Usage** — measured daily usage per item, shown in the item's counting
    unit (e.g. "packs / day", "rolls / day"), with a relative pace bar per row
    (bars compare speed at a glance; note the units differ between items).
-5. **Order** — everything at reorder or projected short, with case quantities.
+5. **Order** — everything at reorder or projected short, plus any monthly
+   item still due this month ("monthly item · once a month, not counted"),
+   with case quantities.
    Rows whose quantity rests on an **aged estimate** (not a fresh count) carry
    an amber "estimate — counted N on ‹date› · recount before sending" warning.
    An **Order total** line in the header sums the whole order in purchase
@@ -413,6 +449,9 @@ whenever the app goes to the background).
   in the Count-tab header).
 - `packcfg[id] = { u, pc, bk }` holds per-item overrides: counting unit,
   per-case count, backup flag. These beat the item defaults baked in code.
+- `mo` is an optional item constant baked in code: cases ordered once per
+  calendar month (§4 "Monthly items"). Nothing new is stored — "already
+  ordered this month" is read from `orders[]`.
 - `ing` / `alg` / `may` / `aln` are optional per-item constants baked in
   code (ingredients or material, declared allergens, precautionary
   "may contain", note/safety line). They render in the Levels "What's in
