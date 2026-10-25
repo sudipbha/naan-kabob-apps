@@ -6,6 +6,35 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-10-25 — Rice clamshells: one case from Sysco every month
+
+Our agreement with Sysco says we order the CLX200 rice clamshell from them
+**once a month**. Champion still supplies the rest. The Sysco app now has a
+"Rice clamshell" card that **puts 1 case on the first Sysco order of every
+month by itself**. Once an order with it is marked as ordered, it stays off
+until the next month starts, then comes back on its own.
+
+It is **not counted in the Sysco app**. The clamshells all sit on one shelf,
+and that shelf is already counted in the Champion app. Counting it in both
+would count every box twice. So the Sysco card has no count box. It sits in
+its own "Monthly" group at the end of the count walk, and it shows when this
+month's case went out.
+
+Decisions made along the way:
+- **1 case a month** (150 containers, 2 sleeves × 75) as the starting
+  amount. If the agreement says more, it's a one-number change. To change it
+  for just one order, type in the card's "to order" box; 0 leaves it off
+  that one order.
+- **Sysco's own item number isn't known yet.** An online search found no
+  Sysco listing for this Genpak container. The order shows the maker's
+  number, "Genpak CLX200-CL", marked "SUPC pending", until the rep or the
+  first invoice confirms Sysco's number. Champion's number (2353099) is
+  never put on the Sysco order — the burger-bag lesson.
+- The Champion clamshell card now has a note: when Sysco's monthly case
+  arrives, type its 2 sleeves into Champion's Receive too. That keeps
+  Champion's count and usage right, and Champion's order then only tops up
+  the rest.
+
 ## 2026-10-24 — Smoothie lids: the order now asks Champion for the batch that fits
 
 The 98 mm flat lids for the 16 oz smoothie cup (Champion KP-98-FL) all
