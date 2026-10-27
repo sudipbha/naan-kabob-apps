@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-26T14:03:35.753Z",
-  "sourceCount": 5,
+  "generatedAt": "2026-10-27T12:40:09.325Z",
+  "sourceCount": 4,
   "items": [
     {
       "id": "da8785cc5779f5c9",
@@ -19,7 +19,7 @@
       ],
       "technicalLevel": "advanced",
       "whySelected": "Recent technical AI coverage with evaluation and training signals from a curated high-signal source.",
-      "score": 70,
+      "score": 68,
       "imageUrl": "https://substack-post-media.s3.amazonaws.com/public/images/519db120-1320-411b-adec-a88865345f2c_4083x2916.jpeg"
     },
     {
@@ -36,25 +36,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and safety signals from a curated high-signal source.",
-      "score": 66,
-      "imageUrl": null
-    },
-    {
-      "id": "da0915a1e152e308",
-      "title": "Beyond the KV cache: Training and serving i14’s Laplace 3B linear attention model on AWS Trainium2 with native PyTorch",
-      "url": "https://aws.amazon.com/blogs/machine-learning/beyond-the-kv-cache-training-and-serving-i14s-laplace-3b-linear-attention-model-on-aws-trainium2-with-native-pytorch/",
-      "source": "AWS Machine Learning Blog",
-      "author": "Kevin Shabahang",
-      "publishedAt": "2026-10-20T21:14:10.000Z",
-      "excerpt": "Learn how i14 trained and served Laplace 3B, a linear attention model, on AWS Trainium2 using native PyTorch. Its recurrent state stays fixed at 29.5 MB per sequence regardless of context length, avoiding the growing key-value cache of transformer models and keeping serving memory predictable.",
-      "topics": [
-        "Training",
-        "Inference",
-        "Models"
-      ],
-      "technicalLevel": "intermediate",
-      "whySelected": "Recent technical AI coverage with training and inference signals from a curated high-signal source.",
-      "score": 60,
+      "score": 64,
       "imageUrl": null
     },
     {
@@ -72,7 +54,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and architecture signals from a curated high-signal source.",
-      "score": 57,
+      "score": 55,
       "imageUrl": null
     },
     {
@@ -90,7 +72,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and reasoning signals from a curated high-signal source.",
-      "score": 54,
+      "score": 52,
       "imageUrl": null
     },
     {
@@ -107,7 +89,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and reasoning signals from a curated high-signal source.",
-      "score": 53,
+      "score": 51,
       "imageUrl": null
     },
     {
@@ -124,7 +106,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and security signals from a curated high-signal source.",
-      "score": 53,
+      "score": 51,
       "imageUrl": null
     },
     {
@@ -141,7 +123,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 51,
+      "score": 50,
       "imageUrl": null
     },
     {
@@ -158,7 +140,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with architecture and engineering signals from a curated high-signal source.",
-      "score": 40,
+      "score": 39,
       "imageUrl": "https://storage.ghost.io/c/68/76/6876f0af-8955-4de4-a637-a5e7cc399136/content/images/2026/10/Blog-header-1-.jpg"
     }
   ]
