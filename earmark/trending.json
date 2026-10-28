@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-27T12:40:09.325Z",
+  "generatedAt": "2026-10-28T12:29:06.282Z",
   "sourceCount": 4,
   "items": [
     {
@@ -19,7 +19,7 @@
       ],
       "technicalLevel": "advanced",
       "whySelected": "Recent technical AI coverage with evaluation and training signals from a curated high-signal source.",
-      "score": 68,
+      "score": 67,
       "imageUrl": "https://substack-post-media.s3.amazonaws.com/public/images/519db120-1320-411b-adec-a88865345f2c_4083x2916.jpeg"
     },
     {
@@ -36,7 +36,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and safety signals from a curated high-signal source.",
-      "score": 64,
+      "score": 63,
       "imageUrl": null
     },
     {
@@ -54,7 +54,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and architecture signals from a curated high-signal source.",
-      "score": 55,
+      "score": 54,
       "imageUrl": null
     },
     {
@@ -72,7 +72,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and reasoning signals from a curated high-signal source.",
-      "score": 52,
+      "score": 51,
       "imageUrl": null
     },
     {
@@ -89,24 +89,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and reasoning signals from a curated high-signal source.",
-      "score": 51,
-      "imageUrl": null
-    },
-    {
-      "id": "a8b8c31de898145e",
-      "title": "How Third Moment Research runs 10,000 agents for 36+ hours",
-      "url": "https://openai.com/index/third-moment-research",
-      "source": "OpenAI",
-      "author": "",
-      "publishedAt": "2026-10-14T07:00:00.000Z",
-      "excerpt": "With GPT-6 Astra and GPT-6.1 Sol, Codex, and Daybreak for cybersecurity, this AI lab builds agents that focus for days and improve with use.",
-      "topics": [
-        "Research",
-        "Security"
-      ],
-      "technicalLevel": "intermediate",
-      "whySelected": "Recent technical AI coverage with research and security signals from a curated high-signal source.",
-      "score": 51,
+      "score": 50,
       "imageUrl": null
     },
     {
@@ -123,7 +106,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 50,
+      "score": 48,
       "imageUrl": null
     },
     {
@@ -140,7 +123,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with architecture and engineering signals from a curated high-signal source.",
-      "score": 39,
+      "score": 37,
       "imageUrl": "https://storage.ghost.io/c/68/76/6876f0af-8955-4de4-a637-a5e7cc399136/content/images/2026/10/Blog-header-1-.jpg"
     }
   ]
