@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-29T12:29:34.621Z",
+  "generatedAt": "2026-10-30T12:29:29.686Z",
   "sourceCount": 5,
   "items": [
     {
@@ -19,7 +19,26 @@
       ],
       "technicalLevel": "advanced",
       "whySelected": "Recent technical AI coverage with evaluation and inference signals from a curated high-signal source.",
-      "score": 76,
+      "score": 74,
+      "imageUrl": null
+    },
+    {
+      "id": "8b5c8b217b9f2294",
+      "title": "Accelerate agentic AI with NVIDIA Nemotron models on Amazon EKS and SageMaker HyperPod EKS",
+      "url": "https://aws.amazon.com/blogs/machine-learning/accelerate-agentic-ai-with-nvidia-nemotron-models-on-amazon-eks-and-sagemaker-hyperpod-eks/",
+      "source": "AWS Machine Learning Blog",
+      "author": "Alex Iankoulski",
+      "publishedAt": "2026-10-29T16:11:08.000Z",
+      "excerpt": "NVIDIA Nemotron 3.5 Super VL is a 120B-parameter mixture-of-experts model that pairs reasoning and tool use with multimodal understanding. This post explores its architecture and use cases, then shows how to deploy it on Amazon EKS, EKS Auto Mode, and Amazon SageMaker HyperPod EKS with NVIDIA Dynamo and vLLM.",
+      "topics": [
+        "Models",
+        "Agents",
+        "Reasoning",
+        "Multimodal"
+      ],
+      "technicalLevel": "advanced",
+      "whySelected": "Recent technical AI coverage with architecture and agents signals from a curated high-signal source.",
+      "score": 72,
       "imageUrl": null
     },
     {
@@ -38,7 +57,7 @@
       ],
       "technicalLevel": "advanced",
       "whySelected": "Recent technical AI coverage with evaluation and training signals from a curated high-signal source.",
-      "score": 65,
+      "score": 64,
       "imageUrl": "https://substack-post-media.s3.amazonaws.com/public/images/519db120-1320-411b-adec-a88865345f2c_4083x2916.jpeg"
     },
     {
@@ -55,7 +74,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and safety signals from a curated high-signal source.",
-      "score": 61,
+      "score": 60,
       "imageUrl": null
     },
     {
@@ -73,7 +92,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and architecture signals from a curated high-signal source.",
-      "score": 52,
+      "score": 51,
       "imageUrl": null
     },
     {
@@ -91,7 +110,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and reasoning signals from a curated high-signal source.",
-      "score": 49,
+      "score": 48,
       "imageUrl": null
     },
     {
@@ -108,7 +127,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and reasoning signals from a curated high-signal source.",
-      "score": 48,
+      "score": 47,
       "imageUrl": null
     },
     {
@@ -125,7 +144,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 47,
+      "score": 45,
       "imageUrl": null
     },
     {
@@ -142,7 +161,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with architecture and engineering signals from a curated high-signal source.",
-      "score": 36,
+      "score": 34,
       "imageUrl": "https://storage.ghost.io/c/68/76/6876f0af-8955-4de4-a637-a5e7cc399136/content/images/2026/10/Blog-header-1-.jpg"
     }
   ]
