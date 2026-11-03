@@ -1,8 +1,25 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-02T21:42:08.970Z",
-  "sourceCount": 5,
+  "generatedAt": "2026-11-03T12:25:02.388Z",
+  "sourceCount": 6,
   "items": [
+    {
+      "id": "f14e00213ff02ea8",
+      "title": "[AINews] LLMs can read & write neural network weights: \"Weight Space Programming\" cuts Autoresearch out of the RSI loop",
+      "url": "https://latent.space/p/ainews-llms-can-read-write-neural-network-weights-weight-space-programming-cuts-autoresearch-out-of/",
+      "source": "Latent Space",
+      "author": "swyx .ai",
+      "publishedAt": "2026-11-03T05:35:00.000Z",
+      "excerpt": "Editing Qwen’s weights to reduce reasoning loops, DeepSeek’s super-agent prototype, and the GDPx benchmark.",
+      "topics": [
+        "Evaluations",
+        "Reasoning"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with evaluation and reasoning signals from a curated high-signal source.",
+      "score": 73,
+      "imageUrl": null
+    },
     {
       "id": "35ee5c24e2404493",
       "title": "Agentic engineering intelligence with Amazon Nova Multimodal Embeddings and Amazon Bedrock AgentCore",
@@ -19,7 +36,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with evaluation and agents signals from a curated high-signal source.",
-      "score": 70,
+      "score": 69,
       "imageUrl": null
     },
     {
@@ -38,7 +55,7 @@
       ],
       "technicalLevel": "advanced",
       "whySelected": "Recent technical AI coverage with evaluation and inference signals from a curated high-signal source.",
-      "score": 69,
+      "score": 68,
       "imageUrl": null
     },
     {
@@ -57,7 +74,7 @@
       ],
       "technicalLevel": "advanced",
       "whySelected": "Recent technical AI coverage with architecture and agents signals from a curated high-signal source.",
-      "score": 67,
+      "score": 66,
       "imageUrl": null
     },
     {
@@ -76,7 +93,7 @@
       ],
       "technicalLevel": "advanced",
       "whySelected": "Recent technical AI coverage with evaluation and training signals from a curated high-signal source.",
-      "score": 59,
+      "score": 58,
       "imageUrl": "https://substack-post-media.s3.amazonaws.com/public/images/519db120-1320-411b-adec-a88865345f2c_4083x2916.jpeg"
     },
     {
@@ -93,7 +110,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and safety signals from a curated high-signal source.",
-      "score": 55,
+      "score": 54,
       "imageUrl": null
     },
     {
@@ -111,7 +128,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and architecture signals from a curated high-signal source.",
-      "score": 46,
+      "score": 45,
       "imageUrl": null
     },
     {
@@ -129,7 +146,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and reasoning signals from a curated high-signal source.",
-      "score": 43,
+      "score": 42,
       "imageUrl": null
     },
     {
@@ -146,7 +163,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and reasoning signals from a curated high-signal source.",
-      "score": 42,
+      "score": 41,
       "imageUrl": null
     },
     {
@@ -163,7 +180,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 40,
+      "score": 39,
       "imageUrl": null
     },
     {
