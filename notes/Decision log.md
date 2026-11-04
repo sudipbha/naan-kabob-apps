@@ -6,6 +6,17 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-11-04 — Small film wrap now carries Sysco's number (#7435266)
+
+Sysco sent the 24-inch film twice when we asked for the 18-inch one,
+because our order line for it had no Sysco item number (see
+[[Incidents and lessons]]). The Small film wrap card now reads "Sysco
+Classic PVC film · 18 in wide, not 24 in · 2000 ft · #7435266", so every
+order names the exact item. The number comes from Sysco's own listings.
+The card shows a TBC badge until the first correct box confirms it. The
+Big film wrap card (24 in, #0257790) is unchanged. Its number matches the
+sticker on the box that came.
+
 ## 2026-10-25 — Rice clamshells: one case from Sysco every month
 
 Our agreement with Sysco says we order the CLX200 rice clamshell from them
