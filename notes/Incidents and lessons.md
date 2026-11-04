@@ -4,6 +4,30 @@ The things that went wrong, and the rules they left behind. Newest first.
 
 ---
 
+## The small film wrap that came as the big one — an order line with no number
+
+**What happened:** on the last two Sysco orders we asked for the small
+(18-inch) film wrap, and both times Sysco sent the 24-inch roll instead.
+The box's yellow Sysco sticker (photo, 2026-11-04) reads "FILM CLING
+W/CUTTRBX 24IN 1/2000FT" and item 0257790, which is our *Big* film wrap.
+The cause was on our side: the Small film wrap card had **no Sysco item
+number**. The order line just said "Small film wrap (18 in × 2000 ft)",
+so whoever picked it chose the film already on our account, the 24-inch.
+
+**The fix (same day):** the card now carries Sysco's own number for the
+18-inch roll, **#7435266** (Sysco Classic PVC film, 18 in × 2000 ft, 1 roll
+per case). Two of Sysco's own listings give that number: its Canadian
+online store and a published Sysco price list. The order line also says
+"18 in wide, not 24 in". The card keeps a TBC badge until the first right
+box arrives with 7435266 and 18IN on its sticker.
+
+**The lesson:** a name and a size are not enough for a supplier who
+carries several of the same thing. **Every card that goes on an order
+needs the supplier's own item number.** When two of our items differ only
+by size, the order line should also say which one we *don't* want.
+
+---
+
 ## The day labels that were the wrong size — a real number for the wrong thing
 
 **What happened:** on 2026-09-16 seven Sysco day-label cards went live
