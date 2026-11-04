@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-03T12:25:02.388Z",
+  "generatedAt": "2026-11-04T12:24:53.241Z",
   "sourceCount": 6,
   "items": [
     {
@@ -17,7 +17,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with evaluation and reasoning signals from a curated high-signal source.",
-      "score": 73,
+      "score": 71,
       "imageUrl": null
     },
     {
@@ -36,26 +36,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with evaluation and agents signals from a curated high-signal source.",
-      "score": 69,
-      "imageUrl": null
-    },
-    {
-      "id": "4ebc8e400813c855",
-      "title": "Building an Agentic AI Platform on Amazon Bedrock AgentCore",
-      "url": "https://aws.amazon.com/blogs/machine-learning/building-an-agentic-ai-platform-on-amazon-bedrock-agentcore/",
-      "source": "AWS Machine Learning Blog",
-      "author": "Omar Elkharbotly",
-      "publishedAt": "2026-10-28T18:28:26.000Z",
-      "excerpt": "Stand up a governed, multi-account Agentic AI Platform on Amazon Bedrock AgentCore. This post walks through the architecture and an open-source reference blueprint: the operating model, control plane, per-Workstream cells, separate inference and tool gateways, and a CI/CD evaluation pipeline that gates each agent befor",
-      "topics": [
-        "Evaluations",
-        "Inference",
-        "Models",
-        "Agents"
-      ],
-      "technicalLevel": "advanced",
-      "whySelected": "Recent technical AI coverage with evaluation and inference signals from a curated high-signal source.",
-      "score": 68,
+      "score": 67,
       "imageUrl": null
     },
     {
@@ -74,7 +55,7 @@
       ],
       "technicalLevel": "advanced",
       "whySelected": "Recent technical AI coverage with architecture and agents signals from a curated high-signal source.",
-      "score": 66,
+      "score": 64,
       "imageUrl": null
     },
     {
@@ -93,7 +74,7 @@
       ],
       "technicalLevel": "advanced",
       "whySelected": "Recent technical AI coverage with evaluation and training signals from a curated high-signal source.",
-      "score": 58,
+      "score": 56,
       "imageUrl": "https://substack-post-media.s3.amazonaws.com/public/images/519db120-1320-411b-adec-a88865345f2c_4083x2916.jpeg"
     },
     {
@@ -110,7 +91,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and safety signals from a curated high-signal source.",
-      "score": 54,
+      "score": 52,
       "imageUrl": null
     },
     {
@@ -128,7 +109,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and architecture signals from a curated high-signal source.",
-      "score": 45,
+      "score": 43,
       "imageUrl": null
     },
     {
@@ -146,7 +127,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and reasoning signals from a curated high-signal source.",
-      "score": 42,
+      "score": 40,
       "imageUrl": null
     },
     {
@@ -163,7 +144,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and reasoning signals from a curated high-signal source.",
-      "score": 41,
+      "score": 39,
       "imageUrl": null
     },
     {
@@ -180,7 +161,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 39,
+      "score": 38,
       "imageUrl": null
     },
     {
