@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-04T12:24:53.241Z",
-  "sourceCount": 6,
+  "generatedAt": "2026-11-05T12:25:52.765Z",
+  "sourceCount": 5,
   "items": [
     {
       "id": "f14e00213ff02ea8",
@@ -17,7 +17,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with evaluation and reasoning signals from a curated high-signal source.",
-      "score": 71,
+      "score": 70,
       "imageUrl": null
     },
     {
@@ -36,26 +36,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with evaluation and agents signals from a curated high-signal source.",
-      "score": 67,
-      "imageUrl": null
-    },
-    {
-      "id": "8b5c8b217b9f2294",
-      "title": "Accelerate agentic AI with NVIDIA Nemotron models on Amazon EKS and SageMaker HyperPod EKS",
-      "url": "https://aws.amazon.com/blogs/machine-learning/accelerate-agentic-ai-with-nvidia-nemotron-models-on-amazon-eks-and-sagemaker-hyperpod-eks/",
-      "source": "AWS Machine Learning Blog",
-      "author": "Alex Iankoulski",
-      "publishedAt": "2026-10-29T16:11:08.000Z",
-      "excerpt": "NVIDIA Nemotron 3.5 Super VL is a 120B-parameter mixture-of-experts model that pairs reasoning and tool use with multimodal understanding. This post explores its architecture and use cases, then shows how to deploy it on Amazon EKS, EKS Auto Mode, and Amazon SageMaker HyperPod EKS with NVIDIA Dynamo and vLLM.",
-      "topics": [
-        "Models",
-        "Agents",
-        "Reasoning",
-        "Multimodal"
-      ],
-      "technicalLevel": "advanced",
-      "whySelected": "Recent technical AI coverage with architecture and agents signals from a curated high-signal source.",
-      "score": 64,
+      "score": 66,
       "imageUrl": null
     },
     {
@@ -74,25 +55,8 @@
       ],
       "technicalLevel": "advanced",
       "whySelected": "Recent technical AI coverage with evaluation and training signals from a curated high-signal source.",
-      "score": 56,
+      "score": 55,
       "imageUrl": "https://substack-post-media.s3.amazonaws.com/public/images/519db120-1320-411b-adec-a88865345f2c_4083x2916.jpeg"
-    },
-    {
-      "id": "1a543055a02f9816",
-      "title": "OpenAI and Poland’s NASK partner to advance AI safety and security",
-      "url": "https://openai.com/index/openai-nask-ai-safety-security-partnership",
-      "source": "OpenAI",
-      "author": "",
-      "publishedAt": "2026-10-23T00:00:00.000Z",
-      "excerpt": "OpenAI and Poland’s NASK are partnering on AI safety, security, and technical research to strengthen safeguards and support a more resilient digital ecosystem.",
-      "topics": [
-        "Research",
-        "Safety"
-      ],
-      "technicalLevel": "intermediate",
-      "whySelected": "Recent technical AI coverage with research and safety signals from a curated high-signal source.",
-      "score": 52,
-      "imageUrl": null
     },
     {
       "id": "a80ac8068cf5aba1",
@@ -109,7 +73,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and architecture signals from a curated high-signal source.",
-      "score": 43,
+      "score": 42,
       "imageUrl": null
     },
     {
@@ -127,7 +91,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and reasoning signals from a curated high-signal source.",
-      "score": 40,
+      "score": 39,
       "imageUrl": null
     },
     {
@@ -144,7 +108,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and reasoning signals from a curated high-signal source.",
-      "score": 39,
+      "score": 38,
       "imageUrl": null
     },
     {
@@ -161,7 +125,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 38,
+      "score": 36,
       "imageUrl": null
     },
     {
