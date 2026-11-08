@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-07T12:22:24.060Z",
-  "sourceCount": 4,
+  "generatedAt": "2026-11-08T12:22:25.910Z",
+  "sourceCount": 3,
   "items": [
     {
       "id": "f14e00213ff02ea8",
@@ -17,7 +17,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with evaluation and reasoning signals from a curated high-signal source.",
-      "score": 67,
+      "score": 65,
       "imageUrl": null
     },
     {
@@ -34,7 +34,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 65,
+      "score": 64,
       "imageUrl": "https://beehiiv-images-production.s3.amazonaws.com/uploads/asset/file/0b4283eb-1bca-4f20-a474-648eae34f704/Smol_Screenshot_2026-11-06_02.26.38-7ec1786ced3a658a.png?t=1793961438"
     },
     {
@@ -53,7 +53,7 @@
       ],
       "technicalLevel": "advanced",
       "whySelected": "Recent technical AI coverage with evaluation and training signals from a curated high-signal source.",
-      "score": 52,
+      "score": 50,
       "imageUrl": "https://substack-post-media.s3.amazonaws.com/public/images/519db120-1320-411b-adec-a88865345f2c_4083x2916.jpeg"
     },
     {
@@ -71,7 +71,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and architecture signals from a curated high-signal source.",
-      "score": 39,
+      "score": 38,
       "imageUrl": null
     },
     {
@@ -89,7 +89,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and reasoning signals from a curated high-signal source.",
-      "score": 36,
+      "score": 35,
       "imageUrl": null
     },
     {
@@ -106,7 +106,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and reasoning signals from a curated high-signal source.",
-      "score": 35,
+      "score": 34,
       "imageUrl": null
     },
     {
@@ -125,23 +125,6 @@
       "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
       "score": 34,
       "imageUrl": null
-    },
-    {
-      "id": "8d18f7bd40bdbc30",
-      "title": "Mistral Large 4 is live in Otari",
-      "url": "https://blog.mozilla.ai/mistral-large-4-is-live-in-otari/",
-      "source": "Mozilla AI",
-      "author": "Mus Himdi",
-      "publishedAt": "2026-10-08T15:10:31.000Z",
-      "excerpt": "Mistral Large 4 is live in Otari from day one. Route to Mistral's 1T-parameter MoE model with one string change, and keep the policies, traces and cost tracking you already run in Otari, Mozilla AI's open-source gateway and policy layer.",
-      "topics": [
-        "Models",
-        "Engineering"
-      ],
-      "technicalLevel": "intermediate",
-      "whySelected": "Recent technical AI coverage with architecture and engineering signals from a curated high-signal source.",
-      "score": 31,
-      "imageUrl": "https://storage.ghost.io/c/68/76/6876f0af-8955-4de4-a637-a5e7cc399136/content/images/2026/10/Blog-header-1-.jpg"
     }
   ]
 }
