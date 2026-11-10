@@ -1,8 +1,45 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-09T12:25:33.983Z",
-  "sourceCount": 3,
+  "generatedAt": "2026-11-10T12:24:19.210Z",
+  "sourceCount": 4,
   "items": [
+    {
+      "id": "bb7c940ecd4bccd6",
+      "title": "NVIDIA Nemotron 3.5 Super VL is now available in Amazon SageMaker JumpStart",
+      "url": "https://aws.amazon.com/blogs/machine-learning/nvidia-nemotron-3-5-super-vl-is-now-available-in-amazon-sagemaker-jumpstart/",
+      "source": "AWS Machine Learning Blog",
+      "author": "Venu Kanamatareddy",
+      "publishedAt": "2026-11-09T20:01:20.000Z",
+      "excerpt": "NVIDIA Nemotron 3.5 Super VL, a 120B-parameter multimodal vision-language model, is now available in Amazon SageMaker JumpStart. Deploy the NVFP4 or BF16 variant in a few steps, then run text, image, and video inference for document intelligence, computer-use agents, and multimodal agentic workloads.",
+      "topics": [
+        "Inference",
+        "Models",
+        "Agents",
+        "Multimodal"
+      ],
+      "technicalLevel": "advanced",
+      "whySelected": "Recent technical AI coverage with inference and architecture signals from a curated high-signal source.",
+      "score": 72,
+      "imageUrl": null
+    },
+    {
+      "id": "308d7d66da977857",
+      "title": "Pluggable Agentic AI Framework: A seven-layer composable enterprise agentic AI reference architecture on Amazon Bedrock AgentCore",
+      "url": "https://aws.amazon.com/blogs/machine-learning/pluggable-agentic-ai-framework-a-seven-layer-composable-enterprise-agentic-ai-reference-architecture-on-amazon-bedrock-agentcore/",
+      "source": "AWS Machine Learning Blog",
+      "author": "Sindhura Palakodety",
+      "publishedAt": "2026-11-09T19:05:54.000Z",
+      "excerpt": "A seven-layer composable reference architecture for taking enterprise agentic AI from prototype to production on Amazon Bedrock AgentCore. Each layer has a stable contract, so you can swap technologies at any layer without redesigning the rest of the stack.",
+      "topics": [
+        "Models",
+        "Agents",
+        "Engineering"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with architecture and agents signals from a curated high-signal source.",
+      "score": 68,
+      "imageUrl": null
+    },
     {
       "id": "f14e00213ff02ea8",
       "title": "[AINews] LLMs can read & write neural network weights: \"Weight Space Programming\" cuts Autoresearch out of the RSI loop",
@@ -17,7 +54,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with evaluation and reasoning signals from a curated high-signal source.",
-      "score": 64,
+      "score": 62,
       "imageUrl": null
     },
     {
@@ -34,7 +71,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 62,
+      "score": 61,
       "imageUrl": "https://beehiiv-images-production.s3.amazonaws.com/uploads/asset/file/0b4283eb-1bca-4f20-a474-648eae34f704/Smol_Screenshot_2026-11-06_02.26.38-7ec1786ced3a658a.png?t=1793961438"
     },
     {
@@ -53,7 +90,7 @@
       ],
       "technicalLevel": "advanced",
       "whySelected": "Recent technical AI coverage with evaluation and training signals from a curated high-signal source.",
-      "score": 49,
+      "score": 47,
       "imageUrl": "https://substack-post-media.s3.amazonaws.com/public/images/519db120-1320-411b-adec-a88865345f2c_4083x2916.jpeg"
     },
     {
