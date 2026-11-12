@@ -1,25 +1,23 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-11T12:25:12.611Z",
-  "sourceCount": 4,
+  "generatedAt": "2026-11-12T12:26:02.565Z",
+  "sourceCount": 3,
   "items": [
     {
-      "id": "bb7c940ecd4bccd6",
-      "title": "NVIDIA Nemotron 3.5 Super VL is now available in Amazon SageMaker JumpStart",
-      "url": "https://aws.amazon.com/blogs/machine-learning/nvidia-nemotron-3-5-super-vl-is-now-available-in-amazon-sagemaker-jumpstart/",
-      "source": "AWS Machine Learning Blog",
-      "author": "Venu Kanamatareddy",
-      "publishedAt": "2026-11-09T20:01:20.000Z",
-      "excerpt": "NVIDIA Nemotron 3.5 Super VL, a 120B-parameter multimodal vision-language model, is now available in Amazon SageMaker JumpStart. Deploy the NVFP4 or BF16 variant in a few steps, then run text, image, and video inference for document intelligence, computer-use agents, and multimodal agentic workloads.",
+      "id": "b25a782d8681abe9",
+      "title": "Evaluating the Evaluators: Investigating LLM Judges for Personalized Writing Style Assessment",
+      "url": "https://machinelearning.apple.com/research/evaluating-evaluators-llm-judges",
+      "source": "Apple Machine Learning Research",
+      "author": "",
+      "publishedAt": "2026-11-10T00:00:00.000Z",
+      "excerpt": "This paper was accepted at the Can We Trust AI Evaluation? Workshop at NeurIPS 2026. We evaluate how good large language model (LLM) judges are for personalized writing tasks. This is important when a user’s preferred writing style is known (e.g., “upbeat”) and an LLM judge is used to evaluate whether generated text ad",
       "topics": [
-        "Inference",
-        "Models",
-        "Agents",
-        "Multimodal"
+        "Research",
+        "Evaluations"
       ],
-      "technicalLevel": "advanced",
-      "whySelected": "Recent technical AI coverage with inference and architecture signals from a curated high-signal source.",
-      "score": 70,
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with research and evaluation signals from a curated high-signal source.",
+      "score": 69,
       "imageUrl": null
     },
     {
@@ -36,26 +34,8 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with training and engineering signals from a curated high-signal source.",
-      "score": 66,
+      "score": 64,
       "imageUrl": "https://i.ytimg.com/vi/bdIoODXsu8k/maxresdefault.jpg"
-    },
-    {
-      "id": "308d7d66da977857",
-      "title": "Pluggable Agentic AI Framework: A seven-layer composable enterprise agentic AI reference architecture on Amazon Bedrock AgentCore",
-      "url": "https://aws.amazon.com/blogs/machine-learning/pluggable-agentic-ai-framework-a-seven-layer-composable-enterprise-agentic-ai-reference-architecture-on-amazon-bedrock-agentcore/",
-      "source": "AWS Machine Learning Blog",
-      "author": "Sindhura Palakodety",
-      "publishedAt": "2026-11-09T19:05:54.000Z",
-      "excerpt": "A seven-layer composable reference architecture for taking enterprise agentic AI from prototype to production on Amazon Bedrock AgentCore. Each layer has a stable contract, so you can swap technologies at any layer without redesigning the rest of the stack.",
-      "topics": [
-        "Models",
-        "Agents",
-        "Engineering"
-      ],
-      "technicalLevel": "intermediate",
-      "whySelected": "Recent technical AI coverage with architecture and agents signals from a curated high-signal source.",
-      "score": 66,
-      "imageUrl": null
     },
     {
       "id": "f14e00213ff02ea8",
@@ -71,7 +51,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with evaluation and reasoning signals from a curated high-signal source.",
-      "score": 61,
+      "score": 59,
       "imageUrl": null
     },
     {
@@ -88,7 +68,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 59,
+      "score": 58,
       "imageUrl": "https://beehiiv-images-production.s3.amazonaws.com/uploads/asset/file/0b4283eb-1bca-4f20-a474-648eae34f704/Smol_Screenshot_2026-11-06_02.26.38-7ec1786ced3a658a.png?t=1793961438"
     },
     {
@@ -105,7 +85,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and architecture signals from a curated high-signal source.",
-      "score": 57,
+      "score": 56,
       "imageUrl": null
     },
     {
@@ -124,7 +104,7 @@
       ],
       "technicalLevel": "advanced",
       "whySelected": "Recent technical AI coverage with evaluation and training signals from a curated high-signal source.",
-      "score": 46,
+      "score": 44,
       "imageUrl": "https://substack-post-media.s3.amazonaws.com/public/images/519db120-1320-411b-adec-a88865345f2c_4083x2916.jpeg"
     },
     {
@@ -177,23 +157,6 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and reasoning signals from a curated high-signal source.",
-      "score": 34,
-      "imageUrl": null
-    },
-    {
-      "id": "8f8c726fbdb30a61",
-      "title": "Code-Switching Detection via Language-Selective Dimensions in Speech Foundation Models",
-      "url": "https://machinelearning.apple.com/research/code-switching-detection",
-      "source": "Apple Machine Learning Research",
-      "author": "",
-      "publishedAt": "2026-10-14T00:00:00.000Z",
-      "excerpt": "Code-switching (CS), the alternation between languages within an utterance, is common in multilingual speech but underrepresented in pretraining corpora. Increasing CS coverage requires finding relevant utterances in large speech collections so that they can be included in training data. One way to find such utterances",
-      "topics": [
-        "Research",
-        "Training"
-      ],
-      "technicalLevel": "intermediate",
-      "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
       "score": 34,
       "imageUrl": null
     }
