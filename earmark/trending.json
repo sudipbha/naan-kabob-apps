@@ -1,8 +1,43 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-12T12:26:02.565Z",
-  "sourceCount": 3,
+  "generatedAt": "2026-11-13T12:25:01.735Z",
+  "sourceCount": 4,
   "items": [
+    {
+      "id": "f421fadbe0ea31d8",
+      "title": "How Natera designed an agentic AI system for lab ops with Amazon Bedrock AgentCore",
+      "url": "https://aws.amazon.com/blogs/machine-learning/how-natera-designed-an-agentic-ai-system-for-lab-ops-with-amazon-bedrock-agentcore/",
+      "source": "AWS Machine Learning Blog",
+      "author": "Ariel Jirau",
+      "publishedAt": "2026-11-12T21:47:07.000Z",
+      "excerpt": "Natera built SWARM, an agentic AI system on Amazon Bedrock AgentCore that captures institutional lab-operations knowledge and deploys it at scale. This post walks through the full architecture, from knowledge base construction to deployment and evaluation, delivering about 130x faster first response and 96.2% automated",
+      "topics": [
+        "Evaluations",
+        "Models",
+        "Agents"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with evaluation and architecture signals from a curated high-signal source.",
+      "score": 71,
+      "imageUrl": null
+    },
+    {
+      "id": "c42330bc780a5261",
+      "title": "Theoretical Limits of Language Model Alignment",
+      "url": "https://machinelearning.apple.com/research/theoretical-limits-alignment",
+      "source": "Apple Machine Learning Research",
+      "author": "",
+      "publishedAt": "2026-11-12T00:00:00.000Z",
+      "excerpt": "Language model (LM) alignment improves model outputs to reflect human preferences while preserving the capabilities of the base model. The most common alignment approaches are (i) reinforcement learning, which maximizes the expected reward under a KL-divergence constraint, and (ii) best-of-NNN alignment, which selects ",
+      "topics": [
+        "Training",
+        "Safety"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with training and safety signals from a curated high-signal source.",
+      "score": 68,
+      "imageUrl": null
+    },
     {
       "id": "b25a782d8681abe9",
       "title": "Evaluating the Evaluators: Investigating LLM Judges for Personalized Writing Style Assessment",
@@ -17,7 +52,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and evaluation signals from a curated high-signal source.",
-      "score": 69,
+      "score": 68,
       "imageUrl": null
     },
     {
@@ -34,7 +69,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with training and engineering signals from a curated high-signal source.",
-      "score": 64,
+      "score": 63,
       "imageUrl": "https://i.ytimg.com/vi/bdIoODXsu8k/maxresdefault.jpg"
     },
     {
@@ -51,7 +86,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with evaluation and reasoning signals from a curated high-signal source.",
-      "score": 59,
+      "score": 58,
       "imageUrl": null
     },
     {
@@ -68,7 +103,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 58,
+      "score": 56,
       "imageUrl": "https://beehiiv-images-production.s3.amazonaws.com/uploads/asset/file/0b4283eb-1bca-4f20-a474-648eae34f704/Smol_Screenshot_2026-11-06_02.26.38-7ec1786ced3a658a.png?t=1793961438"
     },
     {
@@ -85,7 +120,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and architecture signals from a curated high-signal source.",
-      "score": 56,
+      "score": 54,
       "imageUrl": null
     },
     {
@@ -104,7 +139,7 @@
       ],
       "technicalLevel": "advanced",
       "whySelected": "Recent technical AI coverage with evaluation and training signals from a curated high-signal source.",
-      "score": 44,
+      "score": 43,
       "imageUrl": "https://substack-post-media.s3.amazonaws.com/public/images/519db120-1320-411b-adec-a88865345f2c_4083x2916.jpeg"
     },
     {
@@ -141,23 +176,6 @@
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and reasoning signals from a curated high-signal source.",
       "score": 35,
-      "imageUrl": null
-    },
-    {
-      "id": "8fc272f28c8a0129",
-      "title": "Plan or Retrieve First? A Scale Study of Tool Discovery Architectures",
-      "url": "https://machinelearning.apple.com/research/plan-retrieve-tool-discovery",
-      "source": "Apple Machine Learning Research",
-      "author": "",
-      "publishedAt": "2026-10-15T00:00:00.000Z",
-      "excerpt": "Tool-augmented LLM agents discover relevant APIs from large registries before planning execution, yet finite context windows prohibit injecting all tool definitions into a single prompt. The dominant approach, which we term Retrieve-then-Plan (RtP), embeds the user query and retrieves similar tools via approximate near",
-      "topics": [
-        "Research",
-        "Reasoning"
-      ],
-      "technicalLevel": "intermediate",
-      "whySelected": "Recent technical AI coverage with research and reasoning signals from a curated high-signal source.",
-      "score": 34,
       "imageUrl": null
     }
   ]
