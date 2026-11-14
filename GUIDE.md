@@ -41,6 +41,14 @@ shared AI key or fetch private content.
   and reject funding, stock, executive-gossip and promotional items. The JSON
   stores only metadata and short feed excerpts—not article bodies. Adding an
   item to the queue still performs the normal public URL import at that moment.
+- **Publishing the feed:** the scheduled `Refresh Earmark trending` workflow
+  commits only `earmark/trending.json`, and only when it changed. Right after
+  that push it starts the `Deploy to GitHub Pages` workflow itself
+  (`gh workflow run pages.yml`), so the live tab gets each new feed the same
+  morning. GitHub never starts the deploy on its own here: a push made by the
+  workflow's built-in token fires no `push` or `workflow_run` event. If the
+  deploy can't be started, the refresh run fails and shows red. No new commit
+  means no deploy.
 - **Refresh failure:** the generator validates source count, item count, URL
   safety, deduplication and metadata shape before an atomic write. A timeout,
   malformed feed or insufficient high-quality result exits unsuccessfully and

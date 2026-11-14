@@ -10,11 +10,16 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  # Manual runs, and the daily Earmark feed refresh: after it pushes a new
+  # earmark/trending.json it starts this workflow itself with
+  # `gh workflow run pages.yml` (see earmark-trending.yml). workflow_run
+  # cannot do that job: GitHub delivers no workflow_run event for the
+  # scheduled refresh, whose actor is github-actions[bot].
   workflow_dispatch:
   # GITHUB_TOKEN commits do NOT trigger the push event above. workflow_run
-  # publishes after either auto-merge or the scheduled Earmark feed refresh.
+  # publishes after auto-merge squash-merges a PR (started by a person).
   workflow_run:
-    workflows: ["Auto-merge phone PRs", "Refresh Earmark trending"]
+    workflows: ["Auto-merge phone PRs"]
     types: [completed]
 
 permissions:

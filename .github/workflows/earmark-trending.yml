@@ -7,6 +7,8 @@ on:
 
 permissions:
   contents: write
+  # Lets the last step start the "Deploy to GitHub Pages" workflow.
+  actions: write
 
 concurrency:
   group: earmark-ai-trending
@@ -42,3 +44,21 @@ jobs:
           git commit -m "Refresh Earmark AI trending feed"
           git push origin HEAD:main
           echo "changed=true" >> "$GITHUB_OUTPUT"
+      # A push made with GITHUB_TOKEN starts no other workflow: no push event,
+      # and no workflow_run either, because this run's actor is
+      # github-actions[bot]. workflow_dispatch is the exception GitHub allows,
+      # so ask for the Pages deploy directly. Only runs after a real push.
+      - name: Publish the new feed to GitHub Pages
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          for i in 1 2 3; do
+            if gh workflow run pages.yml --repo "$REPO" --ref main; then
+              echo "Pages deploy requested for $(git rev-parse HEAD)"
+              exit 0
+            fi
+            echo "dispatch failed (attempt $i), retrying in 15s..."; sleep 15
+          done
+          echo "Could not start the Pages deploy"; exit 1
