@@ -35,6 +35,7 @@ node tests/earmark-check.js
 
 Netlify deploys are frozen (`netlify.toml` → `ignore = "exit 0"`); GitHub
 Pages is the live host, published by `.github/workflows/pages.yml` on every
-merge to `main` and after a successful scheduled Earmark feed refresh.
+merge to `main` and after every Earmark feed refresh that commits a new feed
+(`.github/workflows/earmark-trending.yml` starts that deploy itself).
 
 <!-- pages pipeline verified 2026-07-04 -->

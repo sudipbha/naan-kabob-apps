@@ -6,6 +6,32 @@ is the *why*, in plain language.)
 
 ---
 
+## 2026-11-14 — Earmark's Trending feed now goes live every day
+
+Every morning a robot collects the newest AI articles for Earmark's
+Trending tab and saves the list in the project. That part always worked.
+But the website never updated after it, because GitHub won't let one
+robot's save start another robot. The live Trending tab only got a new
+list when some app change went out. The last one was on 4 November, so
+the live tab was showing a list about ten days old (see
+[[Incidents and lessons]]).
+
+Now the feed robot starts the website update itself, right after it saves
+a new list. GitHub allows this one kind of "please run" request from a
+robot.
+
+Decisions made along the way:
+- **Publish only when something was saved.** If the feed didn't change,
+  nothing is published. The feed rules didn't change either: only the feed
+  file is saved, and a bad day still keeps the last good list.
+- **Failures show.** If the website update can't be started, that
+  morning's feed run shows as failed in GitHub instead of quietly
+  succeeding.
+- **One way in.** The website workflow had an old setting that was meant
+  to follow the feed robot but never fired. It's removed, so a feed refresh
+  started by hand doesn't publish twice. App changes still go live the same
+  way as before.
+
 ## 2026-11-04 — Small film wrap now carries Sysco's number (#7435266)
 
 Sysco sent the 24-inch film twice when we asked for the 18-inch one,

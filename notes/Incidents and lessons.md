@@ -4,6 +4,31 @@ The things that went wrong, and the rules they left behind. Newest first.
 
 ---
 
+## The Trending feed that saved every day but never went live
+
+**What happened:** Earmark's feed robot ran every morning, saved a fresh
+list of AI articles, and reported success every time. But the live
+website only updated when an app change was merged. A check on 2026-11-14
+found the site last updated on 4 November, while ten daily feed saves had
+piled up behind it. Nothing was broken or lost. The live Trending tab was
+just about ten days out of date.
+
+**Why:** the website workflow was set to wait for the feed robot to
+finish. But GitHub doesn't let work done by its own robot token start
+other workflows, so that wait never ended. App changes still went live
+because a person starts those.
+
+**The fix (same day):** the feed robot now starts the website update
+itself, right after it saves a new list. It uses the one kind of request
+GitHub allows from its robot. If that request fails, the feed run shows
+as failed.
+
+**The lesson:** a green check on step one doesn't prove step two
+happened. When one robot has to follow another, have the first start the
+second directly. Then check once that the second one really ran.
+
+---
+
 ## The small film wrap that came as the big one — an order line with no number
 
 **What happened:** on the last two Sysco orders we asked for the small
