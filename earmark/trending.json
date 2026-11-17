@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-16T12:33:50.931Z",
+  "generatedAt": "2026-11-17T12:25:25.910Z",
   "sourceCount": 4,
   "items": [
     {
@@ -18,7 +18,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with evaluation and architecture signals from a curated high-signal source.",
-      "score": 67,
+      "score": 65,
       "imageUrl": null
     },
     {
@@ -35,7 +35,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with training and safety signals from a curated high-signal source.",
-      "score": 63,
+      "score": 62,
       "imageUrl": null
     },
     {
@@ -52,7 +52,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and evaluation signals from a curated high-signal source.",
-      "score": 63,
+      "score": 62,
       "imageUrl": null
     },
     {
@@ -69,25 +69,8 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with training and engineering signals from a curated high-signal source.",
-      "score": 58,
+      "score": 57,
       "imageUrl": "https://i.ytimg.com/vi/bdIoODXsu8k/maxresdefault.jpg"
-    },
-    {
-      "id": "f14e00213ff02ea8",
-      "title": "[AINews] LLMs can read & write neural network weights: \"Weight Space Programming\" cuts Autoresearch out of the RSI loop",
-      "url": "https://latent.space/p/ainews-llms-can-read-write-neural-network-weights-weight-space-programming-cuts-autoresearch-out-of/",
-      "source": "Latent Space",
-      "author": "swyx .ai",
-      "publishedAt": "2026-11-03T05:35:00.000Z",
-      "excerpt": "Editing Qwen’s weights to reduce reasoning loops, DeepSeek’s super-agent prototype, and the GDPx benchmark.",
-      "topics": [
-        "Evaluations",
-        "Reasoning"
-      ],
-      "technicalLevel": "intermediate",
-      "whySelected": "Recent technical AI coverage with evaluation and reasoning signals from a curated high-signal source.",
-      "score": 53,
-      "imageUrl": null
     },
     {
       "id": "b0388d69473dd791",
@@ -103,7 +86,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and training signals from a curated high-signal source.",
-      "score": 52,
+      "score": 50,
       "imageUrl": "https://beehiiv-images-production.s3.amazonaws.com/uploads/asset/file/0b4283eb-1bca-4f20-a474-648eae34f704/Smol_Screenshot_2026-11-06_02.26.38-7ec1786ced3a658a.png?t=1793961438"
     },
     {
@@ -120,7 +103,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and architecture signals from a curated high-signal source.",
-      "score": 50,
+      "score": 48,
       "imageUrl": null
     },
     {
@@ -139,7 +122,7 @@
       ],
       "technicalLevel": "advanced",
       "whySelected": "Recent technical AI coverage with evaluation and training signals from a curated high-signal source.",
-      "score": 38,
+      "score": 37,
       "imageUrl": "https://substack-post-media.s3.amazonaws.com/public/images/519db120-1320-411b-adec-a88865345f2c_4083x2916.jpeg"
     }
   ]
