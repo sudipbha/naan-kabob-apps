@@ -1,8 +1,26 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-19T12:25:27.517Z",
-  "sourceCount": 3,
+  "generatedAt": "2026-11-20T12:25:34.261Z",
+  "sourceCount": 4,
   "items": [
+    {
+      "id": "7c0429e1122f880b",
+      "title": "Amazon SageMaker AI now detects latency drift, idle GPUs, and missed optimizations on your inference endpoints",
+      "url": "https://aws.amazon.com/blogs/machine-learning/amazon-sagemaker-ai-now-detects-latency-drift-idle-gpus-and-missed-optimizations-on-your-inference-endpoints/",
+      "source": "AWS Machine Learning Blog",
+      "author": "Hazim Qudah",
+      "publishedAt": "2026-11-19T21:28:18.000Z",
+      "excerpt": "Amazon SageMaker AI now monitors your generative AI inference endpoints by default and tells you when a change could improve performance or lower cost. It tracks latency, GPU utilization, and serving configuration, then sends a finding through AWS Health with a one-click path to benchmark alternatives in SageMaker Stud",
+      "topics": [
+        "Research",
+        "Evaluations",
+        "Inference"
+      ],
+      "technicalLevel": "intermediate",
+      "whySelected": "Recent technical AI coverage with research and evaluation signals from a curated high-signal source.",
+      "score": 68,
+      "imageUrl": null
+    },
     {
       "id": "c42330bc780a5261",
       "title": "Theoretical Limits of Language Model Alignment",
@@ -17,7 +35,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with training and safety signals from a curated high-signal source.",
-      "score": 59,
+      "score": 57,
       "imageUrl": null
     },
     {
@@ -34,7 +52,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with research and evaluation signals from a curated high-signal source.",
-      "score": 59,
+      "score": 57,
       "imageUrl": null
     },
     {
@@ -51,7 +69,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with training and engineering signals from a curated high-signal source.",
-      "score": 54,
+      "score": 52,
       "imageUrl": "https://i.ytimg.com/vi/bdIoODXsu8k/maxresdefault.jpg"
     },
     {
@@ -68,7 +86,7 @@
       ],
       "technicalLevel": "intermediate",
       "whySelected": "Recent technical AI coverage with inference and architecture signals from a curated high-signal source.",
-      "score": 45,
+      "score": 44,
       "imageUrl": null
     },
     {
